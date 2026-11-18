@@ -1,0 +1,6 @@
+dist
+dist-ssr
+node_modules
+public/assets/generated
+src/components/ui/brandPaths.ts
+*.md

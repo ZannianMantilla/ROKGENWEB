@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Zannián Mantilla Celis · Desarrollador de software freelance</title>
+    <meta
+      name="description"
+      content="Desarrollador freelance en Colombia: apps móviles con Flutter y Firebase, sitios web a medida y WordPress, diseño UI/UX y análisis de datos con Python."
+    />
+    <meta name="author" content="Zannián Mantilla Celis" />
+    <meta name="theme-color" content="#0b0b12" />
+    <meta name="color-scheme" content="dark light" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <!-- Open Graph / Twitter (las URL absolutas las completa scripts/prerender.mjs) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:site_name" content="Zannián Mantilla Celis" />
+    <meta
+      property="og:title"
+      content="Zannián Mantilla Celis · Desarrollador de software freelance"
+    />
+    <meta
+      property="og:description"
+      content="Apps móviles, sitios web modernos, diseño UI/UX y análisis de datos. Hablemos de tu proyecto."
+    />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Zannián Mantilla Celis — Desarrollador de software" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Zannián Mantilla Celis · Desarrollador de software freelance"
+    />
+    <meta
+      name="twitter:description"
+      content="Apps móviles, sitios web modernos, diseño UI/UX y análisis de datos. Hablemos de tu proyecto."
+    />
+    <meta name="twitter:image" content="/og-image.png" />
+    <!--head-extra-->
+
+    <!-- Tema, idioma y preloader antes del primer paint (sin parpadeos) -->
+    <script>
+      (function () {
+        var d = document.documentElement;
+        try {
+          var t = localStorage.getItem('theme');
+          if (t !== 'light' && t !== 'dark')
+            t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+          d.setAttribute('data-theme', t);
+          if (t === 'light')
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f6f6fa');
+          if (localStorage.getItem('lang') === 'en') d.lang = 'en';
+          if (
+            sessionStorage.getItem('pl') ||
+            matchMedia('(prefers-reduced-motion: reduce)').matches
+          )
+            d.classList.add('no-preload');
+          sessionStorage.setItem('pl', '1');
+        } catch (e) {
+          d.classList.add('no-preload');
+        }
+      })();
+    </script>
+    <style>
+      #preloader {
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        display: grid;
+        place-items: center;
+        background: var(--bg, #0b0b12);
+        animation: pl-out 0.4s cubic-bezier(0.7, 0, 0.3, 1) 0.45s forwards;
+      }
+      .no-preload #preloader {
+        display: none;
+      }
+      #preloader .pl-inner {
+        display: grid;
+        gap: 14px;
+        justify-items: center;
+        font:
+          700 15px/1 ui-monospace,
+          Consolas,
+          monospace;
+        letter-spacing: 0.3em;
+        color: var(--fg, #ededf5);
+      }
+      #preloader .pl-bar {
+        width: 120px;
+        height: 2px;
+        background: rgb(127 127 140 / 0.25);
+        overflow: hidden;
+        border-radius: 2px;
+      }
+      #preloader .pl-bar span {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, #7c3aed, #22d3ee);
+        transform-origin: left;
+        animation: pl-fill 0.42s cubic-bezier(0.6, 0, 0.2, 1) forwards;
+        transform: scaleX(0);
+      }
+      @keyframes pl-fill {
+        to {
+          transform: scaleX(1);
+        }
+      }
+      @keyframes pl-out {
+        to {
+          transform: translateY(-100%);
+          visibility: hidden;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="preloader" aria-hidden="true">
+      <div class="pl-inner">
+        ZM<span class="pl-bar"><span></span></span>
+      </div>
+    </div>
+    <div id="root"><!--app-html--></div>
+    <noscript>
+      <style>
+        #preloader {
+          display: none;
+        }
+      </style>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
