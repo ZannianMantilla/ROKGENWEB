@@ -171,6 +171,28 @@ export function enhance(): () => void {
         });
       }),
 
+    /* Avatar: entra deslizándose y solo flota mientras se ve */
+    () => {
+      const els = gsap.utils.toArray<HTMLElement>('[data-avatar]');
+      ctx.add(() => {
+        els.forEach((el) => {
+          gsap.from(el, {
+            x: 70,
+            rotate: 6,
+            opacity: 0,
+            duration: 1.4,
+            ease: 'expo.out',
+            scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+          });
+        });
+      });
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries) e.target.classList.toggle('in-view', e.isIntersecting);
+      });
+      els.forEach((el) => io.observe(el));
+      cleanups.push(() => io.disconnect());
+    },
+
     /* Bandas de texto: se inclinan según la velocidad del scroll */
     () => {
       const els = gsap.utils.toArray<HTMLElement>('[data-skew]');

@@ -13,7 +13,7 @@ Bilingüe (ES/EN), tema oscuro con acentos morados y fucsia, HTML prerenderizado
 | `npm run serve`    | Sirve `dist/` con compresión, como en producción (http://localhost:4174). |
 | `npm run lighthouse` | Lighthouse móvil contra `npm run serve` (necesita Chrome).               |
 | `npm run lint` / `npm run format` | ESLint / Prettier.                                          |
-| `npm run images`   | Regenera las variantes de la foto (`--force` regenera también íconos y OG). |
+| `npm run images`   | Regenera la foto y los recortes del avatar (`--force` rehace también íconos y OG). |
 
 ## Editar contenido
 
@@ -31,6 +31,20 @@ Bilingüe (ES/EN), tema oscuro con acentos morados y fucsia, HTML prerenderizado
 
 1. Reemplaza `public/assets/foto.jpg` por tu foto. Funciona mejor vertical (4:5) y de al menos 960 × 1200 px.
 2. Ejecuta `npm run images` (también corre solo en cada `npm run build`). El script genera las versiones AVIF/WebP de 320, 640 y 960 px y recorta centrando la cara.
+
+### Avatar
+
+Las ilustraciones del personaje están en `AVATAR/`. `npm run images` les quita el fondo y genera versiones WebP/AVIF transparentes (360 y 720 px) en `public/assets/generated/avatar-*`.
+
+| Archivo                 | Sección                                |
+| ----------------------- | -------------------------------------- |
+| `introduccion.png`      | Hero (dentro de la órbita, solo escritorio) |
+| `checklist.png`         | Servicios                              |
+| `proyectos.png`         | Proyectos                              |
+| `pulgar arriba.png`     | Trayectoria                            |
+| `contacto.png`          | Contacto (asomado sobre el formulario) |
+
+Para cambiar una ilustración, reemplaza el PNG con el mismo nombre y corre `npm run images`. Funciona con fondo blanco o negro liso. La asignación está en `scripts/avatars.mjs` y en la prop `avatar` de cada `SectionHeading`.
 
 ### Capturas de proyectos
 
@@ -83,6 +97,7 @@ src/
   styles/index.css        tokens de color, tipografía y animaciones CSS
 scripts/
   images.mjs              foto responsiva, íconos y og-image con sharp
+  avatars.mjs             recorta el fondo de las ilustraciones de AVATAR/
   prerender.mjs           HTML estático, CSS inline, JSON-LD, sitemap y robots
   brand-icons.mjs         regenera los íconos de marca desde simple-icons
   serve.mjs               servidor local tipo producción

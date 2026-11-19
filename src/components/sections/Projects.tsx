@@ -34,6 +34,7 @@ export function Projects() {
           kicker={t(projects.kicker)}
           title={t(projects.title)}
           intro={t(projects.intro)}
+          avatar="proyectos"
         />
 
         <ul className="space-y-6 md:space-y-8">

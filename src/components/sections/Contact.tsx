@@ -6,6 +6,7 @@ import { submitForm, validate, type FormErrors, type FormValues } from '../../li
 import { trackEvent } from '../../lib/analytics';
 import { SectionHeading } from '../ui/SectionHeading';
 import { BrandIcon } from '../ui/BrandIcon';
+import { Avatar } from '../ui/Avatar';
 import { buttonClasses } from '../ui/buttonStyles';
 
 type Status = 'idle' | 'sending' | 'success' | 'error' | 'fallback';
@@ -186,141 +187,154 @@ export function Contact() {
           </ul>
         </div>
 
-        <div className="gradient-ring self-start card p-6 sm:p-10" data-reveal>
-          {done ? (
-            <div
-              ref={resultRef}
-              tabIndex={-1}
-              className="flex flex-col items-center py-10 text-center outline-none"
-              role="status"
-            >
-              <svg viewBox="0 0 52 52" className="anim-pop size-20 text-accent" aria-hidden>
-                <circle
-                  cx="26"
-                  cy="26"
-                  r="24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  opacity=".3"
-                />
-                <path
-                  d="M15 27l7 7 15-16"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="3.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  pathLength={1}
-                  className="anim-draw"
-                />
-              </svg>
-              <h3 className="mt-6 text-3xl font-semibold">{t(F.successTitle)}</h3>
-              <p className="mt-3 max-w-sm text-muted">
-                {status === 'fallback' ? t(F.fallbackBody) : t(F.successBody)}
-              </p>
-              <button
-                type="button"
-                className={`${buttonClasses('ghost')} mt-8`}
-                onClick={() => setStatus('idle')}
+        <div className="relative mt-40 self-start sm:mt-44 lg:mt-36">
+          <div className="absolute right-4 bottom-full w-32 translate-y-[18%] sm:right-8 sm:w-40 lg:w-44">
+            <div aria-hidden className="absolute inset-[-15%] -z-10 aura [--p:40%]" />
+            <Avatar name="contacto" sizes="(min-width: 1024px) 176px, 160px" />
+          </div>
+          <div className="gradient-ring relative card !bg-surface p-6 sm:p-10" data-reveal>
+            {done ? (
+              <div
+                ref={resultRef}
+                tabIndex={-1}
+                className="flex flex-col items-center py-10 text-center outline-none"
+                role="status"
               >
-                {t(F.again)}
-              </button>
-            </div>
-          ) : (
-            <form ref={formRef} onSubmit={onSubmit} noValidate className="space-y-2">
-              <Field id="cf-name" label={t(F.name)} error={err('name')}>
-                <input
-                  id="cf-name"
-                  name="name"
-                  autoComplete="name"
-                  className={inputCls}
-                  placeholder={t(F.namePh)}
-                  value={values.name}
-                  maxLength={100}
-                  onChange={(e) => update('name', e.target.value)}
-                  onBlur={() => onBlur('name')}
-                  aria-invalid={!!err('name')}
-                  aria-describedby="cf-name-error"
-                  required
-                />
-              </Field>
-              <Field id="cf-email" label={t(F.email)} error={err('email')}>
-                <input
-                  id="cf-email"
-                  name="email"
-                  type="email"
-                  inputMode="email"
-                  autoComplete="email"
-                  className={inputCls}
-                  placeholder={t(F.emailPh)}
-                  value={values.email}
-                  maxLength={150}
-                  onChange={(e) => update('email', e.target.value)}
-                  onBlur={() => onBlur('email')}
-                  aria-invalid={!!err('email')}
-                  aria-describedby="cf-email-error"
-                  required
-                />
-              </Field>
-              <Field id="cf-message" label={t(F.message)} error={err('message')}>
-                <textarea
-                  id="cf-message"
-                  name="message"
-                  rows={5}
-                  className={`${inputCls} resize-y`}
-                  placeholder={t(F.messagePh)}
-                  value={values.message}
-                  maxLength={4000}
-                  onChange={(e) => update('message', e.target.value)}
-                  onBlur={() => onBlur('message')}
-                  aria-invalid={!!err('message')}
-                  aria-describedby="cf-message-error"
-                  required
-                />
-              </Field>
-
-              {/* Honeypot: invisible para personas, tentador para bots */}
-              <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
-                <label htmlFor="cf-gotcha">{t(F.honeypot)}</label>
-                <input id="cf-gotcha" name="_gotcha" type="text" tabIndex={-1} autoComplete="off" />
-              </div>
-
-              {status === 'error' && (
-                <div
-                  role="alert"
-                  className="anim-shake flex gap-3 rounded-2xl border border-danger/40 bg-danger/10 p-4 text-sm"
-                >
-                  <CircleAlert className="mt-0.5 size-5 shrink-0 text-danger" aria-hidden />
-                  <div>
-                    <p className="font-semibold">{t(F.errorTitle)}</p>
-                    <p className="mt-1 text-muted">{t(F.errorBody)}</p>
-                  </div>
-                </div>
-              )}
-
-              <div className="pt-4">
+                <svg viewBox="0 0 52 52" className="anim-pop size-20 text-accent" aria-hidden>
+                  <circle
+                    cx="26"
+                    cy="26"
+                    r="24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    opacity=".3"
+                  />
+                  <path
+                    d="M15 27l7 7 15-16"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    pathLength={1}
+                    className="anim-draw"
+                  />
+                </svg>
+                <h3 className="mt-6 text-3xl font-semibold">{t(F.successTitle)}</h3>
+                <p className="mt-3 max-w-sm text-muted">
+                  {status === 'fallback' ? t(F.fallbackBody) : t(F.successBody)}
+                </p>
                 <button
-                  type="submit"
-                  data-magnetic
-                  disabled={status === 'sending'}
-                  className={`${buttonClasses('primary')} w-full disabled:cursor-wait disabled:opacity-80 sm:w-auto`}
+                  type="button"
+                  className={`${buttonClasses('ghost')} mt-8`}
+                  onClick={() => setStatus('idle')}
                 >
-                  <span data-magnetic-inner className="inline-flex items-center gap-2">
-                    {status === 'sending' ? (
-                      <>
-                        <LoaderCircle className="size-4 animate-spin" aria-hidden /> {t(F.sending)}
-                      </>
-                    ) : (
-                      <>
-                        {t(F.send)} <Send className="size-4" aria-hidden />
-                      </>
-                    )}
-                  </span>
+                  {t(F.again)}
                 </button>
               </div>
-            </form>
-          )}
+            ) : (
+              <form ref={formRef} onSubmit={onSubmit} noValidate className="space-y-2">
+                <Field id="cf-name" label={t(F.name)} error={err('name')}>
+                  <input
+                    id="cf-name"
+                    name="name"
+                    autoComplete="name"
+                    className={inputCls}
+                    placeholder={t(F.namePh)}
+                    value={values.name}
+                    maxLength={100}
+                    onChange={(e) => update('name', e.target.value)}
+                    onBlur={() => onBlur('name')}
+                    aria-invalid={!!err('name')}
+                    aria-describedby="cf-name-error"
+                    required
+                  />
+                </Field>
+                <Field id="cf-email" label={t(F.email)} error={err('email')}>
+                  <input
+                    id="cf-email"
+                    name="email"
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    className={inputCls}
+                    placeholder={t(F.emailPh)}
+                    value={values.email}
+                    maxLength={150}
+                    onChange={(e) => update('email', e.target.value)}
+                    onBlur={() => onBlur('email')}
+                    aria-invalid={!!err('email')}
+                    aria-describedby="cf-email-error"
+                    required
+                  />
+                </Field>
+                <Field id="cf-message" label={t(F.message)} error={err('message')}>
+                  <textarea
+                    id="cf-message"
+                    name="message"
+                    rows={5}
+                    className={`${inputCls} resize-y`}
+                    placeholder={t(F.messagePh)}
+                    value={values.message}
+                    maxLength={4000}
+                    onChange={(e) => update('message', e.target.value)}
+                    onBlur={() => onBlur('message')}
+                    aria-invalid={!!err('message')}
+                    aria-describedby="cf-message-error"
+                    required
+                  />
+                </Field>
+
+                {/* Honeypot: invisible para personas, tentador para bots */}
+                <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
+                  <label htmlFor="cf-gotcha">{t(F.honeypot)}</label>
+                  <input
+                    id="cf-gotcha"
+                    name="_gotcha"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                </div>
+
+                {status === 'error' && (
+                  <div
+                    role="alert"
+                    className="anim-shake flex gap-3 rounded-2xl border border-danger/40 bg-danger/10 p-4 text-sm"
+                  >
+                    <CircleAlert className="mt-0.5 size-5 shrink-0 text-danger" aria-hidden />
+                    <div>
+                      <p className="font-semibold">{t(F.errorTitle)}</p>
+                      <p className="mt-1 text-muted">{t(F.errorBody)}</p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="pt-4">
+                  <button
+                    type="submit"
+                    data-magnetic
+                    disabled={status === 'sending'}
+                    className={`${buttonClasses('primary')} w-full disabled:cursor-wait disabled:opacity-80 sm:w-auto`}
+                  >
+                    <span data-magnetic-inner className="inline-flex items-center gap-2">
+                      {status === 'sending' ? (
+                        <>
+                          <LoaderCircle className="size-4 animate-spin" aria-hidden />{' '}
+                          {t(F.sending)}
+                        </>
+                      ) : (
+                        <>
+                          {t(F.send)} <Send className="size-4" aria-hidden />
+                        </>
+                      )}
+                    </span>
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
       </div>
     </section>

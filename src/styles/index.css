@@ -607,9 +607,6 @@ dialog.modal[open]::backdrop {
 .orbit-core-glow {
   animation: core-pulse 5s ease-in-out infinite;
 }
-.orbit-core-spin {
-  animation: orbit 12s linear infinite;
-}
 
 /* ---------- Bandas de texto gigante ---------- */
 .ticker {
@@ -660,6 +657,19 @@ dialog.modal[open]::backdrop {
   border-radius: inherit;
   border: 2px solid var(--accent);
   animation: ping-soft 2.4s ease-out infinite;
+}
+
+/* ---------- Avatar flotante ---------- */
+@keyframes float {
+  50% {
+    transform: translateY(-14px) rotate(-1.2deg);
+  }
+}
+.avatar-float {
+  animation: float 6s ease-in-out infinite paused;
+}
+.in-view > .avatar-float {
+  animation-play-state: running;
 }
 
 /* ---------- Movimiento reducido ---------- */

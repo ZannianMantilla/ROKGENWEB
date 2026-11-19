@@ -40,6 +40,7 @@ export function Services() {
           kicker={t(services.kicker)}
           title={t(services.title)}
           intro={t(services.intro)}
+          avatar="checklist"
         />
 
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-stagger>

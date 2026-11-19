@@ -67,7 +67,12 @@ export function Journey() {
       className="relative border-y border-line bg-bg-soft py-24 md:py-36"
     >
       <div className="shell">
-        <SectionHeading id="experience-title" kicker={t(journey.kicker)} title={t(journey.title)} />
+        <SectionHeading
+          id="experience-title"
+          kicker={t(journey.kicker)}
+          title={t(journey.title)}
+          avatar="pulgar"
+        />
 
         <div className="grid gap-16 lg:grid-cols-2 lg:gap-20">
           <Timeline

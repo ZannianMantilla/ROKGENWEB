@@ -5,6 +5,7 @@ import { useT } from '../../hooks/useT';
 import { ButtonLink } from '../ui/Button';
 import { Typewriter } from '../ui/Typewriter';
 import { BrandIcon } from '../ui/BrandIcon';
+import { Avatar } from '../ui/Avatar';
 import type { BrandName } from '../ui/brandPaths';
 
 const delay = (s: number) => ({ '--d': `${s}s` }) as CSSProperties;
@@ -55,16 +56,14 @@ function Orbit() {
           <Ring items={['python', 'figma', 'wordpress', 'javascript']} inset="8%" t="46s" reverse />
           <Ring items={['flutter', 'firebase', 'dart']} inset="24%" t="30s" />
 
-          {/* Núcleo */}
-          <div className="absolute inset-[37%] grid place-items-center">
-            <div className="orbit-core-glow absolute inset-[-70%] rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--accent-strong)_60%,transparent),color-mix(in_oklab,#c026d3_20%,transparent)_55%,transparent)]" />
-            <div className="orbit-core-spin absolute inset-0 rounded-full bg-[conic-gradient(var(--accent-strong),var(--accent-2),var(--accent-3),var(--accent-strong))] p-[2px]">
-              <div className="size-full rounded-full bg-bg" />
-            </div>
-            <span className="relative text-gradient font-mono text-4xl font-bold xl:text-5xl">
-              {'</>'}
-            </span>
-          </div>
+          {/* Avatar en el centro de la órbita, señalando el titular */}
+          <div className="orbit-core-glow absolute inset-[22%] rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--accent-strong)_60%,transparent),color-mix(in_oklab,#c026d3_20%,transparent)_55%,transparent)]" />
+          <div className="absolute bottom-[2%] left-[30%] h-[6%] w-[40%] rounded-[50%] bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--accent)_45%,transparent),transparent)]" />
+          <Avatar
+            name="intro"
+            sizes="(min-width: 1024px) 20vw, 1px"
+            className="absolute top-[3%] left-[21%] w-[46%]"
+          />
         </div>
       </div>
     </div>
