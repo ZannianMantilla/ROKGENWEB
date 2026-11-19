@@ -18,7 +18,7 @@ function Timeline({
   return (
     <section aria-labelledby={id}>
       <h3 id={id} className="mb-10 flex items-center gap-3 text-2xl font-semibold" data-reveal>
-        <span className="grid size-11 place-items-center rounded-xl bg-surface-2 text-accent">
+        <span className="grid size-11 place-items-center rounded-xl bg-brand text-white shadow-[0_0_24px_-4px_var(--accent-strong)]">
           <Icon className="size-5" aria-hidden />
         </span>
         {title}
@@ -29,22 +29,24 @@ function Timeline({
         <span
           aria-hidden
           data-line
-          className="absolute top-2 bottom-2 left-[7px] w-px origin-top bg-[linear-gradient(var(--accent),var(--accent-2))]"
+          className="absolute top-2 bottom-2 left-[6px] w-[3px] origin-top rounded-full bg-[linear-gradient(var(--accent),var(--accent-2),var(--accent-3))] shadow-[0_0_14px_var(--accent-strong)]"
         />
         {items.map((it) => (
           <li
             key={`${it.org}-${it.title.es}`}
-            className="relative pb-10 pl-10 last:pb-0"
+            className="group relative pb-10 pl-10 last:pb-0"
             data-reveal
           >
             <span
               aria-hidden
-              className="absolute top-1.5 left-0 size-[15px] rounded-full border-2 border-accent bg-bg shadow-[0_0_0_4px_var(--bg)]"
+              className="dot-pulse absolute top-1.5 left-0 size-[15px] rounded-full border-2 border-accent bg-bg shadow-[0_0_0_4px_var(--bg-soft),0_0_16px_var(--accent-strong)]"
             />
             <p className="font-mono text-xs tracking-wider text-accent-2 uppercase">
               {t(it.period)}
             </p>
-            <h4 className="mt-2 font-display text-xl font-semibold">{t(it.title)}</h4>
+            <h4 className="mt-2 font-display text-xl font-semibold transition-colors duration-300 group-hover:text-accent">
+              {t(it.title)}
+            </h4>
             <p className="mt-1 text-sm font-medium text-muted">{it.org}</p>
             {it.description && (
               <p className="mt-3 leading-relaxed text-muted">{t(it.description)}</p>
@@ -84,7 +86,7 @@ export function Journey() {
             />
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2" data-stagger>
-              <section aria-labelledby="courses-title" className="card p-7">
+              <section aria-labelledby="courses-title" className="gradient-ring card p-7">
                 <h3 id="courses-title" className="text-lg font-semibold">
                   {t(journey.coursesTitle)}
                 </h3>
@@ -100,7 +102,7 @@ export function Journey() {
                   ))}
                 </ul>
               </section>
-              <section aria-labelledby="languages-title" className="card p-7">
+              <section aria-labelledby="languages-title" className="gradient-ring card p-7">
                 <h3 id="languages-title" className="text-lg font-semibold">
                   {t(journey.languagesTitle)}
                 </h3>

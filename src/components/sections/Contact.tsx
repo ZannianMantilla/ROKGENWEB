@@ -145,9 +145,10 @@ export function Contact() {
       aria-labelledby="contact-title"
       className="relative overflow-hidden py-24 md:py-36"
     >
+      <div aria-hidden className="absolute -right-40 bottom-0 -z-10 size-[40rem] aura [--p:38%]" />
       <div
         aria-hidden
-        className="absolute -right-40 bottom-0 -z-10 size-[36rem] rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--accent-strong)_30%,transparent),transparent)]"
+        className="absolute top-10 -left-40 -z-10 size-[30rem] aura [--p:20%] aura-fuchsia"
       />
       <div className="shell grid gap-12 lg:grid-cols-[5fr_6fr] lg:gap-16">
         <div>
@@ -166,9 +167,9 @@ export function Contact() {
                 <a
                   href={d.href}
                   {...(d.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                  className="group flex items-center gap-4 card !rounded-2xl p-4 transition-colors hover:border-accent"
+                  className="group flex items-center gap-4 card !rounded-2xl p-4 transition-[border-color,transform,box-shadow] duration-500 hover:-translate-y-1 hover:border-accent hover:shadow-[0_20px_50px_-20px_var(--accent-strong)]"
                 >
-                  <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-surface-2 text-fg transition-colors group-hover:text-accent">
+                  <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-surface-2 text-fg transition-[background-color,color] duration-500 group-hover:bg-brand group-hover:text-white">
                     {d.icon}
                   </span>
                   <span className="min-w-0 flex-1">
@@ -193,7 +194,7 @@ export function Contact() {
               className="flex flex-col items-center py-10 text-center outline-none"
               role="status"
             >
-              <svg viewBox="0 0 52 52" className="anim-pop size-20 text-accent-2" aria-hidden>
+              <svg viewBox="0 0 52 52" className="anim-pop size-20 text-accent" aria-hidden>
                 <circle
                   cx="26"
                   cy="26"

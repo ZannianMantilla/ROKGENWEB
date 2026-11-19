@@ -52,16 +52,32 @@ export function enhance(): () => void {
         });
       }),
 
+    /* Títulos: cada palabra sube desde su máscara */
+    () =>
+      ctx.add(() => {
+        gsap.utils.toArray<HTMLElement>('[data-split]').forEach((el) => {
+          gsap.from(el.querySelectorAll('.split-word > span'), {
+            yPercent: 115,
+            rotate: 7,
+            duration: 1.1,
+            ease: 'expo.out',
+            stagger: 0.07,
+            scrollTrigger: { trigger: el, start: 'top 92%', once: true },
+          });
+        });
+      }),
+
     /* Stagger en grupos de tarjetas */
     () =>
       ctx.add(() => {
         gsap.utils.toArray<HTMLElement>('[data-stagger]').forEach((el) => {
           gsap.from(el.children, {
-            y: 48,
+            y: 60,
+            scale: 0.94,
             opacity: 0,
-            duration: 1,
+            duration: 1.1,
             ease: 'expo.out',
-            stagger: 0.08,
+            stagger: 0.09,
             scrollTrigger: { trigger: el, start: 'top 92%', once: true },
           });
         });
@@ -127,6 +143,54 @@ export function enhance(): () => void {
         }
       }),
 
+    /* Proyectos: cortina que destapa la vista y mockup que entra con giro */
+    () =>
+      ctx.add(() => {
+        gsap.utils.toArray<HTMLElement>('[data-curtain]').forEach((el) => {
+          gsap.fromTo(
+            el,
+            { scaleX: 1 },
+            {
+              scaleX: 0,
+              duration: 1.3,
+              ease: 'expo.inOut',
+              scrollTrigger: { trigger: el.parentElement, start: 'top 85%', once: true },
+            },
+          );
+        });
+        gsap.utils.toArray<HTMLElement>('[data-pop]').forEach((el) => {
+          gsap.from(el, {
+            scale: 0.75,
+            rotate: -8,
+            opacity: 0,
+            duration: 1.4,
+            delay: 0.35,
+            ease: 'expo.out',
+            scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+          });
+        });
+      }),
+
+    /* Bandas de texto: se inclinan según la velocidad del scroll */
+    () => {
+      const els = gsap.utils.toArray<HTMLElement>('[data-skew]');
+      if (!els.length) return;
+      const setters = els.map((el) => gsap.quickTo(el, 'skewX', { duration: 0.5, ease: 'power3' }));
+      let rest = 0;
+      const st = ScrollTrigger.create({
+        onUpdate: (self) => {
+          const skew = gsap.utils.clamp(-14, 14, self.getVelocity() / -250);
+          setters.forEach((set) => set(skew));
+          clearTimeout(rest);
+          rest = window.setTimeout(() => setters.forEach((set) => set(0)), 120);
+        },
+      });
+      cleanups.push(() => {
+        clearTimeout(rest);
+        st.kill();
+      });
+    },
+
     /* Recalcula posiciones cuando cambian alturas (fuentes, cambio de idioma, imágenes). */
     () => {
       let t = 0;
@@ -158,32 +222,44 @@ export function enhance(): () => void {
   };
 }
 
-/* ---------- Cursor: anillo que sigue al puntero (el cursor nativo se mantiene) ---------- */
+/* ---------- Cursor: punto, anillo con retardo y resplandor (el cursor nativo se mantiene) ---------- */
 function initCursor() {
-  const ring = document.createElement('div');
-  ring.className = 'cursor-ring';
-  ring.setAttribute('aria-hidden', 'true');
-  document.body.append(ring);
-  const xTo = gsap.quickTo(ring, 'x', { duration: 0.35, ease: 'power3' });
-  const yTo = gsap.quickTo(ring, 'y', { duration: 0.35, ease: 'power3' });
+  const make = (cls: string) => {
+    const el = document.createElement('div');
+    el.className = cls;
+    el.setAttribute('aria-hidden', 'true');
+    document.body.append(el);
+    return el;
+  };
+  const glow = make('cursor-glow');
+  const ring = make('cursor-ring');
+  const dot = make('cursor-dot');
+  const follow = (el: HTMLElement, duration: number) => ({
+    x: gsap.quickTo(el, 'x', { duration, ease: 'power3' }),
+    y: gsap.quickTo(el, 'y', { duration, ease: 'power3' }),
+  });
+  const parts = [follow(dot, 0.08), follow(ring, 0.35), follow(glow, 0.9)];
+  const all = [glow, ring, dot];
 
   const onMove = (e: PointerEvent) => {
-    xTo(e.clientX);
-    yTo(e.clientY);
-    ring.classList.add('is-visible');
+    parts.forEach((p) => {
+      p.x(e.clientX);
+      p.y(e.clientY);
+    });
+    all.forEach((el) => el.classList.add('is-visible'));
     const interactive = (e.target as Element).closest?.(
       'a, button, [data-tilt], input, textarea, label',
     );
     ring.classList.toggle('is-hover', !!interactive);
   };
-  const onLeave = () => ring.classList.remove('is-visible');
+  const onLeave = () => all.forEach((el) => el.classList.remove('is-visible'));
 
   addEventListener('pointermove', onMove, { passive: true });
   document.documentElement.addEventListener('pointerleave', onLeave);
   return () => {
     removeEventListener('pointermove', onMove);
     document.documentElement.removeEventListener('pointerleave', onLeave);
-    ring.remove();
+    all.forEach((el) => el.remove());
   };
 }
 

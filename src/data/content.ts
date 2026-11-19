@@ -55,8 +55,6 @@ export const ui = {
   openMenu: { es: 'Abrir menú', en: 'Open menu' },
   closeMenu: { es: 'Cerrar menú', en: 'Close menu' },
   mainNav: { es: 'Navegación principal', en: 'Main navigation' },
-  themeToLight: { es: 'Cambiar a tema claro', en: 'Switch to light theme' },
-  themeToDark: { es: 'Cambiar a tema oscuro', en: 'Switch to dark theme' },
   langSwitch: { es: 'Switch to English', en: 'Cambiar a español' },
   home: { es: 'Inicio', en: 'Home' },
 } satisfies Record<string, Localized | Record<string, Localized>>;

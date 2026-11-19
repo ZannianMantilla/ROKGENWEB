@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import { Menu, Moon, Sun, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { hero, profile, ui, whatsappLink } from '../../data/content';
-import { setLang, setTheme, useTheme } from '../../lib/prefs';
+import { setLang } from '../../lib/prefs';
 import { useT } from '../../hooks/useT';
 
 const SECTIONS = ['about', 'services', 'stack', 'projects', 'experience', 'contact'] as const;
 
 export function Navbar() {
   const { t, lang } = useT();
-  const theme = useTheme();
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState('');
   const menuRef = useRef<HTMLDialogElement>(null);
@@ -49,15 +48,6 @@ export function Navbar() {
         <span aria-hidden>{lang === 'es' ? 'EN' : 'ES'}</span>
         <span className="sr-only">{t(ui.langSwitch)}</span>
       </button>
-      <button
-        type="button"
-        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-        className="grid size-11 place-items-center rounded-full text-muted transition-colors hover:text-fg"
-        aria-label={t(theme === 'dark' ? ui.themeToLight : ui.themeToDark)}
-      >
-        <Sun className="hidden size-[18px] dark:block" aria-hidden />
-        <Moon className="size-[18px] dark:hidden" aria-hidden />
-      </button>
     </div>
   );
 
@@ -75,7 +65,7 @@ export function Navbar() {
           <span className="sr-only">{`${profile.name} — ${t(ui.home)}`}</span>
           <span
             aria-hidden
-            className="grid size-9 place-items-center rounded-xl bg-[linear-gradient(135deg,var(--accent-strong),#0e7490)] font-display text-sm font-bold text-white transition-transform duration-500 group-hover:rotate-[-8deg]"
+            className="grid size-9 place-items-center rounded-xl bg-[linear-gradient(135deg,var(--accent-strong),#c026d3)] font-display text-sm font-bold text-white shadow-[0_0_24px_-4px_var(--accent-strong)] transition-transform duration-500 group-hover:rotate-[-8deg]"
           >
             {profile.initials}
           </span>
@@ -90,11 +80,17 @@ export function Navbar() {
               <a
                 href={`#${l.id}`}
                 aria-current={active === l.id ? 'true' : undefined}
-                className={`rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
+                className={`relative rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
                   active === l.id ? 'bg-surface-2 text-fg' : 'text-muted hover:text-fg'
                 }`}
               >
                 {l.label}
+                <span
+                  aria-hidden
+                  className={`absolute inset-x-3.5 -bottom-px h-px origin-left bg-[linear-gradient(90deg,var(--accent),var(--accent-2))] transition-transform duration-500 ${
+                    active === l.id ? 'scale-x-100' : 'scale-x-0'
+                  }`}
+                />
               </a>
             </li>
           ))}
@@ -107,7 +103,7 @@ export function Navbar() {
             target="_blank"
             rel="noopener noreferrer"
             data-magnetic
-            className="ml-2 hidden h-10 items-center rounded-full bg-fg px-5 text-sm font-semibold text-bg transition-opacity hover:opacity-85 md:inline-flex"
+            className="btn-shine ml-2 hidden h-10 items-center rounded-full bg-brand px-5 text-sm font-semibold text-on-accent shadow-[0_8px_30px_-8px_var(--accent-strong)] md:inline-flex"
           >
             <span data-magnetic-inner>{t(hero.ctaPrimary)}</span>
           </a>

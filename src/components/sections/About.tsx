@@ -13,7 +13,19 @@ export function About() {
   const years = new Date().getFullYear() - profile.careerStartYear;
 
   return (
-    <section id="about" aria-labelledby="about-title" className="relative py-24 md:py-36">
+    <section
+      id="about"
+      aria-labelledby="about-title"
+      className="relative isolate overflow-hidden py-24 md:py-36"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute top-20 -right-48 -z-10 size-[38rem] aura [--p:24%]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute bottom-0 -left-40 -z-10 size-[30rem] aura [--p:14%] aura-fuchsia"
+      />
       <div className="shell">
         <SectionHeading id="about-title" kicker={t(about.kicker)} title={t(about.title)} />
 
@@ -41,7 +53,7 @@ export function About() {
                 </picture>
               </div>
               <p className="absolute -bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap shadow-[var(--shadow)] glass">
-                <MapPin className="size-3.5 text-accent-2" aria-hidden />
+                <MapPin className="size-3.5 text-accent" aria-hidden />
                 Santander · {profile.country}
               </p>
             </div>
@@ -76,9 +88,14 @@ export function About() {
             {about.stats.map((s) => {
               const value = s.value === 'years' ? years : s.value;
               return (
-                <li key={s.label.es} className="gradient-ring card p-6 sm:p-7">
+                <li
+                  key={s.label.es}
+                  className="gradient-ring card p-6 transition-transform duration-500 hover:-translate-y-1 sm:p-7"
+                >
                   <p className="font-display text-5xl font-semibold tracking-tight sm:text-6xl">
-                    <span data-count={value}>{value}</span>
+                    <span data-count={value} className="text-gradient">
+                      {value}
+                    </span>
                     <span className="text-gradient">{s.suffix}</span>
                   </p>
                   <p className="mt-2 text-sm leading-snug text-muted">{t(s.label)}</p>

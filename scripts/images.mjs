@@ -54,7 +54,7 @@ const iconSvg = (
   size,
   pad = 0,
 ) => `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 64 64">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#0e7490"/></linearGradient></defs>
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#c026d3"/></linearGradient></defs>
   <rect x="${pad}" y="${pad}" width="${64 - pad * 2}" height="${64 - pad * 2}" rx="${pad ? 12 : 14}" fill="url(#g)"/>
   <text x="32" y="41.5" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-weight="700" font-size="${pad ? 22 : 26}" fill="#fff" letter-spacing="-1">ZM</text>
 </svg>`;
@@ -83,13 +83,13 @@ if (force || !existsSync(og)) {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
     <defs>
       <radialGradient id="a" cx="85%" cy="20%" r="60%"><stop offset="0" stop-color="#7c3aed" stop-opacity=".75"/><stop offset="1" stop-color="#7c3aed" stop-opacity="0"/></radialGradient>
-      <radialGradient id="b" cx="95%" cy="95%" r="50%"><stop offset="0" stop-color="#22d3ee" stop-opacity=".55"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></radialGradient>
-      <linearGradient id="t" x1="0" x2="1"><stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#22d3ee"/></linearGradient>
+      <radialGradient id="b" cx="95%" cy="95%" r="50%"><stop offset="0" stop-color="#e879f9" stop-opacity=".55"/><stop offset="1" stop-color="#e879f9" stop-opacity="0"/></radialGradient>
+      <linearGradient id="t" x1="0" x2="1"><stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#e879f9"/></linearGradient>
     </defs>
-    <rect width="1200" height="630" fill="#0b0b12"/>
+    <rect width="1200" height="630" fill="#07060d"/>
     <rect width="1200" height="630" fill="url(#a)"/><rect width="1200" height="630" fill="url(#b)"/>
     <g font-family="Segoe UI, Arial, sans-serif">
-      <text x="80" y="130" font-size="26" fill="#22d3ee" letter-spacing="6" font-family="Consolas, monospace">DESARROLLADOR DE SOFTWARE</text>
+      <text x="80" y="130" font-size="26" fill="#e879f9" letter-spacing="6" font-family="Consolas, monospace">DESARROLLADOR DE SOFTWARE</text>
       <text x="80" y="270" font-size="92" font-weight="700" fill="#ededf5" letter-spacing="-3">Zannián</text>
       <text x="80" y="370" font-size="92" font-weight="700" fill="url(#t)" letter-spacing="-3">Mantilla Celis</text>
       <text x="80" y="470" font-size="32" fill="#a1a1b5">Frontend · Mobile · Análisis de Datos · Soporte TI</text>

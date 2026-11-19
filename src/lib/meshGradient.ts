@@ -113,18 +113,12 @@ export function startMeshGradient(canvas: HTMLCanvasElement, reduced: boolean): 
     if (reduced) play();
   });
   ro.observe(canvas);
-  const onTheme = () => {
-    setColors();
-    play();
-  };
-  window.addEventListener('themechange', onTheme);
   document.addEventListener('visibilitychange', play);
 
   return () => {
     cancelAnimationFrame(raf);
     io.disconnect();
     ro.disconnect();
-    window.removeEventListener('themechange', onTheme);
     document.removeEventListener('visibilitychange', play);
   };
 }

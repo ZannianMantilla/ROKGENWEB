@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 import { ui } from './data/content';
 import { useT } from './hooks/useT';
-import { followSystemTheme } from './lib/prefs';
 import { loadAnalytics } from './lib/analytics';
 import { Navbar } from './components/layout/Navbar';
 import { ScrollProgress } from './components/layout/ScrollProgress';
 import { Footer } from './components/layout/Footer';
 import { Hero } from './components/sections/Hero';
+import { Ticker } from './components/sections/Ticker';
 import { About } from './components/sections/About';
 import { Services } from './components/sections/Services';
 import { Stack } from './components/sections/Stack';
@@ -22,8 +22,6 @@ const idle = (fn: () => void, timeout = 1500) =>
 
 export function App() {
   const { t } = useT();
-
-  useEffect(() => followSystemTheme(), []);
 
   // Animaciones, scroll suave y analítica se cargan cuando el navegador está libre.
   useEffect(() => {
@@ -54,6 +52,7 @@ export function App() {
       <Navbar />
       <main id="main" tabIndex={-1} className="outline-none">
         <Hero />
+        <Ticker />
         <About />
         <Services />
         <Stack />

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es" data-theme="dark">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -9,8 +9,8 @@
       content="Desarrollador freelance en Colombia: apps móviles con Flutter y Firebase, sitios web a medida y WordPress, diseño UI/UX y análisis de datos con Python."
     />
     <meta name="author" content="Zannián Mantilla Celis" />
-    <meta name="theme-color" content="#0b0b12" />
-    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#07060d" />
+    <meta name="color-scheme" content="dark" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -45,17 +45,11 @@
     <meta name="twitter:image" content="/og-image.png" />
     <!--head-extra-->
 
-    <!-- Tema, idioma y preloader antes del primer paint (sin parpadeos) -->
+    <!-- Idioma y preloader antes del primer paint (sin parpadeos) -->
     <script>
       (function () {
         var d = document.documentElement;
         try {
-          var t = localStorage.getItem('theme');
-          if (t !== 'light' && t !== 'dark')
-            t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-          d.setAttribute('data-theme', t);
-          if (t === 'light')
-            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f6f6fa');
           if (localStorage.getItem('lang') === 'en') d.lang = 'en';
           if (
             sessionStorage.getItem('pl') ||
@@ -75,7 +69,7 @@
         z-index: 200;
         display: grid;
         place-items: center;
-        background: var(--bg, #0b0b12);
+        background: #07060d;
         animation: pl-out 0.4s cubic-bezier(0.7, 0, 0.3, 1) 0.45s forwards;
       }
       .no-preload #preloader {
@@ -90,7 +84,7 @@
           Consolas,
           monospace;
         letter-spacing: 0.3em;
-        color: var(--fg, #ededf5);
+        color: #f1eefb;
       }
       #preloader .pl-bar {
         width: 120px;
@@ -102,7 +96,8 @@
       #preloader .pl-bar span {
         display: block;
         height: 100%;
-        background: linear-gradient(90deg, #7c3aed, #22d3ee);
+        background: linear-gradient(90deg, #7c3aed, #e879f9);
+        box-shadow: 0 0 12px #e879f9;
         transform-origin: left;
         animation: pl-fill 0.42s cubic-bezier(0.6, 0, 0.2, 1) forwards;
         transform: scaleX(0);

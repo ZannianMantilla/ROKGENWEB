@@ -9,12 +9,67 @@ import type { BrandName } from '../ui/brandPaths';
 
 const delay = (s: number) => ({ '--d': `${s}s` }) as CSSProperties;
 
-const floating: { brand: BrandName; label: string; pos: string; speed: number; d: number }[] = [
-  { brand: 'flutter', label: 'Flutter', pos: 'top-[20%] right-[5%]', speed: 0.6, d: 0 },
-  { brand: 'firebase', label: 'Firebase', pos: 'top-[38%] right-[2%]', speed: 1.1, d: 1.2 },
-  { brand: 'python', label: 'Python', pos: 'top-[56%] right-[6%]', speed: 0.8, d: 0.6 },
-  { brand: 'figma', label: 'Figma', pos: 'top-[74%] right-[3%]', speed: 1.4, d: 1.8 },
-];
+type RingProps = { items: BrandName[]; inset: string; t: string; reverse?: boolean };
+
+/** Anillo que gira con íconos que se mantienen derechos (contra-rotación). */
+function Ring({ items, inset, t, reverse }: RingProps) {
+  return (
+    <div
+      className={`orbit-ring ${reverse ? 'reverse' : ''}`}
+      style={{ inset, '--t': t } as CSSProperties}
+    >
+      {items.map((brand, i) => {
+        const angle = (360 / items.length) * i;
+        return (
+          <div key={brand} className="absolute inset-0" style={{ rotate: `${angle}deg` }}>
+            <div
+              className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2"
+              style={{ rotate: `${-angle}deg` }}
+            >
+              <div className="orbit-counter grid size-14 place-items-center rounded-2xl shadow-[0_0_30px_-6px_var(--accent-strong)] glass">
+                <BrandIcon name={brand} className="size-7" colored />
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Orbit() {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute top-1/2 right-[-3%] hidden aspect-square w-[min(44vw,640px)] -translate-y-1/2 lg:block"
+    >
+      <div className="size-full" data-speed="0.35">
+        <div className="intro relative size-full" style={delay(0.35)}>
+          {/* Anillo exterior punteado con un satélite luminoso */}
+          <div
+            className="orbit-ring !border-dashed opacity-60"
+            style={{ inset: '-4%', '--t': '70s' } as CSSProperties}
+          >
+            <span className="absolute top-1/2 -left-1.5 size-3 rounded-full bg-accent-2 shadow-[0_0_18px_4px_var(--accent-2)]" />
+          </div>
+          <Ring items={['python', 'figma', 'wordpress', 'javascript']} inset="8%" t="46s" reverse />
+          <Ring items={['flutter', 'firebase', 'dart']} inset="24%" t="30s" />
+
+          {/* Núcleo */}
+          <div className="absolute inset-[37%] grid place-items-center">
+            <div className="orbit-core-glow absolute inset-[-70%] rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--accent-strong)_60%,transparent),color-mix(in_oklab,#c026d3_20%,transparent)_55%,transparent)]" />
+            <div className="orbit-core-spin absolute inset-0 rounded-full bg-[conic-gradient(var(--accent-strong),var(--accent-2),var(--accent-3),var(--accent-strong))] p-[2px]">
+              <div className="size-full rounded-full bg-bg" />
+            </div>
+            <span className="relative text-gradient font-mono text-4xl font-bold xl:text-5xl">
+              {'</>'}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function Hero() {
   const { t, lang } = useT();
@@ -63,26 +118,19 @@ export function Hero() {
           ref={canvas}
           className="absolute inset-0 size-full opacity-0 transition-opacity duration-[1.5s] data-[ready=true]:opacity-100"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(var(--line)_1px,transparent_1px),linear-gradient(90deg,var(--line)_1px,transparent_1px)] [mask-image:radial-gradient(70%_60%_at_30%_40%,#000,transparent)] bg-[size:64px_64px] opacity-60" />
+        <span className="stars" />
+        <span className="stars stars-b" />
+        <div className="absolute inset-0 bg-[linear-gradient(var(--line)_1px,transparent_1px),linear-gradient(90deg,var(--line)_1px,transparent_1px)] [mask-image:radial-gradient(70%_60%_at_30%_40%,#000,transparent)] bg-[size:64px_64px] opacity-70" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-[linear-gradient(transparent,var(--bg))]" />
       </div>
 
-      <div className="pointer-events-none absolute inset-0 hidden xl:block" aria-hidden>
-        {floating.map((f) => (
-          <div key={f.brand} className={`absolute ${f.pos}`} data-speed={f.speed}>
-            <div
-              className="intro flex items-center gap-2.5 rounded-2xl px-4 py-3 shadow-[var(--shadow)] glass"
-              style={delay(0.5 + f.d * 0.15)}
-            >
-              <BrandIcon name={f.brand} className="size-5" colored />
-              <span className="text-sm font-semibold">{f.label}</span>
-            </div>
-          </div>
-        ))}
-      </div>
+      <Orbit />
 
-      <div className="shell" data-hero-content>
-        <p className="intro flex items-center gap-3 kicker" style={delay(0)}>
+      <div className="relative z-10 shell" data-hero-content>
+        <p
+          className="intro inline-flex items-center gap-3 rounded-full border border-line-strong bg-[color-mix(in_oklab,var(--accent-strong)_12%,transparent)] px-4 py-2 kicker"
+          style={delay(0)}
+        >
           <span className="relative flex size-2.5" aria-hidden>
             <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-60" />
             <span className="relative inline-flex size-2.5 rounded-full bg-emerald-400" />
@@ -96,7 +144,7 @@ export function Hero() {
 
         <h1
           id="hero-title"
-          className="mt-3 max-w-[14ch] text-[clamp(2.6rem,8.4vw,7.25rem)] leading-[0.95] font-semibold tracking-[-0.035em]"
+          className="mt-3 max-w-[14ch] text-[clamp(2.6rem,8.4vw,7.25rem)] leading-[0.95] font-semibold tracking-[-0.035em] lg:text-[clamp(3.5rem,6vw,6.5rem)]"
         >
           {t(hero.headline).map((line, i, all) => (
             <span
@@ -146,7 +194,7 @@ export function Hero() {
       >
         {t(hero.scroll)}
         <span className="relative h-12 w-px overflow-hidden bg-line-strong" aria-hidden>
-          <span className="absolute inset-x-0 top-0 h-1/2 animate-[scrollcue_2s_ease-in-out_infinite] bg-accent-2" />
+          <span className="absolute inset-x-0 top-0 h-1/2 animate-[scrollcue_2s_ease-in-out_infinite] bg-[linear-gradient(var(--accent),var(--accent-2))]" />
         </span>
       </a>
     </section>

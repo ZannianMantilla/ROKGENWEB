@@ -1,7 +1,7 @@
 # Portafolio · Zannián Mantilla Celis
 
 Portafolio de una sola página: Vite + React 19 + TypeScript + Tailwind CSS 4 + GSAP/ScrollTrigger + Lenis.
-Bilingüe (ES/EN), tema claro/oscuro, HTML prerenderizado en el build para SEO y velocidad.
+Bilingüe (ES/EN), tema oscuro con acentos morados y fucsia, HTML prerenderizado en el build para SEO y velocidad.
 
 ## Comandos
 
@@ -73,12 +73,12 @@ src/
   data/content.ts         ← contenido (ES/EN)
   components/
     layout/               Navbar, Footer, ScrollProgress
-    sections/             Hero, About, Services, Stack, Projects (+ modal y mockups), Journey, Contact
+    sections/             Hero (+ órbita), Ticker, About, Services, Stack, Projects (+ modal y mockups), Journey, Contact
     ui/                   botones, íconos de marca (sprite SVG), typewriter, encabezados
   lib/
-    enhance.ts            GSAP, ScrollTrigger, Lenis, cursor, magnético, tilt (se carga en diferido)
+    enhance.ts            GSAP, ScrollTrigger, Lenis, cursor, magnético, tilt, títulos, cortinas (diferido)
     meshGradient.ts       fondo WebGL del hero (solo escritorio)
-    prefs.ts              idioma y tema
+    prefs.ts              idioma
     form.ts, analytics.ts
   styles/index.css        tokens de color, tipografía y animaciones CSS
 scripts/
@@ -92,9 +92,10 @@ scripts/
 
 - **Prerender en el build.** El `<h1>` llega en el HTML, así que es el LCP desde el primer paint. React solo hidrata.
 - **Animaciones en un chunk diferido.** GSAP, Lenis y el WebGL (~50 KB gzip) se cargan cuando el navegador queda libre. La configuración se reparte en tareas cortas para no bloquear el hilo principal. JS inicial: ~96 KB gzip.
-- **Solo `transform` y `opacity`.** Nunca `visibility`, para que el foco por teclado siga funcionando aunque una sección no se haya revelado.
+- **Solo `transform` y `opacity`.** Nunca `visibility`, para que el foco por teclado siga funcionando aunque una sección no se haya revelado. Excepciones baratas: el brillo del texto con gradiente y el borde cónico de las tarjetas (este último solo gira en hover).
+- **Halos de fondo estáticos.** Animar los halos radiales grandes de cada sección costaba ~0,7 s de primer pintado en móvil; el movimiento lo aportan la órbita, las bandas de texto, el cursor y los reveals.
 - **WebGL solo en escritorio con mouse.** En móvil, blobs CSS (más baratos para la batería).
-- **`prefers-reduced-motion`.** Desactiva Lenis, GSAP, preloader, marquee y typewriter.
+- **`prefers-reduced-motion`.** Desactiva Lenis, GSAP, preloader, marquee, órbita, bandas de texto y typewriter.
 - **Fuentes autoalojadas.** Bricolage Grotesque + Manrope (Google Fonts vía Fontsource, `font-display: swap`). La display se precarga.
 
 ## Lighthouse

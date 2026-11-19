@@ -62,7 +62,15 @@ export function Stack() {
   const half = Math.ceil(all.length / 2);
 
   return (
-    <section id="stack" aria-labelledby="stack-title" className="relative py-24 md:py-36">
+    <section
+      id="stack"
+      aria-labelledby="stack-title"
+      className="relative isolate overflow-hidden py-24 md:py-36"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute top-1/3 left-1/2 -z-10 size-[44rem] -translate-x-1/2 aura [--p:18%]"
+      />
       <div className="shell">
         <SectionHeading
           id="stack-title"

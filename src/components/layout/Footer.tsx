@@ -5,7 +5,19 @@ import { useT } from '../../hooks/useT';
 export function Footer() {
   const { t } = useT();
   return (
-    <footer className="border-t border-line">
+    <footer className="relative isolate overflow-hidden border-t border-line">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute top-0 left-1/2 -z-10 h-80 w-[60rem] max-w-full -translate-x-1/2 aura [--p:30%]"
+      />
+      <p
+        aria-hidden
+        className="ticker pointer-events-none pt-12 text-center text-[clamp(4rem,19vw,17rem)] whitespace-nowrap select-none"
+        data-reveal
+      >
+        <span className="text-outline">{profile.name.split(' ')[0]}</span>
+        <span className="text-gradient">.</span>
+      </p>
       <div className="shell flex flex-col gap-6 py-10 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="font-display text-lg font-semibold">{profile.name}</p>

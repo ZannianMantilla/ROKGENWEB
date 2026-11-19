@@ -2,56 +2,31 @@
 @import '@fontsource-variable/manrope/wght.css';
 @import 'tailwindcss';
 
-@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
-
-/* ---------- Tokens ---------- */
-:root,
-[data-theme='dark'] {
+/* ---------- Tokens (solo tema oscuro, acentos morados) ---------- */
+:root {
   color-scheme: dark;
-  --bg: #0b0b12;
-  --bg-soft: #0f0f18;
-  --surface: #12121c;
-  --surface-2: #1a1a27;
-  --line: rgb(255 255 255 / 0.08);
-  --line-strong: rgb(255 255 255 / 0.16);
-  --fg: #ededf5;
-  --muted: #a1a1b5;
+  --bg: #07060d;
+  --bg-soft: #0c0a16;
+  --surface: #110e1d;
+  --surface-2: #1b1530;
+  --line: rgb(196 181 253 / 0.09);
+  --line-strong: rgb(196 181 253 / 0.18);
+  --fg: #f1eefb;
+  --muted: #aba4c4;
   --accent: #a78bfa;
   --accent-strong: #7c3aed;
-  --accent-2: #22d3ee;
+  --accent-2: #e879f9;
+  --accent-3: #818cf8;
   --danger: #fca5a5;
   --on-accent: #ffffff;
-  --glass: rgb(16 16 26 / 0.62);
-  --shadow: 0 30px 80px -30px rgb(0 0 0 / 0.7);
+  --glass: rgb(13 10 24 / 0.62);
+  --shadow: 0 30px 80px -30px rgb(0 0 0 / 0.75);
+  --glow: 0 0 60px -10px color-mix(in oklab, var(--accent-strong) 70%, transparent);
   --mesh-a: #7c3aed;
-  --mesh-b: #22d3ee;
-  --mesh-c: #c026d3;
-  --mesh-d: #0b0b12;
+  --mesh-b: #c026d3;
+  --mesh-c: #4f46e5;
+  --mesh-d: #07060d;
   --grain-opacity: 0.06;
-}
-
-[data-theme='light'] {
-  color-scheme: light;
-  --bg: #f6f6fa;
-  --bg-soft: #efeff6;
-  --surface: #ffffff;
-  --surface-2: #ececf4;
-  --line: rgb(11 11 18 / 0.09);
-  --line-strong: rgb(11 11 18 / 0.18);
-  --fg: #0b0b12;
-  --muted: #4b4b5f;
-  --accent: #6d28d9;
-  --accent-strong: #6d28d9;
-  --accent-2: #0e7490;
-  --danger: #b91c1c;
-  --on-accent: #ffffff;
-  --glass: rgb(255 255 255 / 0.7);
-  --shadow: 0 30px 70px -35px rgb(40 20 90 / 0.35);
-  --mesh-a: #a78bfa;
-  --mesh-b: #67e8f9;
-  --mesh-c: #f0abfc;
-  --mesh-d: #f6f6fa;
-  --grain-opacity: 0.035;
 }
 
 @theme inline {
@@ -69,6 +44,7 @@
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
   --color-accent-2: var(--accent-2);
+  --color-accent-3: var(--accent-3);
   --color-on-accent: var(--on-accent);
   --color-danger: var(--danger);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -145,10 +121,19 @@
 }
 
 @utility text-gradient {
-  background: linear-gradient(100deg, var(--accent) 10%, var(--accent-2) 90%);
+  background: linear-gradient(
+    100deg,
+    var(--accent) 0%,
+    var(--accent-2) 30%,
+    var(--accent-3) 55%,
+    var(--accent) 80%,
+    var(--accent-2) 100%
+  );
+  background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  animation: text-shine 7s linear infinite;
 }
 
 @utility kicker {
@@ -159,7 +144,30 @@
   color: var(--accent-2);
 }
 
-/* Borde con gradiente que aparece en hover/focus */
+/* Gradiente de marca (botones, íconos activos, cortinas) */
+@utility bg-brand {
+  background-image: linear-gradient(135deg, var(--accent-strong), #a21caf);
+}
+
+/* Halo radial decorativo. --p controla la intensidad. */
+@utility aura {
+  border-radius: 9999px;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklab, var(--aura-color, var(--accent-strong)) var(--p, 22%), transparent),
+    transparent
+  );
+}
+@utility aura-fuchsia {
+  --aura-color: #c026d3;
+}
+
+/* Borde con gradiente cónico: tenue en reposo, gira y se enciende en hover/focus */
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
 @utility gradient-ring {
   position: relative;
   &::before {
@@ -168,12 +176,13 @@
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(
-      135deg,
-      color-mix(in oklab, var(--accent) 80%, transparent),
-      transparent 40%,
-      transparent 60%,
-      color-mix(in oklab, var(--accent-2) 80%, transparent)
+    background: conic-gradient(
+      from var(--angle),
+      transparent 0deg,
+      var(--accent) 60deg,
+      var(--accent-2) 120deg,
+      transparent 180deg,
+      transparent 360deg
     );
     mask:
       linear-gradient(#000 0 0) content-box,
@@ -181,11 +190,23 @@
     mask-composite: exclude;
     opacity: 0.35;
     transition: opacity 0.4s ease;
+    animation: ring-spin 4s linear infinite paused;
     pointer-events: none;
   }
   &:hover::before,
   &:focus-within::before {
     opacity: 1;
+    animation-play-state: running;
+  }
+}
+@keyframes ring-spin {
+  to {
+    --angle: 360deg;
+  }
+}
+@keyframes text-shine {
+  to {
+    background-position: -200% 0;
   }
 }
 
@@ -314,7 +335,8 @@
 .marquee {
   mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
 }
-.marquee-track {
+.marquee-track,
+.ticker-track {
   display: flex;
   width: max-content;
   animation: marquee var(--duration, 40s) linear infinite;
@@ -440,33 +462,204 @@ dialog.modal[open]::backdrop {
 }
 
 /* ---------- Cursor ---------- */
-.cursor-ring {
+.cursor-ring,
+.cursor-dot,
+.cursor-glow {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 70;
-  width: 36px;
-  height: 36px;
-  margin: -18px 0 0 -18px;
-  border: 1.5px solid color-mix(in oklab, var(--accent-2) 70%, transparent);
   border-radius: 999px;
   pointer-events: none;
-  transition:
-    width 0.3s var(--ease-out-expo),
-    height 0.3s var(--ease-out-expo),
-    margin 0.3s var(--ease-out-expo),
-    background-color 0.3s ease,
-    opacity 0.3s ease;
   opacity: 0;
+  transition: opacity 0.3s ease;
 }
-.cursor-ring.is-visible {
+.cursor-ring {
+  z-index: 70;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border: 1.5px solid color-mix(in oklab, var(--accent-2) 75%, transparent);
+  transition:
+    width 0.35s var(--ease-out-expo),
+    height 0.35s var(--ease-out-expo),
+    margin 0.35s var(--ease-out-expo),
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    opacity 0.3s ease;
+}
+.cursor-dot {
+  z-index: 71;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  background: var(--accent-2);
+  box-shadow: 0 0 12px var(--accent-2);
+}
+/* Detrás del contenido: ilumina el fondo y las tarjetas translúcidas, nunca el texto */
+.cursor-glow {
+  z-index: -1;
+  width: 640px;
+  height: 640px;
+  margin: -320px 0 0 -320px;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklab, var(--accent-strong) 28%, transparent),
+    transparent
+  );
+}
+.cursor-ring.is-visible,
+.cursor-dot.is-visible,
+.cursor-glow.is-visible {
   opacity: 1;
 }
 .cursor-ring.is-hover {
-  width: 64px;
-  height: 64px;
-  margin: -32px 0 0 -32px;
-  background: color-mix(in oklab, var(--accent) 14%, transparent);
+  width: 72px;
+  height: 72px;
+  margin: -36px 0 0 -36px;
+  border-color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 16%, transparent);
+}
+
+/* ---------- Botón con destello ---------- */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgb(255 255 255 / 0.35) 50%,
+    transparent 70%
+  );
+  transform: translateX(-110%);
+  transition: transform 0.9s var(--ease-out-expo);
+}
+.btn-shine:hover::after,
+.btn-shine:focus-visible::after {
+  transform: translateX(110%);
+}
+
+/* ---------- Estrellas del hero: mosaicos de puntos que titilan ---------- */
+@keyframes twinkle {
+  50% {
+    opacity: 0.3;
+  }
+}
+.stars {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 22px 38px, #e9d5ff, transparent),
+    radial-gradient(1px 1px at 140px 92px, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 260px 18px, #f5d0fe, transparent),
+    radial-gradient(1px 1px at 78px 210px, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 205px 160px, #ddd6fe, transparent),
+    radial-gradient(1px 1px at 300px 260px, #fff, transparent);
+  background-size: 340px 300px;
+  animation: twinkle 4s ease-in-out infinite;
+}
+.stars-b {
+  background-size: 470px 410px;
+  background-position: 120px 70px;
+  animation-duration: 6.5s;
+  animation-delay: -2s;
+}
+
+/* ---------- Órbita de tecnologías ---------- */
+@keyframes orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes orbit-rev {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+.orbit-ring {
+  position: absolute;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  animation: orbit var(--t, 40s) linear infinite;
+}
+.orbit-ring.reverse {
+  animation-name: orbit-rev;
+}
+/* Cada ícono gira al revés que su anillo para quedar siempre derecho */
+.orbit-counter {
+  animation: orbit-rev var(--t, 40s) linear infinite;
+}
+.orbit-ring.reverse .orbit-counter {
+  animation-name: orbit;
+}
+@keyframes core-pulse {
+  50% {
+    transform: scale(1.06);
+    opacity: 0.85;
+  }
+}
+.orbit-core-glow {
+  animation: core-pulse 5s ease-in-out infinite;
+}
+.orbit-core-spin {
+  animation: orbit 12s linear infinite;
+}
+
+/* ---------- Bandas de texto gigante ---------- */
+.ticker {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px color-mix(in oklab, var(--accent) 80%, transparent);
+}
+
+/* ---------- Títulos que se revelan palabra por palabra ---------- */
+.split-word {
+  display: inline-block;
+  overflow: clip;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+  vertical-align: top;
+}
+.split-word > span {
+  display: inline-block;
+  transform-origin: left bottom;
+}
+
+/* ---------- Cortina que destapa las vistas de proyecto ---------- */
+[data-curtain] {
+  transform: scaleX(0);
+  transform-origin: right;
+}
+
+/* ---------- Pulso de los puntos del timeline ---------- */
+@keyframes ping-soft {
+  from {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+.dot-pulse::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  border: 2px solid var(--accent);
+  animation: ping-soft 2.4s ease-out infinite;
 }
 
 /* ---------- Movimiento reducido ---------- */
