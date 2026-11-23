@@ -88,6 +88,26 @@ for (const h of [48, 96, 192]) {
 }
 console.log(`• Logo: ${logoMeta.width}×${logoMeta.height} → logo-{48,96,192}.webp`);
 
+/* ---------- Huella del cursor (LOGO/huella.webp, negra sobre blanco) → máscara en src/assets ---------- */
+// Lo oscuro pasa a opaco y el blanco a transparente; el color lo pone el CSS (mask-image).
+{
+  const assets = join(root, 'src', 'assets');
+  mkdirSync(assets, { recursive: true });
+  const { data: g, info: gi } = await sharp(join(root, 'LOGO', 'huella.webp'))
+    .trim({ threshold: 30 })
+    .resize(128, 128, { fit: 'contain', background: '#fff' })
+    .flatten({ background: '#fff' })
+    .greyscale()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  const ga = Buffer.alloc(gi.width * gi.height * 2);
+  for (let i = 0; i < g.length; i++) ga.set([0, 255 - g[i]], i * 2);
+  await sharp(ga, { raw: { width: gi.width, height: gi.height, channels: 2 } })
+    .png({ compressionLevel: 9 })
+    .toFile(join(assets, 'huella.png'));
+  console.log('• Huella del cursor lista');
+}
+
 /* ---------- Íconos: el logo sobre fondo oscuro ---------- */
 const clear = { r: 0, g: 0, b: 0, alpha: 0 };
 const icon = async (size, inner, background = '#0c0a16') =>

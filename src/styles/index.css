@@ -457,7 +457,7 @@ dialog.modal[open]::backdrop {
   animation: draw 0.7s 0.2s ease-out both;
 }
 
-/* ---------- Cursor: huella de oso (misma forma que src/components/ui/Paw.tsx) ---------- */
+/* ---------- Cursor: huella de oso con garras (src/assets/huella.png, desde LOGO/huella.webp) ---------- */
 .cursor-paw,
 .cursor-glow,
 .paw-print {
@@ -469,8 +469,7 @@ dialog.modal[open]::backdrop {
 .cursor-paw,
 .paw-print {
   background: var(--accent-2);
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cellipse cx='12' cy='16.5' rx='5.6' ry='4.6'/%3E%3Cellipse cx='5' cy='10.5' rx='2.1' ry='2.7' transform='rotate(-18 5 10.5)'/%3E%3Cellipse cx='9.4' cy='6.6' rx='2.2' ry='2.9' transform='rotate(-6 9.4 6.6)'/%3E%3Cellipse cx='14.6' cy='6.6' rx='2.2' ry='2.9' transform='rotate(6 14.6 6.6)'/%3E%3Cellipse cx='19' cy='10.5' rx='2.1' ry='2.7' transform='rotate(18 19 10.5)'/%3E%3C/svg%3E")
-    center / contain no-repeat;
+  mask: url('../assets/huella.png') center / contain no-repeat;
 }
 .cursor-paw,
 .cursor-glow {
@@ -479,9 +478,9 @@ dialog.modal[open]::backdrop {
 }
 .cursor-paw {
   z-index: 71;
-  width: 26px;
-  height: 26px;
-  margin: -13px 0 0 -13px;
+  width: 30px;
+  height: 30px;
+  margin: -15px 0 0 -15px;
   transition:
     width 0.3s var(--ease-out-expo),
     height 0.3s var(--ease-out-expo),
@@ -493,9 +492,9 @@ dialog.modal[open]::backdrop {
 /* Tamaño y escala van por width/scale: el transform lo usa GSAP para moverla */
 .cursor-paw.is-hover {
   background: var(--accent);
-  width: 40px;
-  height: 40px;
-  margin: -20px 0 0 -20px;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
 }
 .cursor-paw.is-down {
   scale: 0.75;
