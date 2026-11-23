@@ -73,7 +73,7 @@ export function Journey({ level = 2, more = false, extra }: SectionProps & { ext
     <section
       id="experience"
       aria-labelledby="experience-title"
-      className={`relative border-y border-line bg-bg-soft ${sectionPadding(level)}`}
+      className={`relative overflow-x-clip border-y border-line bg-bg-soft ${sectionPadding(level)}`}
     >
       <div className="shell">
         <SectionHeading
@@ -108,7 +108,11 @@ export function Journey({ level = 2, more = false, extra }: SectionProps & { ext
               level={level}
             />
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2" data-stagger>
+            {/* En el inicio, cursos e idiomas ya salen en "Otros conocimientos" */}
+            <div
+              className={`grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 ${level === 2 ? 'hidden' : ''}`}
+              data-stagger
+            >
               <section aria-labelledby="courses-title" className="gradient-ring card p-7">
                 <Sub id="courses-title" className="text-lg font-semibold">
                   {t(journey.coursesTitle)}

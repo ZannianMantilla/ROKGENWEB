@@ -90,7 +90,7 @@ export function OtherSkills({ level = 2 }: SectionProps) {
 
         <Link
           to={ROUTES.stack}
-          className="group mt-8 inline-flex items-center gap-2 font-medium text-accent hover:text-fg"
+          className="group mt-6 inline-flex min-h-11 items-center gap-2 font-medium text-accent hover:text-fg"
         >
           {t(otherSkills.stackLink)}
           <ArrowRight

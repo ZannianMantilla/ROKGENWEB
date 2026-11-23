@@ -71,6 +71,11 @@ if (!SITE_URL) {
   );
 }
 html = html.replace(/content="\/og-image\.png"/g, `content="${abs('/og-image.png')}"`);
+// Íconos y manifest están en /public: Vite no les añade la subcarpeta, así que se la ponemos aquí.
+html = html.replace(
+  /href="\/(favicon\.svg|favicon-32\.png|apple-touch-icon\.png|manifest\.webmanifest)"/g,
+  `href="${BASE}$1"`,
+);
 
 const jsonLd = {
   '@context': 'https://schema.org',

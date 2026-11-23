@@ -8,7 +8,7 @@ import { Link } from '../ui/Link';
 import { ToolLogo } from '../ui/Tools';
 
 const moreLink =
-  'group mt-8 inline-flex items-center gap-2 text-sm font-semibold text-accent transition-colors hover:text-fg';
+  'group mt-6 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-accent transition-colors hover:text-fg';
 
 /** Sobre mí: perfil completo + formación, idiomas, ubicación y herramientas principales. */
 export function AboutPage() {

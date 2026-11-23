@@ -60,6 +60,10 @@
     text-rendering: optimizeLegibility;
     scroll-padding-top: 5rem;
   }
+  /* En móvil, algo fuera del borde (p. ej. un avatar antes de su animación de entrada) no debe ensanchar la página */
+  html {
+    overflow-x: clip;
+  }
   html:not(.lenis) {
     scroll-behavior: smooth;
   }
@@ -539,10 +543,11 @@ dialog.modal[open]::backdrop {
 }
 @media (max-width: 640px) {
   .paw-print {
-    width: 14px;
-    height: 14px;
+    width: 9px;
+    height: 9px;
   }
 }
+
 
 /* ---------- Botón con destello ---------- */
 .btn-shine {

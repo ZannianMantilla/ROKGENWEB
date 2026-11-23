@@ -58,13 +58,13 @@ export function NextPage({ current }: { current: RouteId }) {
         to={ROUTES[next]}
         className="group shell flex items-center justify-between gap-6 py-14 md:py-20"
       >
-        <span>
+        <span className="min-w-0">
           <span className="block kicker">{t(pageNav.next)}</span>
-          <span className="mt-3 block font-display text-5xl font-semibold tracking-tight transition-colors duration-500 group-hover:text-accent sm:text-7xl">
+          <span className="mt-3 block font-display text-4xl font-semibold tracking-tight break-words transition-colors duration-500 group-hover:text-accent sm:text-7xl">
             {t(ui.nav[next])}
           </span>
         </span>
-        <span className="grid size-16 shrink-0 place-items-center rounded-full border border-line-strong transition-[background-color,border-color,transform] duration-500 group-hover:translate-x-2 group-hover:border-transparent group-hover:bg-brand sm:size-24">
+        <span className="grid size-14 shrink-0 place-items-center rounded-full border border-line-strong transition-[background-color,border-color,transform] duration-500 group-hover:translate-x-2 group-hover:border-transparent group-hover:bg-brand sm:size-24">
           <ArrowRight className="size-6 sm:size-8" aria-hidden />
         </span>
       </Link>

@@ -363,8 +363,9 @@ function initPawTrail() {
     const print = document.createElement('span');
     print.className = 'paw-print';
     print.setAttribute('aria-hidden', 'true');
-    const x = innerWidth < 640 ? 4 : 18;
-    print.style.transform = `translate(${x + (left ? 0 : 14)}px, ${stepY}px) rotate(${down ? 180 + (left ? 8 : -8) : left ? -8 : 8}deg)`;
+    // En móvil caben en el margen de 20 px de .shell, sin tapar el texto.
+    const [x, gap] = innerWidth < 640 ? [3, 6] : [18, 14];
+    print.style.transform = `translate(${x + (left ? 0 : gap)}px, ${stepY}px) rotate(${down ? 180 + (left ? 8 : -8) : left ? -8 : 8}deg)`;
     print.addEventListener('animationend', () => print.remove(), { once: true });
     document.body.append(print);
   };

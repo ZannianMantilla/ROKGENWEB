@@ -30,10 +30,13 @@ export function Footer() {
         <span className="text-gradient">.</span>
       </p>
       <nav aria-label={t(ui.footerNav)} className="shell">
-        <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 border-b border-line pb-8 text-sm">
+        <ul className="flex flex-wrap justify-center gap-x-6 border-b border-line pb-6 text-sm">
           {PAGE_ORDER.map((id) => (
             <li key={id}>
-              <Link to={ROUTES[id]} className="text-muted transition-colors hover:text-accent">
+              <Link
+                to={ROUTES[id]}
+                className="inline-flex min-h-11 items-center text-muted transition-colors hover:text-accent"
+              >
                 {t(id === 'home' ? ui.home : ui.nav[id])}
               </Link>
             </li>
