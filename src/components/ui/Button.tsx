@@ -1,5 +1,6 @@
 import type { AnchorHTMLAttributes, ReactNode } from 'react';
 import { buttonClasses, type Variant } from './buttonStyles';
+import { handleLinkClick } from '../../lib/router';
 
 type Props = AnchorHTMLAttributes<HTMLAnchorElement> & {
   variant?: Variant;
@@ -20,7 +21,9 @@ export function ButtonLink({
     <a
       data-magnetic
       className={`${buttonClasses(variant)} ${className}`}
-      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      {...(external
+        ? { target: '_blank', rel: 'noopener noreferrer' }
+        : { onClick: handleLinkClick })}
       {...rest}
     >
       <span className="inline-flex items-center gap-2" data-magnetic-inner>

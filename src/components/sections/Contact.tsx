@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { ArrowUpRight, CircleAlert, LoaderCircle, Mail, Send } from 'lucide-react';
-import { contact, hero, profile, whatsappLink } from '../../data/content';
+import { contact, hero, profile, whatsappLink, detail, ui } from '../../data/content';
 import { useT } from '../../hooks/useT';
+import { sectionPadding, subHeadings, type SectionProps } from '../../lib/section';
+import { ROUTES } from '../../lib/router';
+
 import { submitForm, validate, type FormErrors, type FormValues } from '../../lib/form';
 import { trackEvent } from '../../lib/analytics';
 import { SectionHeading } from '../ui/SectionHeading';
@@ -40,7 +43,8 @@ function Field({
 const inputCls =
   'bg-bg/60 border-line-strong placeholder:text-muted/70 w-full rounded-2xl border px-4 py-3.5 transition-[border-color,box-shadow] outline-none focus:border-accent focus:shadow-[0_0_0_4px_color-mix(in_oklab,var(--accent)_20%,transparent)] aria-[invalid=true]:border-danger';
 
-export function Contact() {
+export function Contact({ level = 2, more = false }: SectionProps) {
+  const [Sub] = subHeadings(level);
   const { t } = useT();
   const [values, setValues] = useState<FormValues>(EMPTY);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -142,9 +146,10 @@ export function Contact() {
 
   return (
     <section
+      data-tone="amethyst"
       id="contact"
       aria-labelledby="contact-title"
-      className="relative overflow-hidden py-24 md:py-36"
+      className={`relative overflow-hidden ${sectionPadding(level)}`}
     >
       <div aria-hidden className="absolute -right-40 bottom-0 -z-10 size-[40rem] aura [--p:38%]" />
       <div
@@ -158,10 +163,16 @@ export function Contact() {
             kicker={t(contact.kicker)}
             title={t(contact.title)}
             intro={t(contact.intro)}
+            level={level}
+            more={
+              more
+                ? { to: ROUTES.contact, label: t(detail.more), context: t(ui.nav.contact) }
+                : undefined
+            }
           />
-          <h3 className="mb-4 text-sm font-semibold text-muted" data-reveal>
+          <Sub className="mb-4 text-sm font-semibold text-muted" data-reveal>
             {t(contact.direct.title)}
-          </h3>
+          </Sub>
           <ul className="grid gap-3" data-stagger>
             {direct.map((d) => (
               <li key={d.href}>
@@ -221,7 +232,7 @@ export function Contact() {
                     className="anim-draw"
                   />
                 </svg>
-                <h3 className="mt-6 text-3xl font-semibold">{t(F.successTitle)}</h3>
+                <Sub className="mt-6 text-3xl font-semibold">{t(F.successTitle)}</Sub>
                 <p className="mt-3 max-w-sm text-muted">
                   {status === 'fallback' ? t(F.fallbackBody) : t(F.successBody)}
                 </p>

@@ -2,7 +2,10 @@ import type { CSSProperties } from 'react';
 import { services } from '../../data/content';
 import { useT } from '../../hooks/useT';
 
-/** Bandas cruzadas con los servicios en texto gigante. Decorativas: el contenido real está en Servicios. */
+/**
+ * Bandas cruzadas con los servicios en texto gigante. Decorativas: el contenido real está en Servicios.
+ * La banda sólida recorre todas las gemas del sitio, como adelanto de lo que viene.
+ */
 export function Ticker() {
   const { t } = useT();
   const words = services.items.map((s) => t(s.title));
@@ -34,7 +37,7 @@ export function Ticker() {
       <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 scale-110 rotate-[3deg] border-y border-line-strong bg-bg-soft py-4 sm:py-5">
         <div data-skew>{band(true, '60s', true)}</div>
       </div>
-      <div className="relative scale-110 -rotate-2 bg-[linear-gradient(90deg,var(--accent-strong),#a21caf,var(--accent-strong))] py-4 text-white shadow-[0_20px_80px_-20px_var(--accent-strong)] sm:py-5">
+      <div className="gem-band relative scale-110 -rotate-2 py-4 text-white sm:py-5">
         <div data-skew>{band(false, '45s')}</div>
       </div>
     </div>

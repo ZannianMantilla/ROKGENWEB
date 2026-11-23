@@ -1,4 +1,4 @@
-import { useEffect, useRef, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from 'react';
 import { ArrowDown, ArrowUpRight } from 'lucide-react';
 import { hero, profile, whatsappLink } from '../../data/content';
 import { useT } from '../../hooks/useT';
@@ -16,6 +16,7 @@ type RingProps = { items: BrandName[]; inset: string; t: string; reverse?: boole
 function Ring({ items, inset, t, reverse }: RingProps) {
   return (
     <div
+      aria-hidden
       className={`orbit-ring ${reverse ? 'reverse' : ''}`}
       style={{ inset, '--t': t } as CSSProperties}
     >
@@ -38,16 +39,76 @@ function Ring({ items, inset, t, reverse }: RingProps) {
   );
 }
 
+/** Esquirlas del cristal: salen disparadas con Web Animations y se borran al terminar. */
+function burst(host: HTMLElement) {
+  const n = 12;
+  for (let i = 0; i < n; i++) {
+    const shard = document.createElement('span');
+    shard.className = 'crystal-shard';
+    host.append(shard);
+    const angle = (Math.PI * 2 * i) / n + Math.random() * 0.5;
+    const dist = 60 + Math.random() * 70;
+    shard
+      .animate(
+        [
+          { transform: 'translate(-50%, -50%) rotate(0deg) scale(1)', opacity: 1 },
+          {
+            transform: `translate(calc(-50% + ${Math.cos(angle) * dist}px), calc(-50% + ${Math.sin(angle) * dist}px)) rotate(${Math.random() * 540 - 270}deg) scale(0.2)`,
+            opacity: 0,
+          },
+        ],
+        { duration: 700 + Math.random() * 400, easing: 'cubic-bezier(.16,1,.3,1)' },
+      )
+      .finished.then(() => shard.remove());
+  }
+}
+
+/** Botón sobre el cristal del avatar: al tocarlo, el cristal estalla y el avatar habla. */
+function CrystalPoke() {
+  const { t } = useT();
+  const [line, setLine] = useState(-1);
+  const hide = useRef(0);
+  const lines = t(hero.crystal.lines);
+
+  const poke = (e: MouseEvent<HTMLButtonElement>) => {
+    const btn = e.currentTarget;
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) burst(btn);
+    const avatar = btn.closest<HTMLElement>('[data-avatar]');
+    avatar?.classList.remove('is-burst');
+    void avatar?.offsetWidth; // reinicia la animación del destello
+    avatar?.classList.add('is-burst');
+    setLine((l) => (l + 1) % lines.length);
+    clearTimeout(hide.current);
+    hide.current = window.setTimeout(() => setLine(-1), 4200);
+  };
+  useEffect(() => () => clearTimeout(hide.current), []);
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={poke}
+        aria-label={t(hero.crystal.label)}
+        className="pointer-events-auto absolute z-10 size-16 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full"
+      />
+      <p
+        aria-live="polite"
+        className={`speech pointer-events-none absolute right-12 bottom-44 w-max max-w-[15rem] ${line < 0 ? 'is-hidden' : ''}`}
+      >
+        {line >= 0 && lines[line]}
+      </p>
+    </>
+  );
+}
+
 function Orbit() {
   return (
-    <div
-      aria-hidden
-      className="pointer-events-none absolute top-1/2 right-[-3%] hidden aspect-square w-[min(44vw,640px)] -translate-y-1/2 lg:block"
-    >
+    <div className="pointer-events-none absolute top-1/2 right-[-3%] z-20 hidden aspect-square w-[min(44vw,640px)] -translate-y-1/2 lg:block">
       <div className="size-full" data-speed="0.35">
         <div className="intro relative size-full" style={delay(0.35)}>
           {/* Anillo exterior punteado con un satélite luminoso */}
           <div
+            aria-hidden
             className="orbit-ring !border-dashed opacity-60"
             style={{ inset: '-4%', '--t': '70s' } as CSSProperties}
           >
@@ -57,13 +118,21 @@ function Orbit() {
           <Ring items={['flutter', 'firebase', 'dart']} inset="24%" t="30s" />
 
           {/* Avatar en el centro de la órbita, señalando el titular */}
-          <div className="orbit-core-glow absolute inset-[22%] rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--accent-strong)_60%,transparent),color-mix(in_oklab,#c026d3_20%,transparent)_55%,transparent)]" />
-          <div className="absolute bottom-[2%] left-[30%] h-[6%] w-[40%] rounded-[50%] bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--accent)_45%,transparent),transparent)]" />
+          <div
+            aria-hidden
+            className="orbit-core-glow absolute inset-[22%] rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--accent-strong)_60%,transparent),color-mix(in_oklab,var(--accent-2)_20%,transparent)_55%,transparent)]"
+          />
+          <div
+            aria-hidden
+            className="absolute bottom-[2%] left-[30%] h-[6%] w-[40%] rounded-[50%] bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--accent)_45%,transparent),transparent)]"
+          />
           <Avatar
             name="intro"
             sizes="(min-width: 1024px) 20vw, 1px"
             className="absolute top-[3%] left-[21%] w-[46%]"
-          />
+          >
+            <CrystalPoke />
+          </Avatar>
         </div>
       </div>
     </div>
@@ -105,6 +174,7 @@ export function Hero() {
 
   return (
     <section
+      data-tone="amethyst"
       id="top"
       aria-labelledby="hero-title"
       className="relative isolate flex min-h-svh items-center overflow-hidden pt-28 pb-20"
@@ -141,21 +211,33 @@ export function Hero() {
           {profile.name}
         </p>
 
-        <h1
-          id="hero-title"
-          className="mt-3 max-w-[14ch] text-[clamp(2.6rem,8.4vw,7.25rem)] leading-[0.95] font-semibold tracking-[-0.035em] lg:text-[clamp(3.5rem,6vw,6.5rem)]"
-        >
-          {t(hero.headline).map((line, i, all) => (
-            <span
-              key={line}
-              className={`intro-line block ${i === 1 ? 'text-gradient' : ''}`}
-              style={delay(i * 0.08)}
-            >
-              {line}
-              {i < all.length - 1 && ' '}
-            </span>
-          ))}
-        </h1>
+        <div className="relative">
+          <h1
+            id="hero-title"
+            className="mt-3 max-w-[14ch] text-[clamp(2.6rem,8.4vw,7.25rem)] leading-[0.95] font-semibold tracking-[-0.035em] lg:text-[clamp(3.5rem,6vw,6.5rem)]"
+          >
+            {t(hero.headline).map((line, i, all) => (
+              <span
+                key={line}
+                className={`intro-line block ${i === 1 ? 'text-gradient' : ''}`}
+                style={delay(i * 0.08)}
+              >
+                {line}
+                {i < all.length - 1 && ' '}
+              </span>
+            ))}
+          </h1>
+
+          {/* En móvil, busto del avatar asomado por el borde derecho, señalando el titular.
+            Va junto a las líneas cortas del titular (la primera es la única ancha). */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute top-[28%] right-[-10vw] w-[36vw] overflow-hidden [mask-image:linear-gradient(#000_75%,transparent)] sm:hidden"
+            style={{ aspectRatio: '722 / 650' }}
+          >
+            <Avatar name="intro" sizes="36vw" />
+          </div>
+        </div>
 
         <p className="intro mt-8 min-h-[1.6em] font-mono text-base sm:text-lg" style={delay(0.3)}>
           <span className="text-accent-2" aria-hidden>

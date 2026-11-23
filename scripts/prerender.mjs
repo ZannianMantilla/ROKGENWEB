@@ -1,8 +1,9 @@
 /**
- * Prerender estático: inyecta el HTML de React en dist/index.html, completa URLs absolutas
- * (canonical, Open Graph), JSON-LD, preload de fuentes, sitemap.xml y robots.txt.
+ * Prerender estático: genera un HTML por página (dist/index.html, dist/sobre-mi/index.html…,
+ * dist/404.html) con su título, descripción, canonical y Open Graph; además JSON-LD,
+ * preload de fuentes, sitemap.xml y robots.txt.
  */
-import { readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -35,11 +36,9 @@ function readEnvFile(key) {
   return '';
 }
 
-const { render } = await import(pathToFileURL(join(ssrDir, 'entry-server.js')).href);
-const appHtml = render();
+const { render, pages } = await import(pathToFileURL(join(ssrDir, 'entry-server.js')).href);
 
 let html = readFileSync(join(dist, 'index.html'), 'utf8');
-html = html.replace('<!--app-html-->', appHtml);
 
 // CSS inline: elimina la única petición que bloquea el render (el CSS pesa ~11 KB comprimido).
 html = html.replace(
@@ -64,10 +63,7 @@ for (const re of [/^bricolage-grotesque-latin-wght-normal.*\.woff2$/]) {
     );
 }
 
-if (SITE_URL) {
-  head.push(`<link rel="canonical" href="${SITE_URL}/">`);
-  head.push(`<meta property="og:url" content="${SITE_URL}/">`);
-} else {
+if (!SITE_URL) {
   console.warn(
     '⚠  SITE_URL no definido: se omiten canonical/og:url y las imágenes OG quedan relativas.',
   );
@@ -145,8 +141,39 @@ head.push(
   `<script type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, '\\u003c')}</script>`,
 );
 
-html = html.replace('<!--head-extra-->', head.join('\n    '));
-writeFileSync(join(dist, 'index.html'), html);
+html = html.replace('<!--head-extra-->', head.join('\n    ') + '\n    <!--page-head-->');
+
+/* ---------- Un HTML por página ---------- */
+const esc = (v) =>
+  v.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const setMeta = (doc, attr, key, value) =>
+  doc.replace(new RegExp(`(<meta\\s+${attr}="${key}"\\s+content=")[^"]*(")`), `$1${esc(value)}$2`);
+
+for (const page of pages) {
+  let doc = html
+    .replace('<!--app-html-->', render(page.path))
+    .replace(/<title>[^<]*<\/title>/, `<title>${esc(page.title)}</title>`);
+  doc = setMeta(doc, 'name', 'description', page.description);
+  for (const key of ['og:title', 'twitter:title']) {
+    doc = setMeta(doc, key.startsWith('og') ? 'property' : 'name', key, page.title);
+  }
+  for (const key of ['og:description', 'twitter:description']) {
+    doc = setMeta(doc, key.startsWith('og') ? 'property' : 'name', key, page.description);
+  }
+  const pageHead = [];
+  if (!page.indexable) pageHead.push('<meta name="robots" content="noindex">');
+  else if (SITE_URL) {
+    const url = `${SITE_URL}${page.path === '/' ? '/' : page.path}`;
+    pageHead.push(
+      `<link rel="canonical" href="${url}">`,
+      `<meta property="og:url" content="${url}">`,
+    );
+  }
+  doc = doc.replace('<!--page-head-->', pageHead.join('\n    '));
+  const out = join(dist, page.file);
+  mkdirSync(dirname(out), { recursive: true });
+  writeFileSync(out, doc);
+}
 
 /* ---------- robots.txt y sitemap.xml ---------- */
 const robots = ['User-agent: *', 'Allow: /'];
@@ -155,15 +182,21 @@ writeFileSync(join(dist, 'robots.txt'), robots.join('\n') + '\n');
 
 if (SITE_URL) {
   const today = new Date().toISOString().slice(0, 10);
+  const urls = pages
+    .filter((p) => p.indexable)
+    .map(
+      (p) =>
+        `  <url><loc>${SITE_URL}${p.path === '/' ? '/' : p.path}</loc><lastmod>${today}</lastmod><priority>${p.path === '/' ? '1.0' : '0.8'}</priority></url>`,
+    );
   writeFileSync(
     join(dist, 'sitemap.xml'),
     `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>${SITE_URL}/</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>1.0</priority></url>
+${urls.join('\n')}
 </urlset>
 `,
   );
 }
 
 rmSync(ssrDir, { recursive: true, force: true });
-console.log(`✓ Prerender listo${SITE_URL ? ` (${SITE_URL})` : ''}`);
+console.log(`✓ Prerender listo: ${pages.length} páginas${SITE_URL ? ` (${SITE_URL})` : ''}`);

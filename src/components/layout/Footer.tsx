@@ -1,5 +1,7 @@
 import { ArrowUp } from 'lucide-react';
-import { footer, profile } from '../../data/content';
+import { footer, profile, ui } from '../../data/content';
+import { PAGE_ORDER, ROUTES } from '../../lib/router';
+import { Link } from '../ui/Link';
 import { useT } from '../../hooks/useT';
 
 export function Footer() {
@@ -18,6 +20,17 @@ export function Footer() {
         <span className="text-outline">{profile.name.split(' ')[0]}</span>
         <span className="text-gradient">.</span>
       </p>
+      <nav aria-label={t(ui.footerNav)} className="shell">
+        <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 border-b border-line pb-8 text-sm">
+          {PAGE_ORDER.map((id) => (
+            <li key={id}>
+              <Link to={ROUTES[id]} className="text-muted transition-colors hover:text-accent">
+                {t(id === 'home' ? ui.home : ui.nav[id])}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
       <div className="shell flex flex-col gap-6 py-10 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="font-display text-lg font-semibold">{profile.name}</p>
@@ -26,7 +39,7 @@ export function Footer() {
           </p>
         </div>
         <a
-          href="#top"
+          href="#main"
           data-magnetic
           className="group inline-flex items-center self-start rounded-full border border-line-strong py-2 pr-2 pl-5 text-sm font-medium transition-colors hover:border-accent sm:self-auto"
         >

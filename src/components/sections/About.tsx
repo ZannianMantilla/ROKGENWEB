@@ -1,6 +1,9 @@
 import { MapPin } from 'lucide-react';
-import { about, profile } from '../../data/content';
+import { about, profile, projects, services, detail, ui } from '../../data/content';
 import { useT } from '../../hooks/useT';
+import { sectionPadding, type SectionProps } from '../../lib/section';
+import { ROUTES } from '../../lib/router';
+
 import { SectionHeading } from '../ui/SectionHeading';
 
 const { photo } = profile;
@@ -8,15 +11,16 @@ const srcset = (ext: string) =>
   photo.widths.map((w) => `${photo.base}-${w}.${ext} ${w}w`).join(', ');
 const sizes = '(min-width: 1024px) 34vw, (min-width: 640px) 60vw, 90vw';
 
-export function About() {
+export function About({ level = 2, more = false }: SectionProps) {
   const { t } = useT();
   const years = new Date().getFullYear() - profile.careerStartYear;
 
   return (
     <section
+      data-tone="sapphire"
       id="about"
       aria-labelledby="about-title"
-      className="relative isolate overflow-hidden py-24 md:py-36"
+      className={`relative isolate overflow-hidden ${sectionPadding(level)}`}
     >
       <div
         aria-hidden
@@ -27,7 +31,15 @@ export function About() {
         className="pointer-events-none absolute bottom-0 -left-40 -z-10 size-[30rem] aura [--p:14%] aura-fuchsia"
       />
       <div className="shell">
-        <SectionHeading id="about-title" kicker={t(about.kicker)} title={t(about.title)} />
+        <SectionHeading
+          id="about-title"
+          kicker={t(about.kicker)}
+          title={t(about.title)}
+          level={level}
+          more={
+            more ? { to: ROUTES.about, label: t(detail.more), context: t(ui.nav.about) } : undefined
+          }
+        />
 
         <div className="grid gap-4 lg:grid-cols-12" data-stagger>
           {/* Foto */}
@@ -86,7 +98,14 @@ export function About() {
           {/* Contadores */}
           <ul className="grid grid-cols-2 gap-4 lg:col-span-12 lg:grid-cols-4">
             {about.stats.map((s) => {
-              const value = s.value === 'years' ? years : s.value;
+              const value =
+                s.value === 'years'
+                  ? years
+                  : s.value === 'projects'
+                    ? projects.items.length
+                    : s.value === 'services'
+                      ? services.items.length
+                      : s.value;
               return (
                 <li
                   key={s.label.es}

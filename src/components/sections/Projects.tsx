@@ -1,24 +1,54 @@
 import { lazy, Suspense, useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import { projects, type Project } from '../../data/content';
+import { projects, type Project, detail, ui } from '../../data/content';
 import { useT } from '../../hooks/useT';
+import { sectionPadding, subHeadings, type SectionProps } from '../../lib/section';
+import { ROUTES } from '../../lib/router';
+
 import { SectionHeading } from '../ui/SectionHeading';
 import { buttonClasses } from '../ui/buttonStyles';
 import { ProjectMockup } from './ProjectMockup';
+import { ClientSites } from './ClientSites';
+import { DeviceFrame } from '../ui/Screenshot';
+
+/** Captura principal en un navegador y, si hay, la versión móvil superpuesta. */
+function ProjectShots({ project: p, priority }: { project: Project; priority: boolean }) {
+  const mobile = p.gallery?.find((s) => s.device === 'mobile');
+  return (
+    <div className="relative mx-auto w-full max-w-xl pb-6">
+      <DeviceFrame
+        shot={p.image!}
+        sizes="(min-width: 1024px) 36rem, 90vw"
+        priority={priority}
+        className="transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:-translate-y-2 group-hover:rotate-[-1deg]"
+      />
+      {mobile && (
+        <DeviceFrame
+          shot={mobile}
+          sizes="140px"
+          decorative
+          className="absolute right-[-4%] bottom-[-6%] w-[26%] rotate-[5deg] transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:translate-y-[-6%] group-hover:rotate-[2deg]"
+        />
+      )}
+    </div>
+  );
+}
 
 // El modal solo se descarga cuando alguien abre un proyecto.
 const ProjectModal = lazy(() => import('./ProjectModal'));
 
-export function Projects() {
+export function Projects({ level = 2, more = false }: SectionProps) {
+  const [Sub] = subHeadings(level);
   const { t, lang } = useT();
   const [open, setOpen] = useState<Project | null>(null);
   const L = projects.labels;
 
   return (
     <section
+      data-tone="rose"
       id="projects"
       aria-labelledby="projects-title"
-      className="relative isolate overflow-hidden py-24 md:py-36"
+      className={`relative isolate overflow-hidden ${sectionPadding(level)}`}
     >
       <div
         aria-hidden
@@ -35,6 +65,12 @@ export function Projects() {
           title={t(projects.title)}
           intro={t(projects.intro)}
           avatar="proyectos"
+          level={level}
+          more={
+            more
+              ? { to: ROUTES.projects, label: t(detail.more), context: t(ui.nav.projects) }
+              : undefined
+          }
         />
 
         <ul className="space-y-6 md:space-y-8">
@@ -60,21 +96,15 @@ export function Projects() {
                   <div data-speed="0.5" className="relative w-full">
                     <div data-pop>
                       {p.image ? (
-                        <img
-                          src={p.image.src}
-                          width={p.image.width}
-                          height={p.image.height}
-                          alt=""
-                          loading="lazy"
-                          decoding="async"
-                          className="mx-auto w-full max-w-md rounded-2xl"
-                        />
+                        <ProjectShots project={p} priority={i === 0} />
                       ) : (
-                        <ProjectMockup
-                          kind={p.mockup}
-                          lang={lang}
-                          className="transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:-translate-y-2 group-hover:rotate-[-2deg]"
-                        />
+                        p.mockup && (
+                          <ProjectMockup
+                            kind={p.mockup}
+                            lang={lang}
+                            className="transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:-translate-y-2 group-hover:rotate-[-2deg]"
+                          />
+                        )
                       )}
                     </div>
                   </div>
@@ -98,12 +128,12 @@ export function Projects() {
                     <span className="h-px w-6 bg-line-strong" aria-hidden />
                     {t(p.type)}
                   </p>
-                  <h3
+                  <Sub
                     id={`project-${p.id}`}
                     className="relative mt-5 text-5xl font-bold tracking-[-0.03em] transition-colors duration-500 group-hover:text-accent sm:text-6xl"
                   >
                     {p.title}
-                  </h3>
+                  </Sub>
                   <p className="mt-5 text-lg leading-relaxed text-muted">{t(p.summary)}</p>
 
                   {(p.stack.length > 0 || t(p.highlights).length > 0) && (
@@ -142,6 +172,7 @@ export function Projects() {
             </li>
           ))}
         </ul>
+        <ClientSites level={level} />
       </div>
 
       {open && (

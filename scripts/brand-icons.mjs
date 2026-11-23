@@ -15,7 +15,6 @@ const icons = {
   figma: si.siFigma,
   github: si.siGithub,
   whatsapp: si.siWhatsapp,
-  gmail: si.siGmail,
 };
 
 const entries = Object.entries(icons)

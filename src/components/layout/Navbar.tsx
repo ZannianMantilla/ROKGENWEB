@@ -3,13 +3,15 @@ import { Menu, X } from 'lucide-react';
 import { hero, profile, ui, whatsappLink } from '../../data/content';
 import { setLang } from '../../lib/prefs';
 import { useT } from '../../hooks/useT';
+import { ROUTES, type RouteId } from '../../lib/router';
+import { Crystal } from '../ui/Crystal';
+import { Link } from '../ui/Link';
 
-const SECTIONS = ['about', 'services', 'stack', 'projects', 'experience', 'contact'] as const;
+const PAGES = ['about', 'services', 'stack', 'projects', 'experience', 'contact'] as const;
 
-export function Navbar() {
+export function Navbar({ route }: { route: RouteId }) {
   const { t, lang } = useT();
   const [scrolled, setScrolled] = useState(false);
-  const [active, setActive] = useState('');
   const menuRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -19,23 +21,8 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Resalta la sección que ocupa el centro del viewport.
-  useEffect(() => {
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) if (e.isIntersecting) setActive(e.target.id);
-      },
-      { rootMargin: '-45% 0px -50% 0px' },
-    );
-    for (const id of ['top', ...SECTIONS]) {
-      const el = document.getElementById(id);
-      if (el) io.observe(el);
-    }
-    return () => io.disconnect();
-  }, []);
-
   const closeMenu = () => menuRef.current?.close();
-  const links = SECTIONS.map((id) => ({ id, label: t(ui.nav[id]) }));
+  const links = PAGES.map((id) => ({ id, label: t(ui.nav[id]) }));
 
   const controls = (
     <div className="flex items-center gap-1">
@@ -53,7 +40,7 @@ export function Navbar() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 border-b transition-[background-color,border-color] duration-500 ${
+      className={`fixed inset-x-0 top-0 z-50 border-b transition-[background-color,border-color] duration-500 [view-transition-name:site-header] ${
         scrolled ? 'border-x-0 border-t-0 glass' : 'border-transparent'
       }`}
     >
@@ -61,37 +48,34 @@ export function Navbar() {
         aria-label={t(ui.mainNav)}
         className="shell flex h-16 items-center justify-between gap-4"
       >
-        <a href="#top" className="group flex items-center gap-3">
+        <Link to={ROUTES.home} className="group flex items-center gap-3">
           <span className="sr-only">{`${profile.name} — ${t(ui.home)}`}</span>
-          <span
-            aria-hidden
-            className="grid size-9 place-items-center rounded-xl bg-[linear-gradient(135deg,var(--accent-strong),#c026d3)] font-display text-sm font-bold text-white shadow-[0_0_24px_-4px_var(--accent-strong)] transition-transform duration-500 group-hover:rotate-[-8deg]"
-          >
-            {profile.initials}
+          <span aria-hidden className="logo-crystal relative grid size-9 place-items-center">
+            <Crystal className="h-8 w-auto transition-transform duration-500 group-hover:scale-110 group-hover:rotate-[-12deg]" />
           </span>
           <span aria-hidden className="hidden font-display text-[0.95rem] font-semibold sm:block">
             Zannián<span className="text-accent">.</span>
           </span>
-        </a>
+        </Link>
 
         <ul className="hidden items-center gap-1 lg:flex">
           {links.map((l) => (
             <li key={l.id}>
-              <a
-                href={`#${l.id}`}
-                aria-current={active === l.id ? 'true' : undefined}
+              <Link
+                to={ROUTES[l.id]}
+                aria-current={route === l.id ? 'page' : undefined}
                 className={`relative rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
-                  active === l.id ? 'bg-surface-2 text-fg' : 'text-muted hover:text-fg'
+                  route === l.id ? 'bg-surface-2 text-fg' : 'text-muted hover:text-fg'
                 }`}
               >
                 {l.label}
                 <span
                   aria-hidden
                   className={`absolute inset-x-3.5 -bottom-px h-px origin-left bg-[linear-gradient(90deg,var(--accent),var(--accent-2))] transition-transform duration-500 ${
-                    active === l.id ? 'scale-x-100' : 'scale-x-0'
+                    route === l.id ? 'scale-x-100' : 'scale-x-0'
                   }`}
                 />
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
@@ -138,20 +122,23 @@ export function Navbar() {
             </button>
           </div>
           <ul className="mt-10 flex flex-col gap-1">
-            {links.map((l, i) => (
+            {[{ id: 'home' as const, label: t(ui.home) }, ...links].map((l, i) => (
               <li
                 key={l.id}
                 className="intro"
                 style={{ '--d': `${i * 0.05}s`, '--intro-delay': '0s' } as CSSProperties}
               >
-                <a
-                  href={`#${l.id}`}
+                <Link
+                  to={ROUTES[l.id]}
                   onClick={closeMenu}
-                  className="flex items-baseline gap-4 py-3 font-display text-4xl font-semibold"
+                  aria-current={route === l.id ? 'page' : undefined}
+                  className={`flex items-baseline gap-4 py-3 font-display text-4xl font-semibold ${
+                    route === l.id ? 'text-accent' : ''
+                  }`}
                 >
-                  <span className="font-mono text-xs text-accent-2">0{i + 1}</span>
+                  <span className="font-mono text-xs text-accent-2">0{i}</span>
                   {l.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

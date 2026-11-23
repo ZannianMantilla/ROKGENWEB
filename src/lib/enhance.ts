@@ -1,6 +1,7 @@
 /**
  * Mejoras progresivas cargadas en diferido (chunk aparte): GSAP + ScrollTrigger, Lenis,
  * cursor, botones magnéticos y tilt. El sitio es 100 % usable sin este módulo.
+ * enhanceGlobal() se inicia una vez; enhancePage() se reinicia en cada cambio de página.
  * Solo se animan transform y opacity. Nunca se usa visibility, para no romper el foco por teclado.
  */
 import { gsap } from 'gsap';
@@ -12,18 +13,35 @@ gsap.registerPlugin(ScrollTrigger);
 /** Cede el hilo principal entre pasos para que ninguna tarea supere ~50 ms (mejor INP/TBT). */
 const yieldToMain = () => new Promise<void>((r) => setTimeout(r, 0));
 
-export function enhance(): () => void {
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+type Kit = { ctx: gsap.Context; cleanups: (() => void)[]; finePointer: boolean };
+
+/** Ejecuta los pasos cediendo el hilo entre cada uno y devuelve la función de limpieza. */
+function run(build: (kit: Kit) => (() => void)[]): () => void {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return () => {};
   const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
   const cleanups: (() => void)[] = [];
   let disposed = false;
-
-  if (reduced) return () => {};
-
   const ctx = gsap.context(() => {});
   cleanups.push(() => ctx.revert());
+  const steps = build({ ctx, cleanups, finePointer });
 
-  const steps: (() => void)[] = [
+  (async () => {
+    for (const step of steps) {
+      if (disposed) return;
+      step();
+      await yieldToMain();
+    }
+  })();
+
+  return () => {
+    disposed = true;
+    cleanups.forEach((fn) => fn());
+  };
+}
+
+/** Lo que vive mientras dura la visita: scroll suave, cursor y recálculo de posiciones. */
+export function enhanceGlobal(): () => void {
+  return run(({ cleanups, finePointer }) => [
     /* Scroll suave: solo con mouse/trackpad; en táctil el scroll nativo es mejor. */
     () => {
       if (!finePointer) return;
@@ -32,12 +50,39 @@ export function enhance(): () => void {
       lenis.on('scroll', ScrollTrigger.update);
       gsap.ticker.add(raf);
       gsap.ticker.lagSmoothing(0);
+      // Al cambiar de página se empieza arriba o en el ancla de la URL: Lenis debe saberlo.
+      const toTop = () => {
+        const target = location.hash ? document.getElementById(location.hash.slice(1)) : null;
+        lenis.scrollTo(target ?? 0, { immediate: true, force: true, offset: target ? -96 : 0 });
+      };
+      addEventListener('routechange', toTop);
       cleanups.push(() => {
+        removeEventListener('routechange', toTop);
         gsap.ticker.remove(raf);
         lenis.destroy();
       });
     },
 
+    /* Recalcula posiciones cuando cambian alturas (fuentes, cambio de idioma, imágenes). */
+    () => {
+      let t = 0;
+      const ro = new ResizeObserver(() => {
+        clearTimeout(t);
+        t = window.setTimeout(() => ScrollTrigger.refresh(), 200);
+      });
+      ro.observe(document.body);
+      cleanups.push(() => ro.disconnect());
+    },
+
+    () => {
+      if (finePointer) cleanups.push(initCursor());
+    },
+  ]);
+}
+
+/** Animaciones de la página actual: se vuelven a crear en cada cambio de ruta. */
+export function enhancePage(): () => void {
+  return run(({ ctx, cleanups, finePointer }) => [
     /* Reveal al entrar en pantalla */
     () =>
       ctx.add(() => {
@@ -171,7 +216,7 @@ export function enhance(): () => void {
         });
       }),
 
-    /* Avatar: entra deslizándose y solo flota mientras se ve */
+    /* Avatar: entra deslizándose, solo se anima mientras se ve y reacciona a la visita */
     () => {
       const els = gsap.utils.toArray<HTMLElement>('[data-avatar]');
       ctx.add(() => {
@@ -191,6 +236,33 @@ export function enhance(): () => void {
       });
       els.forEach((el) => io.observe(el));
       cleanups.push(() => io.disconnect());
+      if (els.length) cleanups.push(initAvatarLife(els, finePointer));
+    },
+
+    /* Gema activa: la sección en el centro de la pantalla tiñe el logo, el cursor y la barra
+       (<html data-gem>), y su avatar destella al llegar. */
+    () => {
+      const root = document.documentElement;
+      const triggers = gsap.utils.toArray<HTMLElement>('section[data-tone]').map((el) =>
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top 55%',
+          end: 'bottom 55%',
+          onToggle: (self) => {
+            if (!self.isActive || root.dataset.gem === el.dataset.tone) return;
+            root.dataset.gem = el.dataset.tone;
+            const avatar = el.querySelector<HTMLElement>('[data-avatar]');
+            if (!avatar) return;
+            avatar.classList.remove('is-burst');
+            void avatar.offsetWidth; // reinicia la animación del destello
+            avatar.classList.add('is-burst');
+          },
+        }),
+      );
+      cleanups.push(() => {
+        triggers.forEach((t) => t.kill());
+        delete root.dataset.gem;
+      });
     },
 
     /* Bandas de texto: se inclinan según la velocidad del scroll */
@@ -213,35 +285,11 @@ export function enhance(): () => void {
       });
     },
 
-    /* Recalcula posiciones cuando cambian alturas (fuentes, cambio de idioma, imágenes). */
-    () => {
-      let t = 0;
-      const ro = new ResizeObserver(() => {
-        clearTimeout(t);
-        t = window.setTimeout(() => ScrollTrigger.refresh(), 200);
-      });
-      ro.observe(document.body);
-      cleanups.push(() => ro.disconnect());
-    },
-
     /* Micro-interacciones de escritorio */
     () => {
-      if (finePointer) cleanups.push(initCursor(), initMagnetic(), initTilt());
+      if (finePointer) cleanups.push(initMagnetic(), initTilt());
     },
-  ];
-
-  (async () => {
-    for (const step of steps) {
-      if (disposed) return;
-      step();
-      await yieldToMain();
-    }
-  })();
-
-  return () => {
-    disposed = true;
-    cleanups.forEach((fn) => fn());
-  };
+  ]);
 }
 
 /* ---------- Cursor: punto, anillo con retardo y resplandor (el cursor nativo se mantiene) ---------- */
@@ -282,6 +330,115 @@ function initCursor() {
     removeEventListener('pointermove', onMove);
     document.documentElement.removeEventListener('pointerleave', onLeave);
     all.forEach((el) => el.remove());
+  };
+}
+
+/* ---------- Avatar vivo ----------
+ * - Con mouse: la mirada y el cuerpo siguen al cursor, y el cristal se enciende al acercarse.
+ * - Sin mouse (o con el cursor quieto): mira a su alrededor cada pocos segundos.
+ * - Al pasar por un enlace o botón (o enfocarlo con teclado) el cristal late más rápido.
+ * - El scroll rápido le da energía al cristal.
+ * Solo escribe variables CSS y transform en los avatares visibles (ver "Avatar vivo" en index.css). */
+function initAvatarLife(avatars: HTMLElement[], finePointer: boolean) {
+  const rigs = avatars.map((el) => {
+    const rig = el.querySelector<HTMLElement>('.avatar-rig')!;
+    const crystal = el.querySelector<HTMLElement>('[data-crystal]')!;
+    gsap.set(rig, {
+      transformPerspective: 800,
+      '--lx': 0,
+      '--ly': 0,
+      '--charge': 0,
+      '--energy': 0,
+    });
+    const to = (prop: string, duration: number) =>
+      gsap.quickTo(rig, prop, { duration, ease: 'power3' });
+    return {
+      el,
+      crystal,
+      near: 0,
+      lx: to('--lx', 0.35),
+      ly: to('--ly', 0.35),
+      rx: to('rotationX', 1.1),
+      ry: to('rotationY', 1.1),
+      charge: to('--charge', 0.6),
+      energy: to('--energy', 0.5),
+    };
+  });
+  const live = () => rigs.filter((r) => r.el.classList.contains('in-view'));
+  const clamp = gsap.utils.clamp(-1, 1);
+  let hover = 0;
+  const applyCharge = () => live().forEach((r) => r.charge(Math.max(hover, r.near)));
+
+  /* Mira hacia un punto de la pantalla */
+  const lookAt = (x: number, y: number) => {
+    for (const r of live()) {
+      const box = r.crystal.getBoundingClientRect();
+      const cx = box.left + box.width / 2;
+      const cy = box.top + box.height / 2;
+      const dx = x - cx;
+      const dy = y - cy;
+      r.lx(clamp(dx / 320));
+      r.ly(clamp(dy / 320));
+      r.ry(clamp(dx / 900) * 9);
+      r.rx(clamp(dy / 900) * -6);
+      r.near = gsap.utils.clamp(0, 1, 1 - Math.hypot(dx, dy) / 280);
+    }
+    applyCharge();
+  };
+
+  /* Mirada ociosa: elige un punto al azar cerca de sí mismo */
+  let idle: gsap.core.Tween | undefined;
+  const wander = () => {
+    for (const r of live()) {
+      const lx = gsap.utils.random(-0.8, 0.8);
+      const ly = gsap.utils.random(-0.5, 0.6);
+      r.lx(lx);
+      r.ly(ly);
+      r.ry(lx * 5);
+      r.rx(ly * -3);
+    }
+    idle = gsap.delayedCall(gsap.utils.random(2.2, 4.5), wander);
+  };
+  const restartIdle = () => {
+    idle?.kill();
+    idle = gsap.delayedCall(3, wander);
+  };
+  restartIdle();
+
+  let frame = 0;
+  const onMove = (e: PointerEvent) => {
+    if (e.pointerType !== 'mouse') return;
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(() => lookAt(e.clientX, e.clientY));
+    restartIdle();
+  };
+  const interactive = 'a, button, input, textarea, select, [data-tilt]';
+  const onOver = (e: Event) => {
+    hover = (e.target as Element).closest?.(interactive) ? 1 : 0;
+    applyCharge();
+  };
+
+  let rest = 0;
+  const scroll = ScrollTrigger.create({
+    onUpdate: (self) => {
+      const v = gsap.utils.clamp(0, 1, Math.abs(self.getVelocity()) / 2500);
+      live().forEach((r) => r.energy(v));
+      clearTimeout(rest);
+      rest = window.setTimeout(() => rigs.forEach((r) => r.energy(0)), 160);
+    },
+  });
+
+  if (finePointer) addEventListener('pointermove', onMove, { passive: true });
+  document.addEventListener('pointerover', onOver, { passive: true });
+  document.addEventListener('focusin', onOver);
+  return () => {
+    idle?.kill();
+    scroll.kill();
+    clearTimeout(rest);
+    cancelAnimationFrame(frame);
+    removeEventListener('pointermove', onMove);
+    document.removeEventListener('pointerover', onOver);
+    document.removeEventListener('focusin', onOver);
   };
 }
 

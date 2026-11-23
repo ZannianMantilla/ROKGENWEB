@@ -1,53 +1,12 @@
 import type { Lang, MockupKind } from '../../data/content';
-import { BrandIcon } from '../ui/BrandIcon';
 
 /**
  * Pantallas ilustrativas dibujadas con HTML/CSS (no son capturas reales).
  * Reemplázalas con capturas agregando `image` al proyecto en content.ts.
  */
 const themes: Record<MockupKind, { bg: string; glow: string }> = {
-  triage: { bg: 'linear-gradient(160deg,#1e1b4b,#0f172a)', glow: '#f43f5e' },
   math: { bg: 'linear-gradient(160deg,#4c1d95,#1e1b4b)', glow: '#facc15' },
-  fitness: { bg: 'linear-gradient(160deg,#052e16,#0f172a)', glow: '#a3e635' },
 };
-
-function Triage({ lang }: { lang: Lang }) {
-  const rows = [
-    { c: '#ef4444', l: 'I', w: '78%' },
-    { c: '#f97316', l: 'II', w: '64%' },
-    { c: '#eab308', l: 'III', w: '70%' },
-    { c: '#22c55e', l: 'IV', w: '52%' },
-  ];
-  return (
-    <div className="flex h-full flex-col gap-2.5 p-4 text-white">
-      <div className="flex items-center justify-between">
-        <span className="font-display text-sm font-bold tracking-wide">MAXTRIAGE</span>
-        <span className="size-6 rounded-full bg-white/15" />
-      </div>
-      <p className="text-[0.6rem] text-white/60">
-        {lang === 'es' ? 'Pacientes en espera' : 'Patients waiting'}
-      </p>
-      {rows.map((r) => (
-        <div key={r.l} className="flex items-center gap-2.5 rounded-xl bg-white/[0.07] p-2.5">
-          <span
-            className="grid size-7 place-items-center rounded-lg text-[0.6rem] font-bold"
-            style={{ background: r.c }}
-          >
-            {r.l}
-          </span>
-          <div className="flex-1 space-y-1.5">
-            <span className="block h-1.5 rounded-full bg-white/70" style={{ width: r.w }} />
-            <span className="block h-1.5 w-2/5 rounded-full bg-white/25" />
-          </div>
-        </div>
-      ))}
-      <div className="mt-auto flex items-center justify-center gap-2 rounded-xl bg-white py-2.5 text-[0.65rem] font-bold text-slate-900">
-        <BrandIcon name="gmail" className="size-3.5" colored />
-        {lang === 'es' ? 'Enviar reporte' : 'Send report'}
-      </div>
-    </div>
-  );
-}
 
 function MathGame({ lang }: { lang: Lang }) {
   const answers = [
@@ -84,64 +43,6 @@ function MathGame({ lang }: { lang: Lang }) {
   );
 }
 
-function Fitness({ lang }: { lang: Lang }) {
-  return (
-    <div className="flex h-full flex-col gap-3 p-4 text-white">
-      <div className="flex items-center justify-between">
-        <span className="font-display text-sm font-bold">GYMROCK</span>
-        <span className="rounded-full bg-lime-400 px-2 py-0.5 text-[0.55rem] font-bold text-slate-900">
-          PRO
-        </span>
-      </div>
-      <p className="text-[0.6rem] text-white/60">
-        {lang === 'es' ? 'Calculadora IMC' : 'BMI calculator'}
-      </p>
-      <div className="relative mx-auto grid size-28 place-items-center">
-        <svg viewBox="0 0 100 100" className="absolute inset-0 -rotate-90">
-          <circle
-            cx="50"
-            cy="50"
-            r="42"
-            fill="none"
-            stroke="rgb(255 255 255 / .12)"
-            strokeWidth="9"
-          />
-          <circle
-            cx="50"
-            cy="50"
-            r="42"
-            fill="none"
-            stroke="#a3e635"
-            strokeWidth="9"
-            strokeLinecap="round"
-            strokeDasharray="264"
-            strokeDashoffset="95"
-          />
-        </svg>
-        <div className="text-center">
-          <p className="font-display text-2xl font-bold">22.9</p>
-          <p className="text-[0.55rem] text-lime-300">Normal</p>
-        </div>
-      </div>
-      {[
-        [lang === 'es' ? 'Peso' : 'Weight', '70 kg'],
-        [lang === 'es' ? 'Altura' : 'Height', '1.75 m'],
-      ].map(([k, v]) => (
-        <div
-          key={k}
-          className="flex items-center justify-between rounded-xl bg-white/[0.07] px-3 py-2.5 text-[0.65rem]"
-        >
-          <span className="text-white/60">{k}</span>
-          <span className="font-bold">{v}</span>
-        </div>
-      ))}
-      <div className="mt-auto rounded-xl bg-lime-400 py-2.5 text-center text-[0.65rem] font-bold text-slate-900">
-        {lang === 'es' ? 'Calcular' : 'Calculate'}
-      </div>
-    </div>
-  );
-}
-
 export function ProjectMockup({
   kind,
   lang,
@@ -152,7 +53,7 @@ export function ProjectMockup({
   className?: string;
 }) {
   const theme = themes[kind];
-  const Screen = kind === 'triage' ? Triage : kind === 'math' ? MathGame : Fitness;
+
   return (
     <div className={`relative ${className}`} aria-hidden>
       <div
@@ -166,7 +67,7 @@ export function ProjectMockup({
         >
           <div className="mx-auto mt-2 h-4 w-16 rounded-full bg-black/60" />
           <div className="h-[calc(100%-1.5rem)]">
-            <Screen lang={lang} />
+            <MathGame lang={lang} />
           </div>
         </div>
       </div>

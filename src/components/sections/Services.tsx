@@ -1,33 +1,21 @@
-import {
-  ChartColumn,
-  Globe,
-  Headset,
-  Megaphone,
-  PenTool,
-  Smartphone,
-  type LucideIcon,
-} from 'lucide-react';
-import { services, type ServiceIcon } from '../../data/content';
+import { services, detail, ui } from '../../data/content';
+import { serviceIcons } from '../../lib/catalog';
 import { useT } from '../../hooks/useT';
+import { sectionPadding, subHeadings, type SectionProps } from '../../lib/section';
+import { ROUTES } from '../../lib/router';
+
 import { SectionHeading } from '../ui/SectionHeading';
 
-const icons: Record<ServiceIcon, LucideIcon> = {
-  mobile: Smartphone,
-  web: Globe,
-  design: PenTool,
-  data: ChartColumn,
-  support: Headset,
-  content: Megaphone,
-};
-
-export function Services() {
+export function Services({ level = 2, more = false }: SectionProps) {
+  const [Sub] = subHeadings(level);
   const { t } = useT();
 
   return (
     <section
+      data-tone="citrine"
       id="services"
       aria-labelledby="services-title"
-      className="relative overflow-hidden border-y border-line bg-bg-soft py-24 md:py-36"
+      className={`relative overflow-hidden border-y border-line bg-bg-soft ${sectionPadding(level)}`}
     >
       <div aria-hidden className="absolute -top-40 -left-40 size-[34rem] aura [--p:22%]" />
       <div
@@ -41,11 +29,17 @@ export function Services() {
           title={t(services.title)}
           intro={t(services.intro)}
           avatar="checklist"
+          level={level}
+          more={
+            more
+              ? { to: ROUTES.services, label: t(detail.more), context: t(ui.nav.services) }
+              : undefined
+          }
         />
 
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-stagger>
           {services.items.map((s, i) => {
-            const Icon = icons[s.icon];
+            const Icon = serviceIcons[s.icon];
             return (
               <li key={s.icon} className="h-full">
                 <article
@@ -64,7 +58,7 @@ export function Services() {
                       0{i + 1}
                     </span>
                   </div>
-                  <h3 className="relative mt-8 text-2xl font-semibold">{t(s.title)}</h3>
+                  <Sub className="relative mt-8 text-2xl font-semibold">{t(s.title)}</Sub>
                   <p className="relative mt-3 leading-relaxed text-muted">{t(s.description)}</p>
                   <ul className="relative mt-auto flex flex-wrap gap-2 pt-6">
                     {s.tags.map((tag) => (

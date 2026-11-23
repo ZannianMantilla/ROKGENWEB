@@ -13,7 +13,6 @@ export type Localized<T = string> = Record<Lang, T>;
 export const profile = {
   name: 'Zannián Mantilla Celis',
   shortName: 'Zannián',
-  initials: 'ZM',
   email: 'zanniancelis@gmail.com',
   phoneDisplay: '+57 324 603 3634',
   /** Número en formato internacional sin "+" para wa.me */
@@ -57,6 +56,7 @@ export const ui = {
   mainNav: { es: 'Navegación principal', en: 'Main navigation' },
   langSwitch: { es: 'Switch to English', en: 'Cambiar a español' },
   home: { es: 'Inicio', en: 'Home' },
+  footerNav: { es: 'Páginas del sitio', en: 'Site pages' },
 } satisfies Record<string, Localized | Record<string, Localized>>;
 
 /* ------------------------------------------------------------------ */
@@ -97,6 +97,24 @@ export const hero = {
     en: 'Hi Zannián, I saw your portfolio and I’d like to talk about a project.',
   },
   scroll: { es: 'Desliza', en: 'Scroll' },
+  /** Lo que dice el avatar al tocar su cristal (en orden, y vuelve a empezar). */
+  crystal: {
+    label: { es: 'Tocar el cristal del avatar', en: 'Tap the avatar’s crystal' },
+    lines: {
+      es: [
+        '¡Hola! Soy Zannián.',
+        'Hago apps, sitios web y análisis de datos.',
+        '¿Tienes una idea? Cuéntamela.',
+        'Este cristal late cuando algo te interesa.',
+      ],
+      en: [
+        'Hi! I’m Zannián.',
+        'I build apps, websites and data analysis.',
+        'Got an idea? Tell me about it.',
+        'This crystal beats when something catches your eye.',
+      ],
+    },
+  },
   headlineLabel: {
     es: 'Zannián Mantilla Celis — Desarrollador de Software | Frontend | Mobile | Análisis de Datos | Soporte TI',
     en: 'Zannián Mantilla Celis — Software Developer | Frontend | Mobile | Data Analysis | IT Support',
@@ -158,8 +176,16 @@ export const about = {
       suffix: '+',
       label: { es: 'años de experiencia (desde 2022)', en: 'years of experience (since 2022)' },
     },
-    { value: 3, suffix: '', label: { es: 'proyectos destacados', en: 'featured projects' } },
-    { value: 6, suffix: '', label: { es: 'servicios freelance', en: 'freelance services' } },
+    {
+      value: 'projects',
+      suffix: '',
+      label: { es: 'proyectos destacados', en: 'featured projects' },
+    },
+    {
+      value: 'services',
+      suffix: '',
+      label: { es: 'servicios freelance', en: 'freelance services' },
+    },
     { value: 3, suffix: '', label: { es: 'idiomas', en: 'languages' } },
   ] as const,
 };
@@ -184,7 +210,7 @@ export const services = {
         es: 'Apps multiplataforma con Flutter y FlutterFlow, con autenticación y datos en Firebase.',
         en: 'Cross-platform apps with Flutter and FlutterFlow, with authentication and data on Firebase.',
       },
-      tags: ['Flutter', 'FlutterFlow', 'Firebase'],
+      tags: ['Flutter', 'Dart', 'FlutterFlow', 'Firebase'],
     },
     {
       icon: 'web',
@@ -229,7 +255,7 @@ export const services = {
         es: 'Gestión de redes, SEO y edición de video para que tu marca se vea y se encuentre.',
         en: 'Social media, SEO and video editing so your brand gets seen and found.',
       },
-      tags: ['SEO', 'CapCut', 'Social media'],
+      tags: ['SEO', 'CapCut', 'Photoshop', 'Illustrator', 'Social media'],
     },
   ]),
 };
@@ -237,7 +263,25 @@ export const services = {
 /* ------------------------------------------------------------------ */
 /* Stack tecnológico                                                    */
 /* ------------------------------------------------------------------ */
-export type StackItem = { name: string | Localized; brand?: BrandName; mono?: string };
+/** Cursos complementarios (se listan en Trayectoria y se enlazan desde el Stack). */
+const COURSES = {
+  eda: {
+    es: 'Análisis exploratorio de datos en Python',
+    en: 'Exploratory data analysis in Python',
+  },
+  networking: { es: 'Networking básico', en: 'Networking basics' },
+  cloud: { es: 'Cómputo en la nube', en: 'Cloud computing' },
+  ml: { es: 'Machine Learning básico', en: 'Machine Learning basics' },
+  english: { es: 'English Does Work L2', en: 'English Does Work L2' },
+} satisfies Record<string, Localized>;
+
+export type StackItem = {
+  name: string | Localized;
+  brand?: BrandName;
+  mono?: string;
+  /** Curso en el que se aprendió (se muestra en la página del stack). */
+  course?: Localized;
+};
 
 export const stack = {
   kicker: { es: '03 · Stack', en: '03 · Stack' },
@@ -267,10 +311,26 @@ export const stack = {
       name: { es: 'Datos', en: 'Data' },
       items: [
         { name: 'Python', brand: 'python' },
-        { name: { es: 'Análisis exploratorio', en: 'Exploratory analysis' }, mono: 'EDA' },
-        { name: { es: 'Machine Learning (básico)', en: 'Machine Learning (basic)' }, mono: 'ML' },
-        { name: { es: 'Cómputo en la nube (básico)', en: 'Cloud computing (basic)' }, mono: 'CL' },
-        { name: { es: 'Networking (básico)', en: 'Networking (basic)' }, mono: 'NW' },
+        {
+          name: { es: 'Análisis exploratorio', en: 'Exploratory analysis' },
+          mono: 'EDA',
+          course: COURSES.eda,
+        },
+        {
+          name: { es: 'Machine Learning (básico)', en: 'Machine Learning (basic)' },
+          mono: 'ML',
+          course: COURSES.ml,
+        },
+        {
+          name: { es: 'Cómputo en la nube (básico)', en: 'Cloud computing (basic)' },
+          mono: 'CL',
+          course: COURSES.cloud,
+        },
+        {
+          name: { es: 'Networking (básico)', en: 'Networking (basic)' },
+          mono: 'NW',
+          course: COURSES.networking,
+        },
       ],
     },
     {
@@ -291,7 +351,7 @@ export const stack = {
 /* ------------------------------------------------------------------ */
 /* Proyectos                                                            */
 /* ------------------------------------------------------------------ */
-export type MockupKind = 'triage' | 'math' | 'fitness';
+export type MockupKind = 'math';
 
 export type Project = {
   id: string;
@@ -306,17 +366,198 @@ export type Project = {
   role?: Localized;
   demoUrl?: string;
   repoUrl?: string;
-  /** Captura real (ruta en /public). Si no hay, se muestra un mockup ilustrativo. */
-  image?: { src: string; width: number; height: number };
-  mockup: MockupKind;
+  /** Captura principal. Si no hay, se muestra el mockup ilustrativo. */
+  image?: Shot;
+  /** Capturas que se ven en el detalle del proyecto. */
+  gallery?: Shot[];
+  /** Servicios a los que corresponde (se cruzan en la página de servicios). */
+  services?: ServiceIcon[];
+  mockup?: MockupKind;
+};
+
+/** Captura de pantalla real, en /public. Se sirve `${base}-${ancho}.webp` para cada ancho. */
+export type Shot = {
+  base: string;
+  widths: number[];
+  /** Tamaño de la versión más grande. */
+  width: number;
+  height: number;
+  alt: Localized;
+  device: 'desktop' | 'mobile';
+};
+
+/** Sitio web en producción para un cliente (capturas tomadas del sitio publicado). */
+export type ClientSite = {
+  id: string;
+  name: string;
+  url: string;
+  summary: Localized;
+  role: Localized;
+  desktop: Shot;
+  mobile: Shot;
+  services: ServiceIcon[];
+  /** Tecnologías confirmadas en el sitio publicado. */
+  stack: string[];
+};
+
+const siteShots = (id: string, name: string) => ({
+  desktop: {
+    base: `/assets/projects/${id}`,
+    widths: [720, 1440],
+    width: 1440,
+    height: 900,
+    alt: { es: `Página de inicio de ${name}`, en: `${name} home page` },
+    device: 'desktop' as const,
+  },
+  mobile: {
+    base: `/assets/projects/${id}-movil`,
+    widths: [390, 780],
+    width: 780,
+    height: 1688,
+    alt: { es: `${name} en móvil`, en: `${name} on mobile` },
+    device: 'mobile' as const,
+  },
+});
+
+const frontAndBack: Localized = {
+  es: 'Desarrollo front-end y back-end',
+  en: 'Front-end and back-end development',
+};
+
+const projectShot = (
+  project: string,
+  name: string,
+  alt: Localized,
+  device: Shot['device'] = 'desktop',
+): Shot =>
+  device === 'desktop'
+    ? {
+        base: `/assets/projects/${project}-${name}`,
+        widths: [720, 1440],
+        width: 1440,
+        height: 900,
+        alt,
+        device,
+      }
+    : {
+        base: `/assets/projects/${project}-${name}`,
+        widths: [390, 780],
+        width: 780,
+        height: 1688,
+        alt,
+        device,
+      };
+
+const gymrockShots = {
+  inicio: projectShot('gymrock', 'inicio', {
+    es: 'Inicio de GymRock con el próximo entrenamiento, sus ejercicios y el botón para empezar',
+    en: 'GymRock home with the next workout, its exercises and a start button',
+  }),
+  entrenar: projectShot('gymrock', 'entrenar', {
+    es: 'Sesión de entrenamiento con kilos y repeticiones por serie, carga sugerida desde el 1RM y temporizador de descanso',
+    en: 'Workout session with weight and reps per set, suggested load from 1RM and a rest timer',
+  }),
+  programa: projectShot('gymrock', 'programa', {
+    es: 'Programa de fuerza intermedia por días, con series, %RM y kilos calculados',
+    en: 'Intermediate strength program by day, with sets, %1RM and calculated weights',
+  }),
+  herramientas: projectShot('gymrock', 'herramientas', {
+    es: 'Calculadoras de IMC y calorías diarias con los datos del usuario',
+    en: 'BMI and daily calorie calculators using the user’s data',
+  }),
+  progreso: projectShot('gymrock', 'progreso', {
+    es: 'Progreso con sesiones, racha, series, volumen, gráfico semanal y 1RM estimado',
+    en: 'Progress with sessions, streak, sets, volume, weekly chart and estimated 1RM',
+  }),
+  bienvenida: projectShot('gymrock', 'bienvenida', {
+    es: 'Pantalla de bienvenida de GymRock con el logo de Rock Fitness',
+    en: 'GymRock welcome screen with the Rock Fitness logo',
+  }),
+  movil: projectShot(
+    'gymrock',
+    'movil',
+    {
+      es: 'Vista móvil del inicio con barra de navegación inferior',
+      en: 'Mobile view of the home screen with bottom navigation bar',
+    },
+    'mobile',
+  ),
+};
+
+const maxtriageShots = {
+  bienvenida: projectShot('maxtriage', 'bienvenida', {
+    es: 'Portada de MAXTRIAGE con los cinco niveles de triage, sus tiempos de atención y el aviso para llamar al 123',
+    en: 'MAXTRIAGE landing page with the five triage levels, their target times and a call-123 notice',
+  }),
+  selector: projectShot('maxtriage', 'selector', {
+    es: 'Selector de nivel de triage para el paciente, del I al V',
+    en: 'Triage level picker for the patient, from I to V',
+  }),
+  nivel: projectShot('maxtriage', 'nivel', {
+    es: 'Detalle del triage III con ejemplos y el formulario para describir el estado de salud',
+    en: 'Triage III details with examples and the form to describe the health condition',
+  }),
+  espera: projectShot('maxtriage', 'espera', {
+    es: 'Pantalla de espera del paciente con cuenta regresiva y resumen de su solicitud',
+    en: 'Patient waiting screen with a countdown and a summary of the request',
+  }),
+  panel: projectShot('maxtriage', 'panel', {
+    es: 'Cola de atención del personal de salud con el conteo por nivel y la solicitud del paciente',
+    en: 'Healthcare staff queue with counts per level and the patient’s request',
+  }),
+  atendiendo: projectShot('maxtriage', 'panel-atendiendo', {
+    es: 'Paciente en atención, con opciones para finalizar o reclasificar el nivel',
+    en: 'Patient being attended, with options to finish or reclassify the level',
+  }),
+  movil: projectShot(
+    'maxtriage',
+    'movil',
+    {
+      es: 'Vista móvil del selector de triage con el aviso de emergencia y la barra inferior',
+      en: 'Mobile view of the triage picker with the emergency notice and bottom bar',
+    },
+    'mobile',
+  ),
+};
+
+const adsolearnShots = {
+  inicio: projectShot('adsolearn', 'inicio', {
+    es: 'Portada de ADSOLEARN con el titular “Freelancing para aprendices ADSO” y una oferta de ejemplo',
+    en: 'ADSOLEARN landing page with the headline “Freelancing for ADSO apprentices” and a sample job offer',
+  }),
+  ofertas: projectShot('adsolearn', 'ofertas', {
+    es: 'Buscador de ofertas del aprendiz, con rango de pago, cupos libres y botón para postularse',
+    en: 'Apprentice job search with pay range, open spots and an apply button',
+  }),
+  misOfertas: projectShot('adsolearn', 'mis-ofertas', {
+    es: 'Panel del contratista con sus ofertas activas, postulados y opción de cerrar cada oferta',
+    en: 'Contractor dashboard with active offers, applicants and an option to close each offer',
+  }),
+  nueva: projectShot('adsolearn', 'nueva', {
+    es: 'Formulario para publicar una oferta con título, descripción, pago en COP y cupos',
+    en: 'Form to publish an offer with title, description, pay in COP and spots',
+  }),
+  postulados: projectShot('adsolearn', 'postulados', {
+    es: 'Lista de aprendices postulados a una oferta, con enlace a su perfil',
+    en: 'List of apprentices who applied to an offer, with a link to their profile',
+  }),
+  movil: projectShot(
+    'adsolearn',
+    'movil',
+    {
+      es: 'Vista móvil del buscador de ofertas con barra de navegación inferior',
+      en: 'Mobile view of the job search with bottom navigation bar',
+    },
+    'mobile',
+  ),
 };
 
 export const projects = {
   kicker: { es: '04 · Proyectos', en: '04 · Projects' },
   title: { es: 'Proyectos destacados', en: 'Featured projects' },
   intro: {
-    es: 'Una selección de lo que he construido: salud, educación y fitness.',
-    en: 'A selection of what I’ve built: health, education and fitness.',
+    es: 'Una selección de lo que he construido: educación, empleo, salud y fitness.',
+    en: 'A selection of what I’ve built: education, jobs, health and fitness.',
   },
   labels: {
     details: { es: 'Ver detalle', en: 'View details' },
@@ -329,31 +570,161 @@ export const projects = {
     demo: { es: 'Ver demo', en: 'Live demo' },
     repo: { es: 'Ver código', en: 'Source code' },
     illustrative: { es: 'Vista ilustrativa', en: 'Illustrative preview' },
+    screenshots: { es: 'Capturas', en: 'Screenshots' },
+    showShot: { es: 'Ver captura', en: 'Show screenshot' },
+    sitesTitle: { es: 'Sitios web para clientes', en: 'Client websites' },
+    sitesIntro: {
+      es: 'Sitios en producción en los que participé en el desarrollo front-end y back-end.',
+      en: 'Live websites where I worked on both front-end and back-end development.',
+    },
+    visit: { es: 'Visitar sitio', en: 'Visit site' },
     talk: { es: '¿Quieres algo así? Hablemos', en: 'Want something like this? Let’s talk' },
   },
   items: list<Project>([
     {
-      id: 'maxtriage',
-      title: 'MAXTRIAGE',
-      year: 2025,
-      type: { es: 'App móvil · Salud', en: 'Mobile app · Health' },
+      id: 'adsolearn',
+      title: 'ADSOLEARN',
+      year: 2026,
+      type: { es: 'Web app · Educación y empleo', en: 'Web app · Education & jobs' },
       summary: {
-        es: 'Sistema móvil de triaje con integración a Gmail y gestión eficiente de datos clínicos.',
-        en: 'Mobile triage system with Gmail integration and efficient clinical data management.',
+        es: 'Plataforma de freelancing que conecta a aprendices ADSO del SENA con personas y empresas que necesitan proyectos de software.',
+        en: 'Freelancing platform that connects SENA software development apprentices with people and companies that need software projects.',
       },
       description: {
-        es: 'MAXTRIAGE es un sistema móvil de triaje enfocado en gestionar datos clínicos de forma eficiente. Se integra con Gmail para la comunicación de la información.',
-        en: 'MAXTRIAGE is a mobile triage system focused on managing clinical data efficiently. It integrates with Gmail to communicate information.',
+        es: 'ADSOLEARN sirve para que los aprendices del programa Análisis y Desarrollo de Software (ADSO) del SENA ganen experiencia, ingresos y portafolio con trabajos reales. Los contratistas publican ofertas con rango de pago y cupos; los aprendices las buscan y se postulan, y el contratista revisa a los postulados y su perfil. Nació en 2024 como proyecto formativo con JSP, Servlets y MySQL, y lo rehice como web app moderna: validación en el cliente y en el servidor, recuperación de contraseña segura y una interfaz responsiva y accesible.',
+        en: 'ADSOLEARN helps apprentices in SENA’s Software Analysis and Development (ADSO) program gain experience, income and portfolio pieces through real jobs. Contractors post offers with a pay range and a number of spots; apprentices search and apply, and the contractor reviews the applicants and their profiles. It started in 2024 as a training project built with JSP, Servlets and MySQL, and I rebuilt it as a modern web app: client- and server-side validation, secure password recovery and a responsive, accessible interface.',
       },
       highlights: {
-        es: ['Integración con Gmail', 'Gestión eficiente de datos clínicos', 'Experiencia móvil'],
-        en: ['Gmail integration', 'Efficient clinical data management', 'Mobile experience'],
+        es: [
+          'Roles de aprendiz y contratista',
+          'Búsqueda de ofertas y postulación con control de cupos',
+          'Validación con Zod y reglas de Firestore',
+          'Responsiva y accesible',
+        ],
+        en: [
+          'Apprentice and contractor roles',
+          'Job search and applications with spot limits',
+          'Validation with Zod and Firestore rules',
+          'Responsive and accessible',
+        ],
       },
-      stack: ['Gmail'], // TODO: agrega las tecnologías usadas (p. ej. Flutter, Firebase…)
-      // role: { es: 'TODO', en: 'TODO' },
-      // demoUrl: 'TODO',
+      stack: ['React', 'TypeScript', 'Tailwind CSS', 'React Router', 'Zod', 'Firebase'],
+      services: ['web'],
+      // demoUrl: 'TODO', — aún no está desplegada
       // repoUrl: 'TODO',
-      mockup: 'triage',
+      image: adsolearnShots.inicio,
+      gallery: [
+        adsolearnShots.inicio,
+        adsolearnShots.ofertas,
+        adsolearnShots.misOfertas,
+        adsolearnShots.nueva,
+        adsolearnShots.postulados,
+        adsolearnShots.movil,
+      ],
+    },
+    {
+      id: 'gymrock',
+      title: 'GYMROCK',
+      year: 2026,
+      type: { es: 'Web app y escritorio · Fitness', en: 'Web & desktop app · Fitness' },
+      summary: {
+        es: 'App de entrenamiento con planes por nivel y objetivo, registro de cada serie, calculadoras y seguimiento del progreso.',
+        en: 'Training app with plans by level and goal, per-set logging, calculators and progress tracking.',
+      },
+      description: {
+        es: 'GYMROCK sirve para entrenar con un plan. Según tu nivel y tu objetivo te asigna uno de 7 programas de fuerza e hipertrofia, registra los kilos y repeticiones de cada serie, sugiere la carga a partir de tu 1RM y controla el descanso con un temporizador. Incluye calentamiento guiado, calculadoras de IMC, calorías y 1RM, y estadísticas de progreso. Nació en 2023 como app móvil con FlutterFlow y Firebase, y la rehice como web app y app de escritorio para Windows que funciona sin internet y guarda los datos en el propio equipo.',
+        en: 'GYMROCK helps you train with a plan. Based on your level and goal it assigns one of 7 strength and hypertrophy programs, logs the weight and reps of every set, suggests loads from your 1RM and times your rest. It includes a guided warm-up, BMI, calorie and 1RM calculators, and progress stats. It started in 2023 as a mobile app built with FlutterFlow and Firebase, and I rebuilt it as a web app and a Windows desktop app that works offline and keeps data on the device.',
+      },
+      highlights: {
+        es: [
+          '7 programas según nivel y objetivo',
+          'Registro por serie con carga sugerida desde el 1RM',
+          'Calculadoras de IMC, calorías y 1RM',
+          'Progreso, racha e historial',
+          'Funciona sin internet, también como .exe',
+        ],
+        en: [
+          '7 programs by level and goal',
+          'Per-set logging with load suggested from 1RM',
+          'BMI, calorie and 1RM calculators',
+          'Progress, streak and history',
+          'Works offline, also as an .exe',
+        ],
+      },
+      stack: [
+        'React',
+        'TypeScript',
+        'Tailwind CSS',
+        'React Router',
+        'Zod',
+        'FlutterFlow',
+        'Firebase',
+      ],
+      // demoUrl: 'TODO', — aún no está publicada
+      // repoUrl: 'TODO',
+      image: gymrockShots.inicio,
+      gallery: [
+        gymrockShots.inicio,
+        gymrockShots.entrenar,
+        gymrockShots.programa,
+        gymrockShots.herramientas,
+        gymrockShots.progreso,
+        gymrockShots.bienvenida,
+        gymrockShots.movil,
+      ],
+      services: ['mobile', 'web'],
+    },
+    {
+      id: 'maxtriage',
+      title: 'MAXTRIAGE',
+      year: 2026,
+      type: { es: 'Web app y escritorio · Salud', en: 'Web & desktop app · Health' },
+      summary: {
+        es: 'Clasificación de triage en cinco niveles: el paciente elige su nivel y sigue su tiempo de espera, y el personal de salud atiende una cola ordenada por gravedad.',
+        en: 'Five-level triage classification: patients pick their level and track their wait time, and healthcare staff work through a queue ordered by severity.',
+      },
+      description: {
+        es: 'MAXTRIAGE sirve para organizar la atención según la urgencia. El paciente elige uno de los cinco niveles de triage, con su definición, ejemplos y tiempo de referencia; describe su estado y sigue la cuenta regresiva de su espera, y si no está conforme puede dejar un reporte. El personal de salud ve la cola ordenada por gravedad y por llegada, con las solicitudes fuera de tiempo resaltadas, y puede atender, finalizar y reclasificar el nivel. Nació en 2025 como app en FlutterFlow que enviaba la solicitud por correo, y la rehice como web app y app de escritorio para Windows, con panel para el personal y reglas de acceso por rol.',
+        en: 'MAXTRIAGE organizes care by urgency. Patients pick one of five triage levels, each with its definition, examples and target time; they describe their condition and follow a countdown of their wait, and can file a report if they are not satisfied. Healthcare staff see the queue ordered by severity and arrival, with overdue requests highlighted, and can attend, finish and reclassify the level. It started in 2025 as a FlutterFlow app that sent requests by email, and I rebuilt it as a web app and a Windows desktop app, with a staff panel and role-based access rules.',
+      },
+      highlights: {
+        es: [
+          'Cinco niveles con ejemplos y tiempos de referencia',
+          'Tiempo de espera en vivo para el paciente',
+          'Cola priorizada y reclasificación para el personal',
+          'Reglas de acceso por rol en Firestore',
+          'Aviso para llamar al 123 en emergencias',
+        ],
+        en: [
+          'Five levels with examples and target times',
+          'Live wait time for the patient',
+          'Prioritized queue and reclassification for staff',
+          'Role-based access rules in Firestore',
+          'Call-123 notice for emergencies',
+        ],
+      },
+      stack: [
+        'React',
+        'TypeScript',
+        'Tailwind CSS',
+        'React Router',
+        'Zod',
+        'Firebase',
+        'FlutterFlow',
+      ],
+      // demoUrl: 'TODO', — aún no está publicada
+      // repoUrl: 'TODO',
+      image: maxtriageShots.bienvenida,
+      gallery: [
+        maxtriageShots.bienvenida,
+        maxtriageShots.selector,
+        maxtriageShots.nivel,
+        maxtriageShots.espera,
+        maxtriageShots.panel,
+        maxtriageShots.atendiendo,
+        maxtriageShots.movil,
+      ],
+      services: ['mobile', 'web'],
     },
     {
       id: 'mategame',
@@ -375,28 +746,77 @@ export const projects = {
       stack: [], // TODO: agrega las tecnologías usadas
       mockup: 'math',
     },
-    {
-      id: 'gymrock',
-      title: 'GYMROCK',
-      year: 2023,
-      type: { es: 'App fitness', en: 'Fitness app' },
-      summary: {
-        es: 'App fitness con FlutterFlow y Firebase: calculadoras funcionales y gestión de usuarios.',
-        en: 'Fitness app built with FlutterFlow and Firebase: working calculators and user management.',
-      },
-      description: {
-        es: 'GYMROCK es una app fitness construida con FlutterFlow y Firebase. Incluye calculadoras funcionales y gestión de usuarios.',
-        en: 'GYMROCK is a fitness app built with FlutterFlow and Firebase. It includes working calculators and user management.',
-      },
-      highlights: {
-        es: ['Calculadoras funcionales', 'Gestión de usuarios', 'Backend en Firebase'],
-        en: ['Working calculators', 'User management', 'Firebase backend'],
-      },
-      stack: ['FlutterFlow', 'Firebase'],
-      mockup: 'fitness',
-    },
   ]),
 };
+
+/** Sitios de clientes. Descripciones tomadas del contenido de cada sitio publicado. */
+export const clientSites = list<ClientSite>([
+  {
+    id: 'solcaribe',
+    name: 'Transporte Sol Caribe',
+    url: 'https://www.transportesolcaribe.com/',
+    summary: {
+      es: 'Sitio de una empresa de transporte escolar, empresarial y turístico con sede en Bucaramanga: servicios, cotización de viajes, empleo, noticias y canal de denuncias.',
+      en: 'Website for a school, corporate and tourist transport company based in Bucaramanga: services, trip quotes, jobs, news and a reporting channel.',
+    },
+    role: frontAndBack,
+    ...siteShots('solcaribe', 'Transporte Sol Caribe'),
+    services: ['web'],
+    stack: [],
+  },
+  {
+    id: 'systemred',
+    name: 'SYSTEMRED GPS',
+    url: 'https://systemred.com.co/',
+    summary: {
+      es: 'Sitio de una empresa de rastreo satelital y gestión de flotas (GPS, videotelemática, control de combustible y cumplimiento PESV), con planes, solicitud de demo y acceso a la plataforma.',
+      en: 'Website for a satellite tracking and fleet management company (GPS, video telematics, fuel control and road-safety compliance), with plans, demo requests and platform access.',
+    },
+    role: frontAndBack,
+    ...siteShots('systemred', 'SYSTEMRED GPS'),
+    services: ['web'],
+    stack: ['WordPress'],
+  },
+  {
+    id: 'solusystem',
+    name: 'Solusystem',
+    url: 'https://solusystem.co/',
+    summary: {
+      es: 'Sitio de una empresa de soluciones tecnológicas (soporte, desarrollo web, ciberseguridad, CCTV, cloud y licencias Microsoft), con asistente para elegir servicio, ofertas y tienda.',
+      en: 'Website for a tech solutions company (support, web development, cybersecurity, CCTV, cloud and Microsoft licenses), with a service picker, offers and a store.',
+    },
+    role: frontAndBack,
+    ...siteShots('solusystem', 'Solusystem'),
+    services: ['web'],
+    stack: [],
+  },
+  {
+    id: 'cherryhot',
+    name: 'Motel Cherry Hot',
+    url: 'https://motelcherryhot.com/',
+    summary: {
+      es: 'Sitio de un motel con catálogo de suites y tarifas, planes románticos, tienda de productos y reservas.',
+      en: 'Website for a motel with a catalog of suites and rates, romantic packages, a product store and bookings.',
+    },
+    role: frontAndBack,
+    ...siteShots('cherryhot', 'Motel Cherry Hot'),
+    services: ['web'],
+    stack: ['WordPress'],
+  },
+  {
+    id: 'serfu',
+    name: 'SERFU HSEQ & Transporte',
+    url: 'https://serfu.co/',
+    summary: {
+      es: 'Sitio de una empresa de seguridad y salud en el trabajo (HSEQ) y transporte en Girón: servicios, capacitaciones y consulta de certificados.',
+      en: 'Website for an occupational health and safety (HSEQ) and transport company in Girón: services, training courses and certificate lookup.',
+    },
+    role: frontAndBack,
+    ...siteShots('serfu', 'SERFU'),
+    services: ['web'],
+    stack: [],
+  },
+]);
 
 /* ------------------------------------------------------------------ */
 /* Experiencia y educación                                              */
@@ -492,11 +912,11 @@ export const journey = {
     },
   ]),
   courses: list<Localized>([
-    { es: 'Análisis exploratorio de datos en Python', en: 'Exploratory data analysis in Python' },
-    { es: 'Networking básico', en: 'Networking basics' },
-    { es: 'Cómputo en la nube', en: 'Cloud computing' },
-    { es: 'Machine Learning básico', en: 'Machine Learning basics' },
-    { es: 'English Does Work L2', en: 'English Does Work L2' },
+    COURSES.eda,
+    COURSES.networking,
+    COURSES.cloud,
+    COURSES.ml,
+    COURSES.english,
   ]),
   languages: [
     { name: { es: 'Español', en: 'Spanish' }, level: { es: 'Nativo', en: 'Native' } },
@@ -572,4 +992,97 @@ export const footer = {
     en: 'Software development from Santander, Colombia.',
   },
   backToTop: { es: 'Volver arriba', en: 'Back to top' },
+};
+
+/* ------------------------------------------------------------------ */
+/* Páginas: textos de navegación, SEO por ruta y páginas de detalle     */
+/* ------------------------------------------------------------------ */
+type PageId = 'about' | 'services' | 'stack' | 'projects' | 'experience' | 'contact';
+
+const brand = 'Zannián Mantilla Celis';
+const pageTitle = (es: string, en: string): Localized => ({
+  es: `${es} · ${brand}`,
+  en: `${en} · ${brand}`,
+});
+
+/** Título y descripción de cada página (pestaña del navegador, buscadores y redes). */
+export const pageSeo: Record<
+  PageId | 'home' | 'notFound',
+  { title: Localized; description: Localized }
+> = {
+  home: seo,
+  about: {
+    title: pageTitle('Sobre mí', 'About'),
+    description: {
+      es: 'Tecnólogo en Análisis y Desarrollo de Software del SENA y estudiante de Ingeniería de Software. Desde 2022 trabajo en soporte, desarrollo frontend y apps móviles.',
+      en: 'Software Analysis and Development technologist (SENA) and Software Engineering student. Since 2022 I’ve worked in IT support, frontend development and mobile apps.',
+    },
+  },
+  services: { title: pageTitle('Servicios', 'Services'), description: services.intro },
+  stack: { title: pageTitle('Stack', 'Stack'), description: stack.intro },
+  projects: {
+    title: pageTitle('Proyectos', 'Projects'),
+    description: {
+      es: `Proyectos destacados (${projects.items.map((p) => p.title).join(', ')}) y sitios web para clientes como ${clientSites.map((s) => s.name).join(', ')}.`,
+      en: `Featured projects (${projects.items.map((p) => p.title).join(', ')}) and client websites such as ${clientSites.map((s) => s.name).join(', ')}.`,
+    },
+  },
+  experience: {
+    title: pageTitle('Trayectoria', 'Journey'),
+    description: {
+      es: 'Experiencia laboral, educación, cursos e idiomas de Zannián Mantilla Celis.',
+      en: 'Work experience, education, courses and languages of Zannián Mantilla Celis.',
+    },
+  },
+  contact: { title: pageTitle('Contacto', 'Contact'), description: contact.intro },
+  notFound: {
+    title: pageTitle('Página no encontrada', 'Page not found'),
+    description: seo.description,
+  },
+};
+
+export const pageNav = {
+  next: { es: 'Siguiente', en: 'Next' },
+  notFound: {
+    title: { es: 'Esta página no existe', en: 'This page doesn’t exist' },
+    body: {
+      es: 'Puede que el enlace esté mal escrito o que la página se haya movido.',
+      en: 'The link may be mistyped or the page may have moved.',
+    },
+    cta: { es: 'Volver al inicio', en: 'Back to home' },
+  },
+};
+
+/** Etiquetas de las páginas de detalle (todo el contenido sale de las secciones de arriba). */
+export const detail = {
+  more: { es: 'Ver más', en: 'See more' },
+  tools: { es: 'Herramientas', en: 'Tools' },
+  relatedProjects: { es: 'Proyectos relacionados', en: 'Related projects' },
+  quote: { es: 'Cotizar por WhatsApp', en: 'Get a quote on WhatsApp' },
+  quoteText: {
+    es: 'Hola Zannián, vi tu portafolio y me interesa el servicio de',
+    en: 'Hi Zannián, I saw your portfolio and I’m interested in your service:',
+  },
+  usedIn: { es: 'Lo uso en', en: 'Used in' },
+  relatedService: { es: 'Servicio', en: 'Service' },
+  learnedIn: { es: 'Formación', en: 'Training' },
+  education: { es: 'Formación', en: 'Education' },
+  mainTools: { es: 'Herramientas principales', en: 'Main tools' },
+  whereIAm: { es: 'Dónde estoy', en: 'Where I am' },
+  seeJourney: { es: 'Ver trayectoria completa', en: 'See full journey' },
+  seeStack: { es: 'Ver todo el stack', en: 'See full stack' },
+  inNumbers: { es: 'En números', en: 'By the numbers' },
+  numbers: {
+    years: { es: 'años de experiencia', en: 'years of experience' },
+    roles: { es: 'cargos y proyectos laborales', en: 'roles and jobs' },
+    education: { es: 'títulos y estudios', en: 'degrees and studies' },
+    courses: { es: 'cursos complementarios', en: 'additional courses' },
+    languages: { es: 'idiomas', en: 'languages' },
+  },
+  ctaGoContact: { es: 'Ir al formulario', en: 'Go to the form' },
+  byService: { es: '¿Ya sabes qué necesitas?', en: 'Already know what you need?' },
+  byServiceIntro: {
+    es: 'Elige un servicio y se abre WhatsApp con el mensaje listo.',
+    en: 'Pick a service and WhatsApp opens with the message ready.',
+  },
 };

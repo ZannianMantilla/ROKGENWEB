@@ -2,31 +2,102 @@
 @import '@fontsource-variable/manrope/wght.css';
 @import 'tailwindcss';
 
-/* ---------- Tokens (solo tema oscuro, acentos morados) ---------- */
+/* ---------- Tokens (solo tema oscuro) ----------
+ * Base grafito neutra, como el lápiz del avatar. El color lo pone la gema:
+ * cada sección declara data-tone y redefine los acentos; la gema de la sección visible
+ * se copia a <html data-gem> (enhance.ts), así el logo, el cursor y la barra la siguen.
+ * --gem-turn gira el tono del cristal y los ojos del avatar (el gris del dibujo no cambia). */
+@property --accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #a78bfa;
+}
+@property --accent-strong {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #7c3aed;
+}
+@property --accent-2 {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #e879f9;
+}
 :root {
   color-scheme: dark;
-  --bg: #07060d;
-  --bg-soft: #0c0a16;
-  --surface: #110e1d;
-  --surface-2: #1b1530;
-  --line: rgb(196 181 253 / 0.09);
-  --line-strong: rgb(196 181 253 / 0.18);
-  --fg: #f1eefb;
-  --muted: #aba4c4;
+  --bg: #0b0b0e;
+  --bg-soft: #101014;
+  --surface: #151519;
+  --surface-2: #1e1e24;
+  --line: rgb(255 255 255 / 0.08);
+  --line-strong: rgb(255 255 255 / 0.15);
+  --fg: #f3f3f6;
+  --muted: #a9a9b4;
+  --danger: #fca5a5;
+  --on-accent: #ffffff;
+  --glass: rgb(15 15 19 / 0.62);
+  --shadow: 0 30px 80px -30px rgb(0 0 0 / 0.75);
+  --mesh-a: #7c3aed;
+  --mesh-b: #be185d;
+  --mesh-c: #b45309;
+  --mesh-d: #0b0b0e;
+  --grain-opacity: 0.06;
+  transition:
+    --accent 0.7s,
+    --accent-strong 0.7s,
+    --accent-2 0.7s;
+}
+:root,
+[data-tone] {
+  --glow: 0 0 60px -10px color-mix(in oklab, var(--accent-strong) 70%, transparent);
+}
+/* Gemas: accent (texto sobre oscuro, ≥4.5:1), accent-strong (rellenos con texto blanco, ≥4.5:1), accent-2 (brillo) */
+:root,
+[data-tone='amethyst'] {
   --accent: #a78bfa;
   --accent-strong: #7c3aed;
   --accent-2: #e879f9;
   --accent-3: #818cf8;
-  --danger: #fca5a5;
-  --on-accent: #ffffff;
-  --glass: rgb(13 10 24 / 0.62);
-  --shadow: 0 30px 80px -30px rgb(0 0 0 / 0.75);
-  --glow: 0 0 60px -10px color-mix(in oklab, var(--accent-strong) 70%, transparent);
-  --mesh-a: #7c3aed;
-  --mesh-b: #c026d3;
-  --mesh-c: #4f46e5;
-  --mesh-d: #07060d;
-  --grain-opacity: 0.06;
+  --gem-turn: 0deg;
+}
+:root[data-gem='sapphire'],
+[data-tone='sapphire'] {
+  --accent: #93c5fd;
+  --accent-strong: #1d4ed8;
+  --accent-2: #a5b4fc;
+  --accent-3: #c4b5fd;
+  --gem-turn: -62deg;
+}
+:root[data-gem='citrine'],
+[data-tone='citrine'] {
+  --accent: #fcd34d;
+  --accent-strong: #b45309;
+  --accent-2: #fb923c;
+  --accent-3: #fde68a;
+  --gem-turn: 128deg;
+}
+:root[data-gem='jade'],
+[data-tone='jade'] {
+  --accent: #86efac;
+  --accent-strong: #047857;
+  --accent-2: #bef264;
+  --accent-3: #a7f3d0;
+  --gem-turn: -130deg;
+}
+:root[data-gem='rose'],
+[data-tone='rose'] {
+  --accent: #f9a8d4;
+  --accent-strong: #be185d;
+  --accent-2: #f472b6;
+  --accent-3: #fda4af;
+  --gem-turn: 52deg;
+}
+:root[data-gem='topaz'],
+[data-tone='topaz'] {
+  --accent: #fdba74;
+  --accent-strong: #c2410c;
+  --accent-2: #fbbf24;
+  --accent-3: #fda4af;
+  --gem-turn: 108deg;
 }
 
 @theme inline {
@@ -146,7 +217,11 @@
 
 /* Gradiente de marca (botones, íconos activos, cortinas) */
 @utility bg-brand {
-  background-image: linear-gradient(135deg, var(--accent-strong), #a21caf);
+  background-image: linear-gradient(
+    135deg,
+    var(--accent-strong),
+    color-mix(in oklab, var(--accent-strong) 70%, var(--accent-2))
+  );
 }
 
 /* Halo radial decorativo. --p controla la intensidad. */
@@ -159,7 +234,7 @@
   );
 }
 @utility aura-fuchsia {
-  --aura-color: #c026d3;
+  --aura-color: var(--accent-2);
 }
 
 /* Borde con gradiente cónico: tenue en reposo, gira y se enciende en hover/focus */
@@ -620,6 +695,19 @@ dialog.modal[open]::backdrop {
   -webkit-text-stroke: 1.5px color-mix(in oklab, var(--accent) 80%, transparent);
 }
 
+/* Banda de gemas: los rellenos de cada gema (todos ≥4.5:1 con texto blanco) desfilan despacio */
+@keyframes gem-flow {
+  to {
+    background-position: 100% 0;
+  }
+}
+.gem-band {
+  background: linear-gradient(90deg, #7c3aed, #be185d, #b45309, #047857, #1d4ed8, #7c3aed, #be185d)
+    0 0 / 400% 100%;
+  box-shadow: 0 24px 60px -24px rgb(0 0 0 / 0.8);
+  animation: gem-flow 40s linear infinite alternate;
+}
+
 /* ---------- Títulos que se revelan palabra por palabra ---------- */
 .split-word {
   display: inline-block;
@@ -659,17 +747,224 @@ dialog.modal[open]::backdrop {
   animation: ping-soft 2.4s ease-out infinite;
 }
 
-/* ---------- Avatar flotante ---------- */
+/* ---------- Avatar vivo ----------
+ * Flota, respira, sus ojos brillan y parpadean, y el cristal late.
+ * initAvatarLife (enhance.ts) mueve --lx/--ly (mirada, -1..1), --charge (interés, 0..1) y --energy (scroll, 0..1).
+ * Todo queda en pausa mientras el avatar no se ve (.in-view). */
 @keyframes float {
   50% {
     transform: translateY(-14px) rotate(-1.2deg);
   }
 }
+@keyframes breathe {
+  50% {
+    transform: scale(1.012, 1.02);
+  }
+}
+@keyframes heartbeat {
+  0%,
+  44%,
+  100% {
+    transform: scale(1);
+  }
+  10% {
+    transform: scale(1.28);
+  }
+  20% {
+    transform: scale(1.02);
+  }
+  30% {
+    transform: scale(1.18);
+  }
+}
+@keyframes blink {
+  0%,
+  93%,
+  100% {
+    transform: scaleY(1);
+  }
+  95.5% {
+    transform: scaleY(0.08);
+  }
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) rotate(0deg) scale(0.6);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(90deg) scale(1);
+    opacity: 1;
+  }
+}
+@keyframes flash {
+  from {
+    transform: scale(3.2);
+    opacity: 1;
+  }
+}
+.avatar-rig {
+  --lx: 0;
+  --ly: 0;
+  --charge: 0;
+  --energy: 0;
+}
 .avatar-float {
   animation: float 6s ease-in-out infinite paused;
 }
-.in-view > .avatar-float {
+.avatar-breathe {
+  position: relative;
+  transform-origin: 50% 100%;
+  animation: breathe 4.4s ease-in-out infinite paused;
+}
+.avatar-crystal,
+.avatar-eye {
+  position: absolute;
+  border-radius: 50%;
+  translate: -50% -50%;
+  mix-blend-mode: screen;
+}
+.avatar-crystal {
+  width: var(--crystal-size, 38%);
+  aspect-ratio: 1;
+  background: radial-gradient(
+    closest-side,
+    rgb(255 255 255 / 0.95),
+    color-mix(in oklab, var(--accent-2) 75%, transparent) 14%,
+    color-mix(in oklab, var(--accent) 42%, transparent) 38%,
+    color-mix(in oklab, var(--accent-strong) 14%, transparent) 66%,
+    transparent
+  );
+  opacity: calc(0.45 + var(--charge) * 0.45 + var(--energy) * 0.35);
+  scale: calc(0.7 + var(--charge) * 0.45 + var(--energy) * 0.3);
+  transition:
+    opacity 0.5s,
+    scale 0.5s var(--ease-out-expo);
+  animation: heartbeat calc(2.8s - var(--charge) * 1.2s) ease-in-out infinite paused;
+}
+/* Destello de cuatro puntas en el centro del cristal */
+.avatar-crystal::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 34%;
+  aspect-ratio: 1;
+  background: #fff;
+  clip-path: polygon(50% 0, 58% 42%, 100% 50%, 58% 58%, 50% 100%, 42% 58%, 0 50%, 42% 42%);
+  animation: twinkle 3.2s ease-in-out infinite paused;
+}
+.avatar-eye {
+  width: var(--eye, 4.4%);
+  aspect-ratio: 1;
+  background: radial-gradient(
+    closest-side,
+    #fff 0 18%,
+    color-mix(in oklab, var(--accent-2) 60%, white) 34%,
+    color-mix(in oklab, var(--accent-2) 45%, transparent) 64%,
+    transparent
+  );
+  translate: calc(-50% + var(--lx) * 26%) calc(-50% + var(--ly) * 20%);
+  opacity: calc(0.7 + var(--charge) * 0.3);
+  animation: blink 5.8s infinite paused;
+}
+/* El ojo derecho parpadea un instante después, como un parpadeo real */
+.avatar-eye + .avatar-eye {
+  animation-delay: 0.04s;
+}
+.in-view .avatar-float,
+.in-view .avatar-breathe,
+.in-view .avatar-crystal,
+.in-view .avatar-crystal::after,
+.in-view .avatar-eye {
   animation-play-state: running;
+}
+/* Al tocar el cristal: un destello que se expande */
+.is-burst .avatar-crystal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklab, var(--accent-2) 70%, transparent),
+    transparent
+  );
+  opacity: 0;
+  animation: flash 0.8s var(--ease-out-expo);
+}
+.crystal-shard {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 9px;
+  height: 14px;
+  background: linear-gradient(135deg, white, var(--accent) 45%, var(--accent-strong));
+  clip-path: polygon(50% 0, 100% 35%, 50% 100%, 0 35%);
+  filter: drop-shadow(0 0 6px var(--accent-2));
+  pointer-events: none;
+}
+/* Globo de diálogo del avatar del hero */
+.speech {
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 1.1rem 1.1rem 0.25rem 1.1rem;
+  background: color-mix(in oklab, var(--surface) 88%, var(--accent-strong));
+  box-shadow: 0 10px 40px -12px var(--accent-strong);
+  font-size: 0.95rem;
+  line-height: 1.35;
+  color: var(--fg);
+  transform-origin: 100% 100%;
+  transition:
+    opacity 0.3s,
+    transform 0.5s var(--ease-out-expo);
+}
+.speech.is-hidden {
+  opacity: 0;
+  transform: scale(0.6) translateY(10px);
+}
+/* Logo: el cristal brilla y late despacio */
+.logo-crystal::before {
+  content: '';
+  position: absolute;
+  inset: -30%;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklab, var(--accent-strong) 60%, transparent),
+    transparent
+  );
+  animation: core-pulse 3s ease-in-out infinite;
+}
+.logo-crystal > svg {
+  position: relative;
+  filter: hue-rotate(var(--gem-turn)) drop-shadow(0 0 6px rgb(232 121 249 / 0.6));
+  transition: filter 0.7s;
+}
+/* El dibujo es gris: girar el tono solo cambia el color del cristal y los ojos */
+.avatar-breathe img {
+  filter: hue-rotate(var(--gem-turn));
+}
+
+/* ---------- Transición entre páginas (View Transitions; router.ts la activa) ---------- */
+@keyframes page-out {
+  to {
+    opacity: 0;
+    transform: translateY(-2.5rem) scale(0.98);
+  }
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(3.5rem);
+  }
+}
+::view-transition-old(root) {
+  animation: page-out 0.35s var(--ease-out-expo) both;
+}
+::view-transition-new(root) {
+  animation: page-in 0.7s var(--ease-out-expo) both;
 }
 
 /* ---------- Movimiento reducido ---------- */

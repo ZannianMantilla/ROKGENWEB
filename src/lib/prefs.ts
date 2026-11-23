@@ -4,7 +4,7 @@
  * El script inline de index.html ya aplica `lang` antes del primer paint.
  */
 import { useSyncExternalStore } from 'react';
-import { seo, type Lang } from '../data/content';
+import type { Lang } from '../data/content';
 
 function createStore<T>(read: () => T, server: T) {
   const listeners = new Set<() => void>();
@@ -38,10 +38,6 @@ const langStore = createStore<Lang>(
 export function setLang(lang: Lang) {
   const root = document.documentElement;
   root.lang = lang;
-  document.title = seo.title[lang];
-  document
-    .querySelector('meta[name="description"]')
-    ?.setAttribute('content', seo.description[lang]);
   save('lang', lang);
   langStore.emit();
 }

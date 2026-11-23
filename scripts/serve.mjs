@@ -27,15 +27,34 @@ const types = {
 };
 const compressible = /^(text\/|application\/(json|xml|manifest)|image\/svg)/;
 
+/** /sobre-mi → dist/sobre-mi/index.html (como cleanUrls en Vercel); si no existe, 404.html. */
+async function resolve(pathname) {
+  const candidates = pathname.endsWith('/')
+    ? [`${pathname}index.html`]
+    : extname(pathname)
+      ? [pathname]
+      : [pathname, `${pathname}/index.html`];
+  for (const c of candidates) {
+    const file = join(dist, normalize(c));
+    if (!file.startsWith(dist + sep)) return null;
+    try {
+      if ((await stat(file)).isFile()) return { file, status: 200 };
+    } catch {
+      /* siguiente candidato */
+    }
+  }
+  return { file: join(dist, '404.html'), status: 404 };
+}
+
 createServer(async (req, res) => {
   const pathname = decodeURIComponent(new URL(req.url, 'http://x').pathname);
-  const file = join(dist, normalize(pathname.endsWith('/') ? `${pathname}index.html` : pathname));
-  if (!file.startsWith(dist + sep)) {
+  const hit = await resolve(pathname);
+  if (!hit) {
     res.writeHead(403).end();
     return;
   }
+  const { file, status } = hit;
   try {
-    if (!(await stat(file)).isFile()) throw new Error('not a file');
     let body = await readFile(file);
     const type = types[extname(file)] || 'application/octet-stream';
     const headers = {
@@ -53,7 +72,7 @@ createServer(async (req, res) => {
       body = gzipSync(body);
       headers['Content-Encoding'] = 'gzip';
     }
-    res.writeHead(200, headers).end(body);
+    res.writeHead(status, headers).end(body);
   } catch {
     res.writeHead(404, { 'Content-Type': 'text/plain' }).end('404');
   }
