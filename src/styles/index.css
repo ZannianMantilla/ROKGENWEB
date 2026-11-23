@@ -3,101 +3,32 @@
 @import 'tailwindcss';
 
 /* ---------- Tokens (solo tema oscuro) ----------
- * Base grafito neutra, como el lápiz del avatar. El color lo pone la gema:
- * cada sección declara data-tone y redefine los acentos; la gema de la sección visible
- * se copia a <html data-gem> (enhance.ts), así el logo, el cursor y la barra la siguen.
- * --gem-turn gira el tono del cristal y los ojos del avatar (el gris del dibujo no cambia). */
-@property --accent {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: #a78bfa;
-}
-@property --accent-strong {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: #7c3aed;
-}
-@property --accent-2 {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: #e879f9;
-}
+ * Morado (marca) y fucsia dominan; el ámbar es el tercer color, solo en detalles.
+ * Juntos recuerdan a la ametrina, la piedra que mezcla amatista y citrino. */
 :root {
   color-scheme: dark;
-  --bg: #0b0b0e;
-  --bg-soft: #101014;
-  --surface: #151519;
-  --surface-2: #1e1e24;
-  --line: rgb(255 255 255 / 0.08);
-  --line-strong: rgb(255 255 255 / 0.15);
-  --fg: #f3f3f6;
-  --muted: #a9a9b4;
-  --danger: #fca5a5;
-  --on-accent: #ffffff;
-  --glass: rgb(15 15 19 / 0.62);
-  --shadow: 0 30px 80px -30px rgb(0 0 0 / 0.75);
-  --mesh-a: #7c3aed;
-  --mesh-b: #be185d;
-  --mesh-c: #b45309;
-  --mesh-d: #0b0b0e;
-  --grain-opacity: 0.06;
-  transition:
-    --accent 0.7s,
-    --accent-strong 0.7s,
-    --accent-2 0.7s;
-}
-:root,
-[data-tone] {
-  --glow: 0 0 60px -10px color-mix(in oklab, var(--accent-strong) 70%, transparent);
-}
-/* Gemas: accent (texto sobre oscuro, ≥4.5:1), accent-strong (rellenos con texto blanco, ≥4.5:1), accent-2 (brillo) */
-:root,
-[data-tone='amethyst'] {
+  --bg: #07060d;
+  --bg-soft: #0c0a16;
+  --surface: #110e1d;
+  --surface-2: #1b1530;
+  --line: rgb(196 181 253 / 0.09);
+  --line-strong: rgb(196 181 253 / 0.18);
+  --fg: #f1eefb;
+  --muted: #aba4c4;
   --accent: #a78bfa;
   --accent-strong: #7c3aed;
   --accent-2: #e879f9;
-  --accent-3: #818cf8;
-  --gem-turn: 0deg;
-}
-:root[data-gem='sapphire'],
-[data-tone='sapphire'] {
-  --accent: #93c5fd;
-  --accent-strong: #1d4ed8;
-  --accent-2: #a5b4fc;
-  --accent-3: #c4b5fd;
-  --gem-turn: -62deg;
-}
-:root[data-gem='citrine'],
-[data-tone='citrine'] {
-  --accent: #fcd34d;
-  --accent-strong: #b45309;
-  --accent-2: #fb923c;
-  --accent-3: #fde68a;
-  --gem-turn: 128deg;
-}
-:root[data-gem='jade'],
-[data-tone='jade'] {
-  --accent: #86efac;
-  --accent-strong: #047857;
-  --accent-2: #bef264;
-  --accent-3: #a7f3d0;
-  --gem-turn: -130deg;
-}
-:root[data-gem='rose'],
-[data-tone='rose'] {
-  --accent: #f9a8d4;
-  --accent-strong: #be185d;
-  --accent-2: #f472b6;
-  --accent-3: #fda4af;
-  --gem-turn: 52deg;
-}
-:root[data-gem='topaz'],
-[data-tone='topaz'] {
-  --accent: #fdba74;
-  --accent-strong: #c2410c;
-  --accent-2: #fbbf24;
-  --accent-3: #fda4af;
-  --gem-turn: 108deg;
+  --accent-3: #fbbf24;
+  --danger: #fca5a5;
+  --on-accent: #ffffff;
+  --glass: rgb(13 10 24 / 0.62);
+  --shadow: 0 30px 80px -30px rgb(0 0 0 / 0.75);
+  --glow: 0 0 60px -10px color-mix(in oklab, var(--accent-strong) 70%, transparent);
+  --mesh-a: #7c3aed;
+  --mesh-b: #c026d3;
+  --mesh-c: #d97706;
+  --mesh-d: #07060d;
+  --grain-opacity: 0.06;
 }
 
 @theme inline {
@@ -191,20 +122,12 @@
   border-radius: 1.5rem;
 }
 
+/* Estático a propósito: animar background-position repinta el texto en cada frame */
 @utility text-gradient {
-  background: linear-gradient(
-    100deg,
-    var(--accent) 0%,
-    var(--accent-2) 30%,
-    var(--accent-3) 55%,
-    var(--accent) 80%,
-    var(--accent-2) 100%
-  );
-  background-size: 200% 100%;
+  background: linear-gradient(100deg, var(--accent), var(--accent-2) 70%, var(--accent-3) 130%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: text-shine 7s linear infinite;
 }
 
 @utility kicker {
@@ -279,12 +202,6 @@
     --angle: 360deg;
   }
 }
-@keyframes text-shine {
-  to {
-    background-position: -200% 0;
-  }
-}
-
 /* ---------- Grano ---------- */
 .grain {
   pointer-events: none;
@@ -695,19 +612,6 @@ dialog.modal[open]::backdrop {
   -webkit-text-stroke: 1.5px color-mix(in oklab, var(--accent) 80%, transparent);
 }
 
-/* Banda de gemas: los rellenos de cada gema (todos ≥4.5:1 con texto blanco) desfilan despacio */
-@keyframes gem-flow {
-  to {
-    background-position: 100% 0;
-  }
-}
-.gem-band {
-  background: linear-gradient(90deg, #7c3aed, #be185d, #b45309, #047857, #1d4ed8, #7c3aed, #be185d)
-    0 0 / 400% 100%;
-  box-shadow: 0 24px 60px -24px rgb(0 0 0 / 0.8);
-  animation: gem-flow 40s linear infinite alternate;
-}
-
 /* ---------- Títulos que se revelan palabra por palabra ---------- */
 .split-word {
   display: inline-block;
@@ -747,9 +651,15 @@ dialog.modal[open]::backdrop {
   animation: ping-soft 2.4s ease-out infinite;
 }
 
+/* Un bloque fuera de pantalla no gasta CPU en sus animaciones en bucle (enhance.ts lo marca) */
+.is-offscreen,
+.is-offscreen * {
+  animation-play-state: paused !important;
+}
+
 /* ---------- Avatar vivo ----------
  * Flota, respira, sus ojos brillan y parpadean, y el cristal late.
- * initAvatarLife (enhance.ts) mueve --lx/--ly (mirada, -1..1), --charge (interés, 0..1) y --energy (scroll, 0..1).
+ * initAvatarLife (enhance.ts) escribe --lx/--ly (mirada, -1..1) y --charge (interés, 0..1); aquí se suavizan.
  * Todo queda en pausa mientras el avatar no se ve (.in-view). */
 @keyframes float {
   50% {
@@ -808,7 +718,6 @@ dialog.modal[open]::backdrop {
   --lx: 0;
   --ly: 0;
   --charge: 0;
-  --energy: 0;
 }
 .avatar-float {
   animation: float 6s ease-in-out infinite paused;
@@ -836,8 +745,8 @@ dialog.modal[open]::backdrop {
     color-mix(in oklab, var(--accent-strong) 14%, transparent) 66%,
     transparent
   );
-  opacity: calc(0.45 + var(--charge) * 0.45 + var(--energy) * 0.35);
-  scale: calc(0.7 + var(--charge) * 0.45 + var(--energy) * 0.3);
+  opacity: calc(0.45 + var(--charge) * 0.45);
+  scale: calc(0.7 + var(--charge) * 0.45);
   transition:
     opacity 0.5s,
     scale 0.5s var(--ease-out-expo);
@@ -867,6 +776,9 @@ dialog.modal[open]::backdrop {
   );
   translate: calc(-50% + var(--lx) * 26%) calc(-50% + var(--ly) * 20%);
   opacity: calc(0.7 + var(--charge) * 0.3);
+  transition:
+    translate 0.35s var(--ease-out-expo),
+    opacity 0.5s;
   animation: blink 5.8s infinite paused;
 }
 /* El ojo derecho parpadea un instante después, como un parpadeo real */
@@ -939,12 +851,7 @@ dialog.modal[open]::backdrop {
 }
 .logo-crystal > svg {
   position: relative;
-  filter: hue-rotate(var(--gem-turn)) drop-shadow(0 0 6px rgb(232 121 249 / 0.6));
-  transition: filter 0.7s;
-}
-/* El dibujo es gris: girar el tono solo cambia el color del cristal y los ojos */
-.avatar-breathe img {
-  filter: hue-rotate(var(--gem-turn));
+  filter: drop-shadow(0 0 6px rgb(232 121 249 / 0.6));
 }
 
 /* ---------- Transición entre páginas (View Transitions; router.ts la activa) ---------- */

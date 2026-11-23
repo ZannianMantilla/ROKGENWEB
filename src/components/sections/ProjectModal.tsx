@@ -4,14 +4,13 @@ import { hero, projects, whatsappLink, type Project } from '../../data/content';
 import { useT } from '../../hooks/useT';
 import { BrandIcon } from '../ui/BrandIcon';
 import { buttonClasses } from '../ui/buttonStyles';
-import { ProjectMockup } from './ProjectMockup';
 import { ProjectGallery } from './ProjectGallery';
 
 type Props = { project: Project; onClose: () => void };
 
 /** Detalle de proyecto en un <dialog> nativo: trampa de foco, Esc y backdrop incluidos. */
 export default function ProjectModal({ project: p, onClose }: Props) {
-  const { t, lang } = useT();
+  const { t } = useT();
   const ref = useRef<HTMLDialogElement>(null);
   const L = projects.labels;
   const gallery = p.gallery ?? [];
@@ -54,13 +53,7 @@ export default function ProjectModal({ project: p, onClose }: Props) {
               className="border-b border-line bg-surface-2/60 p-5 pr-16 sm:p-8 sm:pr-20"
             />
           )}
-          <div className={gallery.length ? '' : 'grid md:grid-cols-[2fr_3fr]'}>
-            {!gallery.length && p.mockup && (
-              <div className="hidden items-center justify-center bg-surface-2/60 p-8 md:flex">
-                <ProjectMockup kind={p.mockup} lang={lang} className="w-full" />
-              </div>
-            )}
-
+          <div>
             <div className="p-7 sm:p-10">
               <p className="font-mono text-xs tracking-wider text-accent-2 uppercase">
                 {p.year} · {t(p.type)}

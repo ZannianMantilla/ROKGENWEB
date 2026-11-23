@@ -24,7 +24,6 @@ export function StackPage() {
 
   return (
     <section
-      data-tone="jade"
       id="stack"
       aria-labelledby="stack-title"
       className={`relative isolate overflow-hidden ${sectionPadding(1)}`}

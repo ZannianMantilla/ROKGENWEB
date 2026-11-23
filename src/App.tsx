@@ -2,7 +2,7 @@ import { useEffect, useRef, type ComponentType } from 'react';
 import { pageSeo, ui } from './data/content';
 import { useT } from './hooks/useT';
 import { loadAnalytics } from './lib/analytics';
-import { ROUTES, useRoute, type RouteId } from './lib/router';
+import { ROUTES, useRoute, withBase, type RouteId } from './lib/router';
 import { Navbar } from './components/layout/Navbar';
 import { ScrollProgress } from './components/layout/ScrollProgress';
 import { Footer } from './components/layout/Footer';
@@ -15,7 +15,6 @@ import { JourneyPage } from './components/pages/JourneyPage';
 import { ContactPage } from './components/pages/ContactPage';
 import { NextPage, NotFound, PageCta } from './components/pages/PageExtras';
 import { BrandSprite } from './components/ui/BrandIcon';
-import { TONES } from './lib/section';
 
 const PAGES: Record<RouteId, ComponentType> = {
   home: HomePage,
@@ -50,7 +49,7 @@ export function App() {
     document.querySelector('meta[property="og:title"]')?.setAttribute('content', t(meta.title));
     const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
     if (canonical && route !== 'notFound')
-      canonical.href = new URL(ROUTES[route], canonical.href).href;
+      canonical.href = new URL(withBase(ROUTES[route]), canonical.href).href;
   }, [route, lang, t]);
 
   // Al navegar, el foco pasa al contenido nuevo para lectores de pantalla y teclado.
@@ -104,7 +103,7 @@ export function App() {
       <BrandSprite />
       <ScrollProgress />
       <Navbar route={route} />
-      <main id="main" tabIndex={-1} className="outline-none" key={route} data-tone={TONES[route]}>
+      <main id="main" tabIndex={-1} className="outline-none" key={route}>
         <Page />
         {!['home', 'contact', 'notFound'].includes(route) && <PageCta />}
         <NextPage current={route} />

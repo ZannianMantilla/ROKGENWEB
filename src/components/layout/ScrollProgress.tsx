@@ -6,20 +6,27 @@ export function ScrollProgress() {
 
   useEffect(() => {
     let frame = 0;
+    let max = 0;
+    // El alto se mide solo cuando cambia: leerlo en cada scroll fuerza un recálculo de estilos.
+    const measure = () => {
+      max = document.documentElement.scrollHeight - innerHeight;
+      onScroll();
+    };
     const update = () => {
       frame = 0;
-      const max = document.documentElement.scrollHeight - innerHeight;
       if (bar.current) bar.current.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
     };
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(update);
     };
-    update();
+    const ro = new ResizeObserver(measure);
+    ro.observe(document.body);
     addEventListener('scroll', onScroll, { passive: true });
-    addEventListener('resize', onScroll);
+    addEventListener('resize', measure);
     return () => {
+      ro.disconnect();
       removeEventListener('scroll', onScroll);
-      removeEventListener('resize', onScroll);
+      removeEventListener('resize', measure);
       cancelAnimationFrame(frame);
     };
   }, []);

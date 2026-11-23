@@ -7,7 +7,6 @@ import { ROUTES } from '../../lib/router';
 
 import { SectionHeading } from '../ui/SectionHeading';
 import { buttonClasses } from '../ui/buttonStyles';
-import { ProjectMockup } from './ProjectMockup';
 import { ClientSites } from './ClientSites';
 import { DeviceFrame } from '../ui/Screenshot';
 
@@ -39,13 +38,12 @@ const ProjectModal = lazy(() => import('./ProjectModal'));
 
 export function Projects({ level = 2, more = false }: SectionProps) {
   const [Sub] = subHeadings(level);
-  const { t, lang } = useT();
+  const { t } = useT();
   const [open, setOpen] = useState<Project | null>(null);
   const L = projects.labels;
 
   return (
     <section
-      data-tone="rose"
       id="projects"
       aria-labelledby="projects-title"
       className={`relative isolate overflow-hidden ${sectionPadding(level)}`}
@@ -95,24 +93,9 @@ export function Projects({ level = 2, more = false }: SectionProps) {
                   />
                   <div data-speed="0.5" className="relative w-full">
                     <div data-pop>
-                      {p.image ? (
-                        <ProjectShots project={p} priority={i === 0} />
-                      ) : (
-                        p.mockup && (
-                          <ProjectMockup
-                            kind={p.mockup}
-                            lang={lang}
-                            className="transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:-translate-y-2 group-hover:rotate-[-2deg]"
-                          />
-                        )
-                      )}
+                      <ProjectShots project={p} priority={i === 0} />
                     </div>
                   </div>
-                  {!p.image && (
-                    <span className="absolute bottom-3 left-4 font-mono text-[0.65rem] tracking-wider text-muted uppercase">
-                      {t(L.illustrative)}
-                    </span>
-                  )}
                   <div aria-hidden data-curtain className="absolute inset-0 z-10 bg-brand" />
                 </div>
 

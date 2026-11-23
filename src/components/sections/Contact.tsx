@@ -146,7 +146,6 @@ export function Contact({ level = 2, more = false }: SectionProps) {
 
   return (
     <section
-      data-tone="amethyst"
       id="contact"
       aria-labelledby="contact-title"
       className={`relative overflow-hidden ${sectionPadding(level)}`}

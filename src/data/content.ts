@@ -25,7 +25,7 @@ export const profile = {
   careerStartYear: 2022,
   photo: {
     /** Generado por `npm run images` a partir de public/assets/foto.jpg */
-    base: '/assets/generated/foto',
+    base: `${import.meta.env.BASE_URL}assets/generated/foto`,
     widths: [320, 640, 960],
     width: 960,
     height: 1200,
@@ -97,23 +97,10 @@ export const hero = {
     en: 'Hi Zannián, I saw your portfolio and I’d like to talk about a project.',
   },
   scroll: { es: 'Desliza', en: 'Scroll' },
-  /** Lo que dice el avatar al tocar su cristal (en orden, y vuelve a empezar). */
+  /** Lo que dice el avatar al tocar su cristal. */
   crystal: {
     label: { es: 'Tocar el cristal del avatar', en: 'Tap the avatar’s crystal' },
-    lines: {
-      es: [
-        '¡Hola! Soy Zannián.',
-        'Hago apps, sitios web y análisis de datos.',
-        '¿Tienes una idea? Cuéntamela.',
-        'Este cristal late cuando algo te interesa.',
-      ],
-      en: [
-        'Hi! I’m Zannián.',
-        'I build apps, websites and data analysis.',
-        'Got an idea? Tell me about it.',
-        'This crystal beats when something catches your eye.',
-      ],
-    },
+    line: { es: '¿Qué hay pa’ hacer?', en: 'So, what are we building?' },
   },
   headlineLabel: {
     es: 'Zannián Mantilla Celis — Desarrollador de Software | Frontend | Mobile | Análisis de Datos | Soporte TI',
@@ -351,8 +338,6 @@ export const stack = {
 /* ------------------------------------------------------------------ */
 /* Proyectos                                                            */
 /* ------------------------------------------------------------------ */
-export type MockupKind = 'math';
-
 export type Project = {
   id: string;
   title: string;
@@ -366,13 +351,12 @@ export type Project = {
   role?: Localized;
   demoUrl?: string;
   repoUrl?: string;
-  /** Captura principal. Si no hay, se muestra el mockup ilustrativo. */
-  image?: Shot;
+  /** Captura principal (tarjeta del inicio). */
+  image: Shot;
   /** Capturas que se ven en el detalle del proyecto. */
   gallery?: Shot[];
   /** Servicios a los que corresponde (se cruzan en la página de servicios). */
   services?: ServiceIcon[];
-  mockup?: MockupKind;
 };
 
 /** Captura de pantalla real, en /public. Se sirve `${base}-${ancho}.webp` para cada ancho. */
@@ -402,7 +386,7 @@ export type ClientSite = {
 
 const siteShots = (id: string, name: string) => ({
   desktop: {
-    base: `/assets/projects/${id}`,
+    base: `${import.meta.env.BASE_URL}assets/projects/${id}`,
     widths: [720, 1440],
     width: 1440,
     height: 900,
@@ -410,7 +394,7 @@ const siteShots = (id: string, name: string) => ({
     device: 'desktop' as const,
   },
   mobile: {
-    base: `/assets/projects/${id}-movil`,
+    base: `${import.meta.env.BASE_URL}assets/projects/${id}-movil`,
     widths: [390, 780],
     width: 780,
     height: 1688,
@@ -432,7 +416,7 @@ const projectShot = (
 ): Shot =>
   device === 'desktop'
     ? {
-        base: `/assets/projects/${project}-${name}`,
+        base: `${import.meta.env.BASE_URL}assets/projects/${project}-${name}`,
         widths: [720, 1440],
         width: 1440,
         height: 900,
@@ -440,7 +424,7 @@ const projectShot = (
         device,
       }
     : {
-        base: `/assets/projects/${project}-${name}`,
+        base: `${import.meta.env.BASE_URL}assets/projects/${project}-${name}`,
         widths: [390, 780],
         width: 780,
         height: 1688,
@@ -479,6 +463,34 @@ const gymrockShots = {
     {
       es: 'Vista móvil del inicio con barra de navegación inferior',
       en: 'Mobile view of the home screen with bottom navigation bar',
+    },
+    'mobile',
+  ),
+};
+
+const matemageShots = {
+  inicio: projectShot('matemage', 'inicio', {
+    es: 'Inicio de MATEMAGE: elegir operación (sumas, restas, multiplicar o dividir) y nivel',
+    en: 'MATEMAGE start screen: pick an operation (add, subtract, multiply or divide) and a level',
+  }),
+  acierto: projectShot('matemage', 'acierto', {
+    es: 'Pregunta de multiplicación respondida bien, con el mago frente al monstruo',
+    en: 'Multiplication question answered correctly, with the wizard facing the monster',
+  }),
+  error: projectShot('matemage', 'error', {
+    es: 'Respuesta equivocada: se marca la correcta y una pista explica por qué',
+    en: 'Wrong answer: the right one is highlighted and a hint explains why',
+  }),
+  final: projectShot('matemage', 'final', {
+    es: 'Fin de la ronda con estrellas, repaso de los errores y opción de practicarlos',
+    en: 'End of the round with stars, a review of the mistakes and an option to practice them',
+  }),
+  movil: projectShot(
+    'matemage',
+    'movil',
+    {
+      es: 'Vista móvil de una pregunta con la pista tras un error',
+      en: 'Mobile view of a question with the hint after a mistake',
     },
     'mobile',
   ),
@@ -569,7 +581,6 @@ export const projects = {
     highlights: { es: 'Puntos clave', en: 'Highlights' },
     demo: { es: 'Ver demo', en: 'Live demo' },
     repo: { es: 'Ver código', en: 'Source code' },
-    illustrative: { es: 'Vista ilustrativa', en: 'Illustrative preview' },
     screenshots: { es: 'Capturas', en: 'Screenshots' },
     showShot: { es: 'Ver captura', en: 'Show screenshot' },
     sitesTitle: { es: 'Sitios web para clientes', en: 'Client websites' },
@@ -727,24 +738,44 @@ export const projects = {
       services: ['mobile', 'web'],
     },
     {
-      id: 'mategame',
-      title: 'MATEGAME',
+      id: 'matemage',
+      title: 'MATEMAGE',
       year: 2024,
       type: { es: 'Videojuego educativo', en: 'Educational game' },
       summary: {
-        es: 'Videojuego matemático educativo para niños, con interfaz amigable y enfoque pedagógico.',
-        en: 'Educational math game for kids, with a friendly interface and a pedagogical approach.',
+        es: 'Juego web para que niñas y niños practiquen las cuatro operaciones lanzando hechizos contra un monstruo.',
+        en: 'Web game where kids practice the four basic operations by casting spells at a monster.',
       },
       description: {
-        es: 'MATEGAME es un videojuego para que niñas y niños practiquen matemáticas jugando. La interfaz se diseñó para ser amigable y el contenido sigue un enfoque pedagógico.',
-        en: 'MATEGAME is a game that lets kids practice math while playing. The interface was designed to be friendly and the content follows a pedagogical approach.',
+        es: 'MATEMAGE es un videojuego para que niñas y niños practiquen matemáticas jugando. Se elige la operación (sumas, restas, multiplicaciones o divisiones) y el nivel (Aprendiz, Hechicero o Archimago), y cada ronda trae diez operaciones con cuatro opciones. Si la respuesta es incorrecta, el juego muestra la correcta y explica cómo llegar a ella. Al final da estrellas según los aciertos, repasa los errores y permite practicar solo esos.',
+        en: 'MATEMAGE is a game that lets kids practice math while playing. They pick an operation (addition, subtraction, multiplication or division) and a level (Apprentice, Sorcerer or Archmage), and each round brings ten problems with four choices. After a wrong answer, the game shows the right one and explains how to get there. At the end it awards stars based on correct answers, reviews the mistakes and lets kids practice just those.',
       },
       highlights: {
-        es: ['Enfoque pedagógico', 'Interfaz amigable para niños', 'Aprender jugando'],
-        en: ['Pedagogical approach', 'Kid-friendly interface', 'Learning through play'],
+        es: [
+          'Cuatro operaciones y tres niveles',
+          'Pistas que explican cada error',
+          'Repaso y práctica de los errores',
+          'Sin restas negativas ni divisiones con decimales',
+          'Se juega solo con el teclado',
+        ],
+        en: [
+          'Four operations and three levels',
+          'Hints that explain every mistake',
+          'Review and practice of mistakes',
+          'No negative subtractions or decimal divisions',
+          'Fully playable with the keyboard',
+        ],
       },
-      stack: [], // TODO: agrega las tecnologías usadas
-      mockup: 'math',
+      stack: ['HTML', 'CSS', 'JavaScript'],
+      services: ['web'],
+      image: matemageShots.inicio,
+      gallery: [
+        matemageShots.inicio,
+        matemageShots.acierto,
+        matemageShots.error,
+        matemageShots.final,
+        matemageShots.movil,
+      ],
     },
   ]),
 };

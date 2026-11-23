@@ -188,7 +188,7 @@ export function enhancePage(): () => void {
         }
       }),
 
-    /* Proyectos: cortina que destapa la vista y mockup que entra con giro */
+    /* Proyectos: cortina que destapa la vista y captura que entra con giro */
     () =>
       ctx.add(() => {
         gsap.utils.toArray<HTMLElement>('[data-curtain]').forEach((el) => {
@@ -239,30 +239,13 @@ export function enhancePage(): () => void {
       if (els.length) cleanups.push(initAvatarLife(els, finePointer));
     },
 
-    /* Gema activa: la sección en el centro de la pantalla tiñe el logo, el cursor y la barra
-       (<html data-gem>), y su avatar destella al llegar. */
+    /* Las animaciones CSS en bucle de un bloque se pausan mientras no se ve (ver .is-offscreen) */
     () => {
-      const root = document.documentElement;
-      const triggers = gsap.utils.toArray<HTMLElement>('section[data-tone]').map((el) =>
-        ScrollTrigger.create({
-          trigger: el,
-          start: 'top 55%',
-          end: 'bottom 55%',
-          onToggle: (self) => {
-            if (!self.isActive || root.dataset.gem === el.dataset.tone) return;
-            root.dataset.gem = el.dataset.tone;
-            const avatar = el.querySelector<HTMLElement>('[data-avatar]');
-            if (!avatar) return;
-            avatar.classList.remove('is-burst');
-            void avatar.offsetWidth; // reinicia la animación del destello
-            avatar.classList.add('is-burst');
-          },
-        }),
-      );
-      cleanups.push(() => {
-        triggers.forEach((t) => t.kill());
-        delete root.dataset.gem;
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries) e.target.classList.toggle('is-offscreen', !e.isIntersecting);
       });
+      document.querySelectorAll('#main > *, #root > footer').forEach((el) => io.observe(el));
+      cleanups.push(() => io.disconnect());
     },
 
     /* Bandas de texto: se inclinan según la velocidad del scroll */
@@ -337,48 +320,46 @@ function initCursor() {
  * - Con mouse: la mirada y el cuerpo siguen al cursor, y el cristal se enciende al acercarse.
  * - Sin mouse (o con el cursor quieto): mira a su alrededor cada pocos segundos.
  * - Al pasar por un enlace o botón (o enfocarlo con teclado) el cristal late más rápido.
- * - El scroll rápido le da energía al cristal.
  * Solo escribe variables CSS y transform en los avatares visibles (ver "Avatar vivo" en index.css). */
 function initAvatarLife(avatars: HTMLElement[], finePointer: boolean) {
   const rigs = avatars.map((el) => {
     const rig = el.querySelector<HTMLElement>('.avatar-rig')!;
     const crystal = el.querySelector<HTMLElement>('[data-crystal]')!;
-    gsap.set(rig, {
-      transformPerspective: 800,
-      '--lx': 0,
-      '--ly': 0,
-      '--charge': 0,
-      '--energy': 0,
-    });
-    const to = (prop: string, duration: number) =>
-      gsap.quickTo(rig, prop, { duration, ease: 'power3' });
+    gsap.set(rig, { transformPerspective: 800 });
+    // Las variables se escriben directo y las suaviza CSS: animarlas con GSAP lee getComputedStyle
+    // en cada cambio y fuerza un recálculo de estilos por frame.
+    const set = (name: string, value: number) => rig.style.setProperty(name, value.toFixed(3));
     return {
       el,
       crystal,
       near: 0,
-      lx: to('--lx', 0.35),
-      ly: to('--ly', 0.35),
-      rx: to('rotationX', 1.1),
-      ry: to('rotationY', 1.1),
-      charge: to('--charge', 0.6),
-      energy: to('--energy', 0.5),
+      charge: -1,
+      look(lx: number, ly: number) {
+        set('--lx', lx);
+        set('--ly', ly);
+      },
+      rx: gsap.quickTo(rig, 'rotationX', { duration: 1.1, ease: 'power3' }),
+      ry: gsap.quickTo(rig, 'rotationY', { duration: 1.1, ease: 'power3' }),
+      setCharge(v: number) {
+        if (v === this.charge) return;
+        this.charge = v;
+        set('--charge', v);
+      },
     };
   });
   const live = () => rigs.filter((r) => r.el.classList.contains('in-view'));
   const clamp = gsap.utils.clamp(-1, 1);
   let hover = 0;
-  const applyCharge = () => live().forEach((r) => r.charge(Math.max(hover, r.near)));
+  const applyCharge = () =>
+    live().forEach((r) => r.setCharge(Math.round(Math.max(hover, r.near) * 20) / 20));
 
   /* Mira hacia un punto de la pantalla */
   const lookAt = (x: number, y: number) => {
     for (const r of live()) {
       const box = r.crystal.getBoundingClientRect();
-      const cx = box.left + box.width / 2;
-      const cy = box.top + box.height / 2;
-      const dx = x - cx;
-      const dy = y - cy;
-      r.lx(clamp(dx / 320));
-      r.ly(clamp(dy / 320));
+      const dx = x - (box.left + box.width / 2);
+      const dy = y - (box.top + box.height / 2);
+      r.look(clamp(dx / 320), clamp(dy / 320));
       r.ry(clamp(dx / 900) * 9);
       r.rx(clamp(dy / 900) * -6);
       r.near = gsap.utils.clamp(0, 1, 1 - Math.hypot(dx, dy) / 280);
@@ -392,8 +373,7 @@ function initAvatarLife(avatars: HTMLElement[], finePointer: boolean) {
     for (const r of live()) {
       const lx = gsap.utils.random(-0.8, 0.8);
       const ly = gsap.utils.random(-0.5, 0.6);
-      r.lx(lx);
-      r.ly(ly);
+      r.look(lx, ly);
       r.ry(lx * 5);
       r.rx(ly * -3);
     }
@@ -418,23 +398,11 @@ function initAvatarLife(avatars: HTMLElement[], finePointer: boolean) {
     applyCharge();
   };
 
-  let rest = 0;
-  const scroll = ScrollTrigger.create({
-    onUpdate: (self) => {
-      const v = gsap.utils.clamp(0, 1, Math.abs(self.getVelocity()) / 2500);
-      live().forEach((r) => r.energy(v));
-      clearTimeout(rest);
-      rest = window.setTimeout(() => rigs.forEach((r) => r.energy(0)), 160);
-    },
-  });
-
   if (finePointer) addEventListener('pointermove', onMove, { passive: true });
   document.addEventListener('pointerover', onOver, { passive: true });
   document.addEventListener('focusin', onOver);
   return () => {
     idle?.kill();
-    scroll.kill();
-    clearTimeout(rest);
     cancelAnimationFrame(frame);
     removeEventListener('pointermove', onMove);
     document.removeEventListener('pointerover', onOver);

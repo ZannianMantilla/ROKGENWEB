@@ -1,7 +1,7 @@
 # Portafolio · Zannián Mantilla Celis
 
 Portafolio multipágina: Vite + React 19 + TypeScript + Tailwind CSS 4 + GSAP/ScrollTrigger + Lenis.
-Bilingüe (ES/EN), tema oscuro grafito donde cada sección tiene su gema: amatista (inicio y contacto), zafiro (sobre mí), citrino (servicios), jade (stack), cuarzo rosa (proyectos) y topacio (trayectoria). Al hacer scroll, el logo, el cursor, la barra de progreso y el cristal del avatar toman la gema de la sección visible. Las gemas están en `index.css` (sección Tokens) y la de cada página en `TONES` (`src/lib/section.ts`). Cada página se prerenderiza en el build para SEO y velocidad.
+Bilingüe (ES/EN), tema oscuro con morado y fucsia como colores de marca, y ámbar como tercer color en los detalles (tokens en `src/styles/index.css`).
 
 ## Páginas
 
@@ -41,9 +41,7 @@ Bilingüe (ES/EN), tema oscuro grafito donde cada sección tiene su gema: amatis
 
 - Cada texto traducible es `{ es: '...', en: '...' }`, con los dos idiomas lado a lado.
 - `profile`: correo, WhatsApp, GitHub, LinkedIn y año de inicio para el contador de experiencia.
-- `projects.items`: cada proyecto acepta `stack`, `role`, `demoUrl`, `repoUrl` e `image`.
-  - Los campos vacíos no se muestran.
-  - Mientras no haya `image`, se muestra un mockup ilustrativo dibujado en CSS, con la etiqueta "Vista ilustrativa".
+- `projects.items`: cada proyecto lleva `image` (obligatoria) y acepta `gallery`, `stack`, `role`, `demoUrl` y `repoUrl`. Los campos vacíos no se muestran.
 - `journey`: experiencia, educación, cursos e idiomas.
 - Busca `TODO` en ese archivo para ver lo que falta.
 
@@ -64,7 +62,7 @@ Las ilustraciones del personaje están en `AVATAR/`. `npm run images` les quita 
 | `pulgar arriba.png`     | Trayectoria                            |
 | `contacto.png`          | Contacto (asomado sobre el formulario) |
 
-**El avatar está vivo.** Flota y respira. Sus ojos brillan, parpadean y siguen al cursor, y el cristal del colgante late: más fuerte cuando el cursor se acerca o pasa por un enlace, y con el scroll rápido. En el hero, al tocar el cristal salen esquirlas y el avatar dice una frase (`hero.crystal` en `content.ts`). El cristal también es el logo y el favicon (`src/components/ui/Crystal.tsx`).
+**El avatar está vivo.** Flota y respira. Sus ojos brillan, parpadean y siguen al cursor, y el cristal del colgante late: más fuerte cuando el cursor se acerca o pasa por un enlace. En el hero, al tocar el cristal salen esquirlas y el avatar pregunta "¿Qué hay pa’ hacer?" (`hero.crystal` en `content.ts`). El cristal también es el logo y el favicon (`src/components/ui/Crystal.tsx`).
 
 - Las posiciones de ojos y cristal de cada ilustración están en `AVATARS` (`src/components/ui/Avatar.tsx`), en % de la imagen recortada. Si cambias una ilustración, vuelve a medirlas.
 - El movimiento está en `initAvatarLife` (`src/lib/enhance.ts`) y en la sección "Avatar vivo" de `index.css`.
@@ -81,7 +79,7 @@ Las capturas van en `public/assets/projects/` como WebP, con el ancho en el nomb
 
 Toma como ejemplo `adsolearnShot()` en `content.ts`. Cada captura lleva su texto alternativo en ES/EN.
 
-Las capturas actuales de **ADSOLEARN** salieron de su modo demo (`D:\YO\Proyectos\Proyecto SENA Web`). Las de **GYMROCK** salieron de `D:\YO\Proyectos\GymRock Web`, recorriendo la app como usuario nuevo: bienvenida, marcas de 1RM y una sesión registrada. Las de **MAXTRIAGE** salieron de `D:\YO\Proyectos\MAXTRIAGE Web` en modo demo: un paciente crea una solicitud de triage III y el personal la atiende.
+Las capturas actuales de **ADSOLEARN** salieron de su modo demo (`D:\YO\Proyectos\Proyecto SENA Web`). Las de **GYMROCK** salieron de `D:\YO\Proyectos\GymRock Web`, recorriendo la app como usuario nuevo: bienvenida, marcas de 1RM y una sesión registrada. Las de **MAXTRIAGE** salieron de `D:\YO\Proyectos\MAXTRIAGE Web` en modo demo: un paciente crea una solicitud de triage III y el personal la atiende. Las de **MATEMAGE** salieron de `D:\YO\Proyectos\Matemage`, jugando una ronda de multiplicaciones en nivel Hechicero con dos errores.
 
 ### Sitios web para clientes
 
@@ -115,6 +113,16 @@ Ninguna es secreta: todo lo que empieza por `VITE_` termina en el JS público.
 
 ## Desplegar
 
+**GitHub Pages (el actual):** el sitio se publica en https://zannianmantilla.github.io/rokgen/ con `.github/workflows/deploy.yml`, en cada push a `main`.
+
+1. En el repo `ZannianMantilla/rokgen`: *Settings → Pages → Source: GitHub Actions*.
+2. (Opcional) En *Settings → Secrets and variables → Actions → Variables* agrega `VITE_FORM_ENDPOINT` y, si los usas, `VITE_PLAUSIBLE_DOMAIN` o `VITE_GA_ID`.
+
+- El sitio vive en la subcarpeta `/rokgen/`. El build la recibe en `BASE_PATH` y `SITE_URL`, que ya están en el workflow.
+- En el código, los enlaces internos pasan por `withBase` (`src/lib/router.ts`) y las imágenes usan `import.meta.env.BASE_URL`. Si agregas una ruta o imagen nueva, úsalos igual.
+- Para probar en local con la subcarpeta: `BASE_PATH=/rokgen/ npm run build` (en Git Bash, antepone `MSYS_NO_PATHCONV=1`).
+- GitHub Pages no permite cabeceras propias: la caché inmutable y las cabeceras de seguridad de `vercel.json` solo aplican en Vercel.
+
 **Vercel:** importa el repositorio y listo. `vercel.json` ya define el build, la carpeta `dist`, caché inmutable y cabeceras de seguridad. Agrega `VITE_FORM_ENDPOINT` en *Settings → Environment Variables*. Cuando tengas dominio propio, define también `SITE_URL=https://tudominio.com`.
 
 **Netlify:** igual, con `netlify.toml`.
@@ -127,7 +135,7 @@ src/
   components/
     layout/               Navbar, Footer, ScrollProgress
     pages/                inicio (resumen), una página detallada por sección, cierre, siguiente y 404
-    sections/             Hero (+ órbita), Ticker, About, Services, Stack, Projects (+ modal y mockups), Journey, Contact
+    sections/             Hero (+ órbita), Ticker, About, Services, Stack, Projects (+ modal y galería), Journey, Contact
     ui/                   botones, enlaces internos, capturas, avatar, íconos de marca, typewriter, encabezados
   lib/
     router.ts             rutas y navegación sin recarga (History API + View Transitions)
@@ -168,8 +176,8 @@ En este equipo el antivirus (Kaspersky) inyecta scripts en las páginas de `loca
 - [ ] URL de LinkedIn en `profile.linkedin`.
 - [ ] Endpoint del formulario (`VITE_FORM_ENDPOINT`).
 - [ ] Dominio y `SITE_URL` (canonical, sitemap, Open Graph).
-- [ ] MATEGAME: tecnologías, rol y capturas reales (hoy muestra una ilustración).
-- [ ] Enlaces a demo o repositorio de ADSOLEARN, GYMROCK y MAXTRIAGE cuando se publiquen.
+- [ ] MATEMAGE: rol (hoy no se muestra).
+- [ ] Enlaces a demo o repositorio de ADSOLEARN, GYMROCK, MAXTRIAGE y MATEMAGE cuando se publiquen.
 - [ ] Año de los sitios web para clientes (hoy no se muestra).
 - [ ] Descripción de funciones en "Monitor (ANDES)" y "Soporte Técnico (Solusystem)".
 - [ ] (Opcional) Plausible o GA4.

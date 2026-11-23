@@ -4,7 +4,6 @@ import { useT } from '../../hooks/useT';
 
 /**
  * Bandas cruzadas con los servicios en texto gigante. Decorativas: el contenido real está en Servicios.
- * La banda sólida recorre todas las gemas del sitio, como adelanto de lo que viene.
  */
 export function Ticker() {
   const { t } = useT();
@@ -22,7 +21,7 @@ export function Ticker() {
           {words.map((w) => (
             <li key={w} className="flex items-center gap-8 whitespace-nowrap sm:gap-12">
               <span className={outline ? 'text-outline' : undefined}>{w}</span>
-              <span className={`text-[0.55em] ${outline ? 'text-accent' : 'text-white/80'}`}>
+              <span className={`text-[0.55em] ${outline ? 'text-accent' : 'text-accent-3'}`}>
                 ✦
               </span>
             </li>
@@ -37,7 +36,7 @@ export function Ticker() {
       <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 scale-110 rotate-[3deg] border-y border-line-strong bg-bg-soft py-4 sm:py-5">
         <div data-skew>{band(true, '60s', true)}</div>
       </div>
-      <div className="gem-band relative scale-110 -rotate-2 py-4 text-white sm:py-5">
+      <div className="relative scale-110 -rotate-2 bg-[linear-gradient(90deg,var(--accent-strong),#a21caf,var(--accent-strong))] py-4 text-white shadow-[0_20px_80px_-20px_var(--accent-strong)] sm:py-5">
         <div data-skew>{band(false, '45s')}</div>
       </div>
     </div>

@@ -63,12 +63,11 @@ function burst(host: HTMLElement) {
   }
 }
 
-/** Botón sobre el cristal del avatar: al tocarlo, el cristal estalla y el avatar habla. */
+/** Botón sobre el cristal del avatar: al tocarlo, el cristal estalla y el avatar pregunta qué hay pa' hacer. */
 function CrystalPoke() {
   const { t } = useT();
-  const [line, setLine] = useState(-1);
+  const [talking, setTalking] = useState(false);
   const hide = useRef(0);
-  const lines = t(hero.crystal.lines);
 
   const poke = (e: MouseEvent<HTMLButtonElement>) => {
     const btn = e.currentTarget;
@@ -77,9 +76,9 @@ function CrystalPoke() {
     avatar?.classList.remove('is-burst');
     void avatar?.offsetWidth; // reinicia la animación del destello
     avatar?.classList.add('is-burst');
-    setLine((l) => (l + 1) % lines.length);
+    setTalking(true);
     clearTimeout(hide.current);
-    hide.current = window.setTimeout(() => setLine(-1), 4200);
+    hide.current = window.setTimeout(() => setTalking(false), 4200);
   };
   useEffect(() => () => clearTimeout(hide.current), []);
 
@@ -93,9 +92,9 @@ function CrystalPoke() {
       />
       <p
         aria-live="polite"
-        className={`speech pointer-events-none absolute right-12 bottom-44 w-max max-w-[15rem] ${line < 0 ? 'is-hidden' : ''}`}
+        className={`speech pointer-events-none absolute right-12 bottom-44 w-max max-w-[15rem] ${talking ? '' : 'is-hidden'}`}
       >
-        {line >= 0 && lines[line]}
+        {talking && t(hero.crystal.line)}
       </p>
     </>
   );
@@ -174,7 +173,6 @@ export function Hero() {
 
   return (
     <section
-      data-tone="amethyst"
       id="top"
       aria-labelledby="hero-title"
       className="relative isolate flex min-h-svh items-center overflow-hidden pt-28 pb-20"

@@ -1,5 +1,5 @@
 import type { AnchorHTMLAttributes } from 'react';
-import { handleLinkClick } from '../../lib/router';
+import { handleLinkClick, withBase } from '../../lib/router';
 
 type Props = AnchorHTMLAttributes<HTMLAnchorElement> & { to: string };
 
@@ -7,7 +7,7 @@ type Props = AnchorHTMLAttributes<HTMLAnchorElement> & { to: string };
 export function Link({ to, onClick, ...rest }: Props) {
   return (
     <a
-      href={to}
+      href={withBase(to)}
       onClick={(e) => {
         onClick?.(e);
         handleLinkClick(e);

@@ -70,7 +70,6 @@ export function Journey({ level = 2, more = false, extra }: SectionProps & { ext
   const { t } = useT();
   return (
     <section
-      data-tone="topaz"
       id="experience"
       aria-labelledby="experience-title"
       className={`relative border-y border-line bg-bg-soft ${sectionPadding(level)}`}

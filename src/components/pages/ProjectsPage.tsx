@@ -6,7 +6,6 @@ import { ROUTES } from '../../lib/router';
 import { sectionPadding } from '../../lib/section';
 import { ProjectGallery } from '../sections/ProjectGallery';
 import { ClientSites } from '../sections/ClientSites';
-import { ProjectMockup } from '../sections/ProjectMockup';
 import { BrandIcon } from '../ui/BrandIcon';
 import { Link } from '../ui/Link';
 import { DeviceFrame } from '../ui/Screenshot';
@@ -19,7 +18,6 @@ export function ProjectsPage() {
   const { t } = useT();
   return (
     <section
-      data-tone="rose"
       id="projects"
       aria-labelledby="projects-title"
       className={`relative isolate overflow-x-clip ${sectionPadding(1)}`}
@@ -69,17 +67,8 @@ function ProjectCase({ project: p, index }: { project: Project; index: number })
               sizes="(min-width: 1024px) 40rem, 92vw"
               priority={index === 0}
             />
-          ) : p.image ? (
-            <DeviceFrame shot={p.image} sizes="(min-width: 1024px) 40rem, 92vw" />
           ) : (
-            p.mockup && (
-              <div className="grid place-items-center py-6">
-                <ProjectMockup kind={p.mockup} lang={lang} className="w-full max-w-sm" />
-                <span className="mt-6 font-mono text-[0.65rem] tracking-wider text-muted uppercase">
-                  {t(L.illustrative)}
-                </span>
-              </div>
-            )
+            <DeviceFrame shot={p.image} sizes="(min-width: 1024px) 40rem, 92vw" />
           )}
         </div>
       </div>

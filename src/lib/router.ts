@@ -19,11 +19,18 @@ export const ROUTES = {
 
 export type RouteId = keyof typeof ROUTES | 'notFound';
 
+/** Subcarpeta donde se publica el sitio, sin '/' final ('' en la raíz, '/rokgen' en GitHub Pages). */
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+/** Ruta interna (de ROUTES) → URL real con la subcarpeta. Los enlaces "#ancla" quedan igual. */
+export const withBase = (to: string) => (to.startsWith('/') ? BASE + to : to);
+
 /** Orden de las páginas (navegación, "siguiente página" y sitemap). */
 export const PAGE_ORDER = Object.keys(ROUTES) as (keyof typeof ROUTES)[];
 
 export function routeFromPath(pathname: string): RouteId {
-  const clean = pathname.replace(/\/+$/, '') || '/';
+  const inner = pathname.startsWith(BASE) ? pathname.slice(BASE.length) : pathname;
+  const clean = inner.replace(/\/+$/, '') || '/';
   const hit = PAGE_ORDER.find((id) => ROUTES[id] === clean);
   return hit ?? 'notFound';
 }

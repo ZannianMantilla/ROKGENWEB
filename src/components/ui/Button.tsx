@@ -1,6 +1,6 @@
 import type { AnchorHTMLAttributes, ReactNode } from 'react';
 import { buttonClasses, type Variant } from './buttonStyles';
-import { handleLinkClick } from '../../lib/router';
+import { handleLinkClick, withBase } from '../../lib/router';
 
 type Props = AnchorHTMLAttributes<HTMLAnchorElement> & {
   variant?: Variant;
@@ -14,12 +14,14 @@ export function ButtonLink({
   icon,
   external,
   className = '',
+  href = '',
   children,
   ...rest
 }: Props) {
   return (
     <a
       data-magnetic
+      href={withBase(href)}
       className={`${buttonClasses(variant)} ${className}`}
       {...(external
         ? { target: '_blank', rel: 'noopener noreferrer' }

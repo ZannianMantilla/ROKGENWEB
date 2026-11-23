@@ -87,7 +87,7 @@ const at = ([x, y]: readonly [number, number]) => ({ left: `${x}%`, top: `${y}%`
  */
 export function Avatar({ name, sizes, className = '', fade = false, children }: Props) {
   const { w, h, eyes, crystal, glow, eye } = AVATARS[name];
-  const base = `/assets/generated/avatar-${name}`;
+  const base = `${import.meta.env.BASE_URL}assets/generated/avatar-${name}`;
   const set = (ext: string) => `${base}-360.${ext} 360w, ${base}-720.${ext} 720w`;
   return (
     <div className={`pointer-events-none select-none ${className}`} data-avatar>

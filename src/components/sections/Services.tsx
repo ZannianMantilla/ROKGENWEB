@@ -12,7 +12,6 @@ export function Services({ level = 2, more = false }: SectionProps) {
 
   return (
     <section
-      data-tone="citrine"
       id="services"
       aria-labelledby="services-title"
       className={`relative overflow-hidden border-y border-line bg-bg-soft ${sectionPadding(level)}`}

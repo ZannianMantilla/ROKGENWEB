@@ -5,7 +5,6 @@ import { PAGE_ORDER, ROUTES, type RouteId } from '../../lib/router';
 import { Link } from '../ui/Link';
 import { buttonClasses } from '../ui/buttonStyles';
 import { ButtonLink } from '../ui/Button';
-import { TONES } from '../../lib/section';
 
 /** Cierre de cada página interna: invitación a escribir. */
 export function PageCta() {
@@ -46,7 +45,7 @@ export function PageCta() {
   );
 }
 
-/** Enlace grande a la página siguiente, con el color de su gema, al final de cada página interna. */
+/** Enlace grande a la página siguiente, al final de cada página interna. */
 export function NextPage({ current }: { current: RouteId }) {
   const { t } = useT();
   const pages = PAGE_ORDER.filter((id) => id !== 'home');
@@ -54,7 +53,7 @@ export function NextPage({ current }: { current: RouteId }) {
   const next = index >= 0 ? pages[index + 1] : undefined;
   if (!next) return null;
   return (
-    <nav aria-label={t(pageNav.next)} className="border-t border-line" data-tone={TONES[next]}>
+    <nav aria-label={t(pageNav.next)} className="border-t border-line">
       <Link
         to={ROUTES[next]}
         className="group shell flex items-center justify-between gap-6 py-14 md:py-20"

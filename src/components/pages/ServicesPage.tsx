@@ -22,7 +22,6 @@ export function ServicesPage() {
 
   return (
     <section
-      data-tone="citrine"
       id="services"
       aria-labelledby="services-title"
       className={`relative isolate overflow-hidden ${sectionPadding(1)}`}

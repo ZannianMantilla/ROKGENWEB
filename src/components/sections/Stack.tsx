@@ -15,7 +15,6 @@ export function Stack({ level = 2, more = false }: SectionProps) {
 
   return (
     <section
-      data-tone="jade"
       id="stack"
       aria-labelledby="stack-title"
       className={`relative isolate overflow-hidden ${sectionPadding(level)}`}

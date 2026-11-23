@@ -19,7 +19,9 @@ const rawUrl =
     `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`) ||
   process.env.URL ||
   '';
-const SITE_URL = rawUrl.replace(/\/$/, '');
+const SITE_URL = rawUrl.replace(/\/$/, ''); // con la subcarpeta si la hay
+// Subcarpeta de publicación, la misma que usa Vite (vite.config.ts).
+const BASE = process.env.BASE_PATH || '/';
 
 function readEnvFile(key) {
   for (const f of ['.env.production.local', '.env.local', '.env.production', '.env']) {
@@ -59,7 +61,7 @@ for (const re of [/^bricolage-grotesque-latin-wght-normal.*\.woff2$/]) {
   const font = assets.find((f) => re.test(f));
   if (font)
     head.push(
-      `<link rel="preload" href="/assets/${font}" as="font" type="font/woff2" crossorigin>`,
+      `<link rel="preload" href="${BASE}assets/${font}" as="font" type="font/woff2" crossorigin>`,
     );
 }
 

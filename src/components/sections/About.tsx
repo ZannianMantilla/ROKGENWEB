@@ -17,7 +17,6 @@ export function About({ level = 2, more = false }: SectionProps) {
 
   return (
     <section
-      data-tone="sapphire"
       id="about"
       aria-labelledby="about-title"
       className={`relative isolate overflow-hidden ${sectionPadding(level)}`}
