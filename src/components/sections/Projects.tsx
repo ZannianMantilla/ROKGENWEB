@@ -36,7 +36,8 @@ function ProjectShots({ project: p, priority }: { project: Project; priority: bo
 // El modal solo se descarga cuando alguien abre un proyecto.
 const ProjectModal = lazy(() => import('./ProjectModal'));
 
-export function Projects({ level = 2, more = false }: SectionProps) {
+/** `kicker` reemplaza al de la sección (en el inicio la presenta como el área de software). */
+export function Projects({ level = 2, more = false, kicker }: SectionProps & { kicker?: string }) {
   const [Sub] = subHeadings(level);
   const { t } = useT();
   const [open, setOpen] = useState<Project | null>(null);
@@ -59,7 +60,7 @@ export function Projects({ level = 2, more = false }: SectionProps) {
       <div className="shell">
         <SectionHeading
           id="projects-title"
-          kicker={t(projects.kicker)}
+          kicker={kicker ?? t(projects.kicker)}
           title={t(projects.title)}
           intro={t(projects.intro)}
           avatar="proyectos"
@@ -136,6 +137,7 @@ export function Projects({ level = 2, more = false }: SectionProps) {
                     <button
                       type="button"
                       data-magnetic
+                      data-sound="pop"
                       onClick={() => setOpen(p)}
                       className={buttonClasses('ghost')}
                       aria-haspopup="dialog"

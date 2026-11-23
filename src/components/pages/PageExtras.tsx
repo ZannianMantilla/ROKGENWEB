@@ -82,8 +82,19 @@ export function NotFound() {
         className="pointer-events-none absolute top-1/3 left-1/2 -z-10 size-[36rem] -translate-x-1/2 aura [--p:30%]"
       />
       <div className="shell text-center">
-        <p aria-hidden className="ticker text-outline text-[clamp(6rem,24vw,14rem)]">
-          404
+        <p
+          aria-hidden
+          className="ticker text-outline flex items-center justify-center gap-[0.08em] text-[clamp(6rem,24vw,14rem)]"
+        >
+          4
+          <img
+            src={`${import.meta.env.BASE_URL}assets/generated/logo-192.webp`}
+            width={163}
+            height={192}
+            alt=""
+            className="bear-lost h-[0.85em] w-auto"
+          />
+          4
         </p>
         <h1 className="mt-2 text-4xl font-semibold sm:text-5xl">{t(N.title)}</h1>
         <p className="mx-auto mt-4 max-w-md text-lg text-muted">{t(N.body)}</p>

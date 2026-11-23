@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import { services } from '../../data/content';
 import { useT } from '../../hooks/useT';
+import { Paw } from '../ui/Paw';
 
 /**
  * Bandas cruzadas con los servicios en texto gigante. Decorativas: el contenido real está en Servicios.
@@ -21,9 +22,9 @@ export function Ticker() {
           {words.map((w) => (
             <li key={w} className="flex items-center gap-8 whitespace-nowrap sm:gap-12">
               <span className={outline ? 'text-outline' : undefined}>{w}</span>
-              <span className={`text-[0.55em] ${outline ? 'text-accent' : 'text-accent-3'}`}>
-                ✦
-              </span>
+              <Paw
+                className={`size-[0.5em] shrink-0 ${outline ? 'text-accent' : 'text-accent-3'}`}
+              />
             </li>
           ))}
         </ul>

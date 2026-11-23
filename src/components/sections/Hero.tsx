@@ -87,6 +87,7 @@ function CrystalPoke() {
       <button
         type="button"
         onClick={poke}
+        data-sound="chime"
         aria-label={t(hero.crystal.label)}
         className="pointer-events-auto absolute z-10 size-16 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full"
       />

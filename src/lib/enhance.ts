@@ -41,6 +41,11 @@ function run(build: (kit: Kit) => (() => void)[]): () => void {
 
 /** Lo que vive mientras dura la visita: scroll suave, cursor y recálculo de posiciones. */
 export function enhanceGlobal(): () => void {
+  console.info(
+    '%cʕ•ᴥ•ʔ %c¿Curioseando el código? Si te gusta lo que ves, hablemos: zanniancelis@gmail.com',
+    'font-size:16px',
+    'color:#c084fc',
+  );
   return run(({ cleanups, finePointer }) => [
     /* Scroll suave: solo con mouse/trackpad; en táctil el scroll nativo es mejor. */
     () => {
@@ -76,6 +81,7 @@ export function enhanceGlobal(): () => void {
 
     () => {
       if (finePointer) cleanups.push(initCursor());
+      cleanups.push(initPawTrail());
     },
   ]);
 }
@@ -171,7 +177,9 @@ export function enhancePage(): () => void {
             duration: 1.6,
             ease: 'power3.out',
             onUpdate: () => {
-              el.textContent = String(Math.round(state.v));
+              el.textContent = Math.round(state.v).toLocaleString(
+                document.documentElement.lang === 'en' ? 'en-US' : 'es-CO',
+              );
             },
             scrollTrigger: { trigger: el, start: 'top 90%', once: true },
           });
@@ -275,7 +283,7 @@ export function enhancePage(): () => void {
   ]);
 }
 
-/* ---------- Cursor: punto, anillo con retardo y resplandor (el cursor nativo se mantiene) ---------- */
+/* ---------- Cursor: huella de oso que gira hacia donde se mueve, y resplandor (el cursor nativo se mantiene) ---------- */
 function initCursor() {
   const make = (cls: string) => {
     const el = document.createElement('div');
@@ -285,34 +293,85 @@ function initCursor() {
     return el;
   };
   const glow = make('cursor-glow');
-  const ring = make('cursor-ring');
-  const dot = make('cursor-dot');
+  const paw = make('cursor-paw');
   const follow = (el: HTMLElement, duration: number) => ({
     x: gsap.quickTo(el, 'x', { duration, ease: 'power3' }),
     y: gsap.quickTo(el, 'y', { duration, ease: 'power3' }),
   });
-  const parts = [follow(dot, 0.08), follow(ring, 0.35), follow(glow, 0.9)];
-  const all = [glow, ring, dot];
+  const parts = [follow(paw, 0.12), follow(glow, 0.9)];
+  const turn = gsap.quickTo(paw, 'rotation', { duration: 0.4, ease: 'power3' });
+  const all = [glow, paw];
+  let last = { x: 0, y: 0 };
+  let angle = 0;
 
   const onMove = (e: PointerEvent) => {
     parts.forEach((p) => {
       p.x(e.clientX);
       p.y(e.clientY);
     });
+    const dx = e.clientX - last.x;
+    const dy = e.clientY - last.y;
+    if (dx * dx + dy * dy > 64) {
+      // Los dedos apuntan hacia donde avanza (la huella dibujada mira hacia arriba = -90°).
+      const target = (Math.atan2(dy, dx) * 180) / Math.PI + 90;
+      angle += ((((target - angle) % 360) + 540) % 360) - 180; // por el giro más corto
+      turn(angle);
+      last = { x: e.clientX, y: e.clientY };
+    }
     all.forEach((el) => el.classList.add('is-visible'));
     const interactive = (e.target as Element).closest?.(
       'a, button, [data-tilt], input, textarea, label',
     );
-    ring.classList.toggle('is-hover', !!interactive);
+    paw.classList.toggle('is-hover', !!interactive);
   };
   const onLeave = () => all.forEach((el) => el.classList.remove('is-visible'));
+  const onDown = () => paw.classList.add('is-down');
+  const onUp = () => paw.classList.remove('is-down');
 
   addEventListener('pointermove', onMove, { passive: true });
+  addEventListener('pointerdown', onDown);
+  addEventListener('pointerup', onUp);
   document.documentElement.addEventListener('pointerleave', onLeave);
   return () => {
     removeEventListener('pointermove', onMove);
+    removeEventListener('pointerdown', onDown);
+    removeEventListener('pointerup', onUp);
     document.documentElement.removeEventListener('pointerleave', onLeave);
     all.forEach((el) => el.remove());
+  };
+}
+
+/* ---------- Huellas de oso bajando (o subiendo) por el borde izquierdo mientras se hace scroll ---------- */
+function initPawTrail() {
+  const STRIDE = 110; // px de scroll por paso
+  let lastY = scrollY;
+  let travelled = 0;
+  let stepY = 90; // posición en pantalla del siguiente paso
+  let left = true;
+
+  const onScroll = () => {
+    const dy = scrollY - lastY;
+    lastY = scrollY;
+    travelled += Math.abs(dy);
+    if (travelled < STRIDE || !dy) return;
+    travelled = 0;
+    const down = dy > 0;
+    stepY += down ? 56 : -56;
+    if (stepY > innerHeight - 60) stepY = 90;
+    if (stepY < 90) stepY = innerHeight - 60;
+    left = !left;
+    const print = document.createElement('span');
+    print.className = 'paw-print';
+    print.setAttribute('aria-hidden', 'true');
+    const x = innerWidth < 640 ? 4 : 18;
+    print.style.transform = `translate(${x + (left ? 0 : 14)}px, ${stepY}px) rotate(${down ? 180 + (left ? 8 : -8) : left ? -8 : 8}deg)`;
+    print.addEventListener('animationend', () => print.remove(), { once: true });
+    document.body.append(print);
+  };
+  addEventListener('scroll', onScroll, { passive: true });
+  return () => {
+    removeEventListener('scroll', onScroll);
+    document.querySelectorAll('.paw-print').forEach((el) => el.remove());
   };
 }
 

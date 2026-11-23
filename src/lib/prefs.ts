@@ -45,3 +45,24 @@ export function setLang(lang: Lang) {
 export function useLang() {
   return useSyncExternalStore(langStore.subscribe, langStore.get, langStore.server);
 }
+
+/* ---------- Sonidos (activos salvo que el visitante los apague) ---------- */
+const readSound = () => {
+  try {
+    return localStorage.getItem('sound') !== 'off';
+  } catch {
+    return true;
+  }
+};
+const soundStore = createStore<boolean>(readSound, true);
+
+export const soundOn = readSound;
+
+export function setSound(on: boolean) {
+  save('sound', on ? 'on' : 'off');
+  soundStore.emit();
+}
+
+export function useSound() {
+  return useSyncExternalStore(soundStore.subscribe, soundStore.get, soundStore.server);
+}

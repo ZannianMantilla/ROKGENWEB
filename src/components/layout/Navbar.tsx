@@ -1,16 +1,17 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, Volume2, VolumeX, X } from 'lucide-react';
 import { hero, profile, ui, whatsappLink } from '../../data/content';
-import { setLang } from '../../lib/prefs';
+import { setLang, setSound, useSound } from '../../lib/prefs';
+import { play } from '../../lib/sound';
 import { useT } from '../../hooks/useT';
 import { ROUTES, type RouteId } from '../../lib/router';
-import { Crystal } from '../ui/Crystal';
 import { Link } from '../ui/Link';
 
 const PAGES = ['about', 'services', 'stack', 'projects', 'experience', 'contact'] as const;
 
 export function Navbar({ route }: { route: RouteId }) {
   const { t, lang } = useT();
+  const sound = useSound();
   const [scrolled, setScrolled] = useState(false);
   const menuRef = useRef<HTMLDialogElement>(null);
 
@@ -35,6 +36,24 @@ export function Navbar({ route }: { route: RouteId }) {
         <span aria-hidden>{lang === 'es' ? 'EN' : 'ES'}</span>
         <span className="sr-only">{t(ui.langSwitch)}</span>
       </button>
+      <button
+        type="button"
+        data-sound="none"
+        aria-pressed={sound}
+        aria-label={t(ui.sound)}
+        title={t(ui.sound)}
+        onClick={() => {
+          setSound(!sound);
+          if (!sound) play('pop', true);
+        }}
+        className="grid size-11 place-items-center rounded-full text-muted transition-colors hover:text-fg"
+      >
+        {sound ? (
+          <Volume2 className="size-4" aria-hidden />
+        ) : (
+          <VolumeX className="size-4" aria-hidden />
+        )}
+      </button>
     </div>
   );
 
@@ -48,13 +67,19 @@ export function Navbar({ route }: { route: RouteId }) {
         aria-label={t(ui.mainNav)}
         className="shell flex h-16 items-center justify-between gap-4"
       >
-        <Link to={ROUTES.home} className="group flex items-center gap-3">
-          <span className="sr-only">{`${profile.name} — ${t(ui.home)}`}</span>
-          <span aria-hidden className="logo-crystal relative grid size-9 place-items-center">
-            <Crystal className="h-8 w-auto transition-transform duration-500 group-hover:scale-110 group-hover:rotate-[-12deg]" />
-          </span>
+        <Link to={ROUTES.home} className="group flex items-center gap-3" data-sound="growl">
+          <span className="sr-only">{`${profile.shortName} — ${t(ui.home)}`}</span>
+          {/* El oso es el distintivo de la marca (LOGO/oso.webp → scripts/images.mjs). */}
+          <img
+            src={`${import.meta.env.BASE_URL}assets/generated/logo-96.webp`}
+            srcSet={`${import.meta.env.BASE_URL}assets/generated/logo-48.webp 1x, ${import.meta.env.BASE_URL}assets/generated/logo-96.webp 2x`}
+            width={41}
+            height={48}
+            alt=""
+            className="h-10 w-auto transition-transform duration-500 group-hover:scale-110 group-hover:rotate-[-8deg]"
+          />
           <span aria-hidden className="hidden font-display text-[0.95rem] font-semibold sm:block">
-            Zannián<span className="text-accent">.</span>
+            {profile.shortName}
           </span>
         </Link>
 
@@ -96,6 +121,7 @@ export function Navbar({ route }: { route: RouteId }) {
             className="grid size-11 place-items-center rounded-full lg:hidden"
             aria-label={t(ui.openMenu)}
             aria-haspopup="dialog"
+            data-sound="pop"
             onClick={() => menuRef.current?.showModal()}
           >
             <Menu className="size-5" aria-hidden />

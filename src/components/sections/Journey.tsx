@@ -5,6 +5,7 @@ import { useT } from '../../hooks/useT';
 import { sectionPadding, subHeadings, type SectionProps } from '../../lib/section';
 import { ROUTES } from '../../lib/router';
 import { SectionHeading } from '../ui/SectionHeading';
+import { Paw } from '../ui/Paw';
 
 function Timeline({
   id,
@@ -115,10 +116,7 @@ export function Journey({ level = 2, more = false, extra }: SectionProps & { ext
                 <ul className="mt-5 space-y-3">
                   {journey.courses.map((c) => (
                     <li key={c.es} className="flex gap-3 text-sm leading-snug text-muted">
-                      <span
-                        className="mt-1.5 size-1.5 shrink-0 rounded-full bg-accent-2"
-                        aria-hidden
-                      />
+                      <Paw className="mt-0.5 size-3.5 shrink-0 text-accent-2" />
                       {t(c)}
                     </li>
                   ))}

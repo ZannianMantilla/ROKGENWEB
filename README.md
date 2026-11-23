@@ -1,4 +1,4 @@
-# Portafolio · Zannián Mantilla Celis
+# Portafolio · Zannián MC
 
 Portafolio multipágina: Vite + React 19 + TypeScript + Tailwind CSS 4 + GSAP/ScrollTrigger + Lenis.
 Bilingüe (ES/EN), tema oscuro con morado y fucsia como colores de marca, y ámbar como tercer color en los detalles (tokens en `src/styles/index.css`).
@@ -62,7 +62,9 @@ Las ilustraciones del personaje están en `AVATAR/`. `npm run images` les quita 
 | `pulgar arriba.png`     | Trayectoria                            |
 | `contacto.png`          | Contacto (asomado sobre el formulario) |
 
-**El avatar está vivo.** Flota y respira. Sus ojos brillan, parpadean y siguen al cursor, y el cristal del colgante late: más fuerte cuando el cursor se acerca o pasa por un enlace. En el hero, al tocar el cristal salen esquirlas y el avatar pregunta "¿Qué hay pa’ hacer?" (`hero.crystal` en `content.ts`). El cristal también es el logo y el favicon (`src/components/ui/Crystal.tsx`).
+**El avatar está vivo.** Flota y respira. Sus ojos brillan, parpadean y siguen al cursor, y el cristal del colgante late: más fuerte cuando el cursor se acerca o pasa por un enlace. En el hero, al tocar el cristal salen esquirlas y el avatar pregunta "¿Qué hay pa’ hacer?" (`hero.crystal` en `content.ts`). El logo es **el oso**, distintivo de la marca: la fuente está en `LOGO/oso.webp` (fondo transparente) y `scripts/images.mjs` genera `logo-{48,96,192}.webp`, el favicon, los íconos y la imagen OG (`node scripts/images.mjs --force` para regenerarlos). El nombre completo solo aparece en la presentación del hero; en el resto de la web es `profile.shortName` ("Zannián MC").
+
+**Guiños al oso y sonidos.** El cursor es una huella que gira hacia donde se mueve, y al hacer scroll bajan huellas por el borde izquierdo (`initCursor` e `initPawTrail` en `src/lib/enhance.ts`; no se activan con movimiento reducido). Los sonidos están en `src/lib/sound.ts`: el logo gruñe con un audio real (`public/assets/sounds/oso.mp3`, "Bear growl" de Universfield en Pixabay, licencia de Pixabay) y el resto se sintetiza con Web Audio. Cada enlace o botón hace un "tic"; `data-sound="…"` elige otro sonido. Se pueden apagar con el botón del altavoz de la barra.
 
 - Las posiciones de ojos y cristal de cada ilustración están en `AVATARS` (`src/components/ui/Avatar.tsx`), en % de la imagen recortada. Si cambias una ilustración, vuelve a medirlas.
 - El movimiento está en `initAvatarLife` (`src/lib/enhance.ts`) y en la sección "Avatar vivo" de `index.css`.

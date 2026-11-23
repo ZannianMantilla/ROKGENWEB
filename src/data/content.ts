@@ -12,7 +12,8 @@ export type Localized<T = string> = Record<Lang, T>;
 /* ------------------------------------------------------------------ */
 export const profile = {
   name: 'Zannián Mantilla Celis',
-  shortName: 'Zannián',
+  /** Nombre de marca. El nombre completo solo se usa en la presentación (hero). */
+  shortName: 'Zannián MC',
   email: 'zanniancelis@gmail.com',
   phoneDisplay: '+57 324 603 3634',
   /** Número en formato internacional sin "+" para wa.me */
@@ -55,6 +56,7 @@ export const ui = {
   closeMenu: { es: 'Cerrar menú', en: 'Close menu' },
   mainNav: { es: 'Navegación principal', en: 'Main navigation' },
   langSwitch: { es: 'Switch to English', en: 'Cambiar a español' },
+  sound: { es: 'Sonidos de la web', en: 'Site sounds' },
   home: { es: 'Inicio', en: 'Home' },
   footerNav: { es: 'Páginas del sitio', en: 'Site pages' },
 } satisfies Record<string, Localized | Record<string, Localized>>;
@@ -64,8 +66,8 @@ export const ui = {
 /* ------------------------------------------------------------------ */
 export const seo = {
   title: {
-    es: 'Zannián Mantilla Celis · Desarrollador de software freelance',
-    en: 'Zannián Mantilla Celis · Freelance software developer',
+    es: 'Zannián MC · Desarrollador de software freelance',
+    en: 'Zannián MC · Freelance software developer',
   },
   description: {
     es: 'Desarrollador freelance en Colombia: apps móviles con Flutter y Firebase, sitios web a medida y WordPress, diseño UI/UX y análisis de datos con Python.',
@@ -83,12 +85,22 @@ export const hero = {
     en: ['Software that', 'solves real', 'problems.'],
   },
   roles: {
-    es: ['Desarrollo apps móviles', 'Creo sitios web modernos', 'Convierto datos en decisiones'],
-    en: ['I build mobile apps', 'I craft modern websites', 'I turn data into decisions'],
+    es: [
+      'Desarrollo apps móviles',
+      'Creo sitios web modernos',
+      'Gestiono redes de marcas',
+      'Convierto datos en decisiones',
+    ],
+    en: [
+      'I build mobile apps',
+      'I craft modern websites',
+      'I run brands’ social media',
+      'I turn data into decisions',
+    ],
   },
   intro: {
-    es: 'Soy Zannián Mantilla Celis, desarrollador de software en Colombia. Trabajo en mobile, frontend y análisis de datos, y cuido cada proyecto desde la idea hasta la entrega.',
-    en: 'I’m Zannián Mantilla Celis, a software developer based in Colombia. I work across mobile, frontend and data analysis, and I look after every project from idea to delivery.',
+    es: 'Soy Zannián Mantilla Celis, desarrollador de software y community manager en Colombia. Trabajo en mobile, frontend, redes sociales y análisis de datos, y cuido cada proyecto desde la idea hasta la entrega.',
+    en: 'I’m Zannián Mantilla Celis, a software developer and community manager based in Colombia. I work across mobile, frontend, social media and data analysis, and I look after every project from idea to delivery.',
   },
   ctaPrimary: { es: 'Hablemos', en: 'Let’s talk' },
   ctaSecondary: { es: 'Ver proyectos', en: 'See projects' },
@@ -119,19 +131,19 @@ export const about = {
   },
   bio: {
     es: [
-      'Soy Tecnólogo en Análisis y Desarrollo de Software del SENA y estudio Ingeniería de Software en la UTO. Desde 2022 trabajo en soporte, desarrollo frontend y apps móviles, tanto en proyectos independientes como en equipos multidisciplinarios y entornos organizacionales.',
+      'Soy Tecnólogo en Análisis y Desarrollo de Software del SENA y estudio Ingeniería de Software en la UTO. Desde 2022 trabajo en soporte técnico y mantenimiento de equipos, desarrollo frontend, apps móviles y gestión de redes sociales, tanto en proyectos independientes como en equipos multidisciplinarios y entornos organizacionales.',
       'Construyo apps con Flutter, FlutterFlow y Firebase, sitios con HTML, CSS, JavaScript y WordPress, y analizo datos con Python. También diseño interfaces en Figma y produzco piezas visuales con Photoshop, Illustrator y CapCut.',
       'Me considero adaptable, creativo y analítico: primero entiendo el problema y después elijo la herramienta.',
     ],
     en: [
-      'I hold a Software Analysis and Development technologist degree from SENA and I’m studying Software Engineering at UTO. Since 2022 I’ve worked in IT support, frontend development and mobile apps, both on independent projects and in multidisciplinary teams and organizations.',
+      'I hold a Software Analysis and Development technologist degree from SENA and I’m studying Software Engineering at UTO. Since 2022 I’ve worked in IT support and hardware maintenance, frontend development, mobile apps and social media management, both on independent projects and in multidisciplinary teams and organizations.',
       'I build apps with Flutter, FlutterFlow and Firebase, websites with HTML, CSS, JavaScript and WordPress, and I analyze data with Python. I also design interfaces in Figma and produce visual content with Photoshop, Illustrator and CapCut.',
       'I’m adaptable, creative and analytical: I understand the problem first, then pick the tool.',
     ],
   },
   photoAlt: {
-    es: 'Retrato de Zannián Mantilla Celis',
-    en: 'Portrait of Zannián Mantilla Celis',
+    es: 'Retrato de Zannián MC',
+    en: 'Portrait of Zannián MC',
   },
   facts: [
     {
@@ -230,8 +242,8 @@ export const services = {
       icon: 'support',
       title: { es: 'Soporte TI', en: 'IT support' },
       description: {
-        es: 'Soporte técnico, mantenimiento y soluciones tecnológicas, incluidas intranets en SharePoint.',
-        en: 'Technical support, maintenance and tech solutions, including SharePoint intranets.',
+        es: 'Soporte presencial y remoto, mantenimiento preventivo de equipos e impresoras, e intranets en SharePoint.',
+        en: 'On-site and remote support, preventive maintenance of computers and printers, and SharePoint intranets.',
       },
       tags: ['SharePoint', 'Helpdesk'],
     },
@@ -566,6 +578,7 @@ const adsolearnShots = {
 
 export const projects = {
   kicker: { es: '04 · Proyectos', en: '04 · Projects' },
+  areaKicker: { es: 'Área 01 · Desarrollo de software', en: 'Area 01 · Software development' },
   title: { es: 'Proyectos destacados', en: 'Featured projects' },
   intro: {
     es: 'Una selección de lo que he construido: educación, empleo, salud y fitness.',
@@ -595,7 +608,7 @@ export const projects = {
     {
       id: 'adsolearn',
       title: 'ADSOLEARN',
-      year: 2026,
+      year: 2024,
       type: { es: 'Web app · Educación y empleo', en: 'Web app · Education & jobs' },
       summary: {
         es: 'Plataforma de freelancing que conecta a aprendices ADSO del SENA con personas y empresas que necesitan proyectos de software.',
@@ -636,7 +649,7 @@ export const projects = {
     {
       id: 'gymrock',
       title: 'GYMROCK',
-      year: 2026,
+      year: 2023,
       type: { es: 'Web app y escritorio · Fitness', en: 'Web & desktop app · Fitness' },
       summary: {
         es: 'App de entrenamiento con planes por nivel y objetivo, registro de cada serie, calculadoras y seguimiento del progreso.',
@@ -688,7 +701,7 @@ export const projects = {
     {
       id: 'maxtriage',
       title: 'MAXTRIAGE',
-      year: 2026,
+      year: 2024,
       type: { es: 'Web app y escritorio · Salud', en: 'Web & desktop app · Health' },
       summary: {
         es: 'Clasificación de triage en cinco niveles: el paciente elige su nivel y sigue su tiempo de espera, y el personal de salud atiende una cola ordenada por gravedad.',
@@ -866,62 +879,93 @@ export const journey = {
   educationTitle: { es: 'Educación', en: 'Education' },
   coursesTitle: { es: 'Formación complementaria', en: 'Additional training' },
   languagesTitle: { es: 'Idiomas', en: 'Languages' },
+  // Fechas y funciones según el CV 2027.
   experience: list<TimelineEntry>([
     {
       period: { es: 'Oct 2025 – Dic 2025', en: 'Oct 2025 – Dec 2025' },
       title: { es: 'Monitor', en: 'Monitor' },
       org: 'ANDES · Programa MinTIC / Talento Tech',
-      // TODO: describe tus funciones como monitor.
-    },
-    {
-      period: { es: 'Ago 2025 – Sep 2025', en: 'Aug 2025 – Sep 2025' },
-      title: { es: 'Auxiliar de Sistemas', en: 'IT Assistant' },
-      org: 'Organización Servicios y Asesorías S.A.S. · Compañía Pesquera del Mar',
       description: {
-        es: 'Soporte TI, análisis de datos operativos e intranet corporativa en SharePoint.',
-        en: 'IT support, operational data analysis and a corporate SharePoint intranet.',
+        es: 'Acompañamiento a beneficiarios, mentores y ejecutores en el proceso de formación y en el uso de las plataformas tecnológicas; seguimiento al plan de estudios.',
+        en: 'Supported learners, mentors and instructors through the training process and the use of its tech platforms; tracked the study plan.',
       },
     },
     {
-      period: { es: '2024', en: '2024' },
+      period: { es: '2025 – 2026', en: '2025 – 2026' },
+      title: { es: 'Community Manager', en: 'Community Manager' },
+      org: 'Solusystem',
+      description: {
+        es: 'Gestión de redes sociales para varios clientes, creación de contenido e informes de crecimiento.',
+        en: 'Social media management for several clients, content creation and growth reports.',
+      },
+    },
+    {
+      period: { es: 'Feb 2025 – Sep 2025', en: 'Feb 2025 – Sep 2025' },
+      title: {
+        es: 'Auxiliar de Sistemas / Soporte Técnico',
+        en: 'IT Assistant / Technical Support',
+      },
+      org: 'Organización Servicios y Asesorías S.A.S. · Compañía Pesquera del Mar',
+      description: {
+        es: 'Soporte TI, mantenimiento de equipos e impresoras, análisis de datos operativos e intranet corporativa en SharePoint.',
+        en: 'IT support, computer and printer maintenance, operational data analysis and a corporate SharePoint intranet.',
+      },
+    },
+    {
+      period: { es: 'May 2024 – Oct 2024', en: 'May 2024 – Oct 2024' },
       title: { es: 'Community Manager', en: 'Community Manager' },
       org: 'Pomposa Zapatos',
       description: {
-        es: 'Gestión de redes, SEO, contenido audiovisual y seguimiento de métricas.',
-        en: 'Social media management, SEO, audiovisual content and metrics tracking.',
+        es: 'Redes sociales, SEO, producción y edición de contenido audiovisual, y análisis de métricas de audiencia.',
+        en: 'Social media, SEO, audiovisual content production and editing, and audience metrics analysis.',
       },
     },
     {
-      period: { es: '2023 – 2024', en: '2023 – 2024' },
-      title: { es: 'Desarrollador de Software Freelancer', en: 'Freelance Software Developer' },
+      period: { es: 'Ene 2023 – Nov 2025', en: 'Jan 2023 – Nov 2025' },
+      title: { es: 'Desarrollador de Apps Freelance', en: 'Freelance App Developer' },
       org: 'Independiente',
       description: {
-        es: 'Apps en Flutter, soluciones web y software a medida para clientes.',
-        en: 'Flutter apps, web solutions and custom software for clients.',
+        es: 'Apps móviles con Flutter y Dart, interfaces UI/UX y aplicaciones educativas e interactivas.',
+        en: 'Mobile apps with Flutter and Dart, UI/UX interfaces and educational, interactive apps.',
       },
     },
     {
-      period: { es: '2023 – 2024', en: '2023 – 2024' },
-      title: { es: 'Desarrollador Frontend', en: 'Frontend Developer' },
+      period: { es: 'May 2023 – Nov 2024', en: 'May 2023 – Nov 2024' },
+      title: { es: 'Desarrollador de Software Freelance', en: 'Freelance Software Developer' },
+      org: 'Independiente',
+      description: {
+        es: 'Interfaces frontend, desarrollo full-stack, bases de datos y optimización de rendimiento.',
+        en: 'Frontend interfaces, full-stack development, databases and performance optimization.',
+      },
+    },
+    {
+      period: { es: '2023 – 2026', en: '2023 – 2026' },
+      title: { es: 'Desarrollador Web', en: 'Web Developer' },
       org: 'Solusystem',
       description: {
-        es: 'Sitios web a medida, optimización de código y rendimiento.',
-        en: 'Custom websites, code optimization and performance.',
+        es: 'Sitios web a medida, interfaces frontend y optimización de código en equipos multidisciplinarios.',
+        en: 'Custom websites, frontend interfaces and code optimization in multidisciplinary teams.',
       },
     },
     {
-      period: { es: '2022 – 2024', en: '2022 – 2024' },
-      title: { es: 'Soporte Técnico', en: 'Technical Support' },
+      period: { es: 'Sep 2022 – Abr 2026', en: 'Sep 2022 – Apr 2026' },
+      title: {
+        es: 'Auxiliar de Sistemas / Soporte Técnico',
+        en: 'IT Assistant / Technical Support',
+      },
       org: 'Solusystem',
-      // TODO: describe tus funciones de soporte técnico.
+      description: {
+        es: 'Soporte presencial y remoto, mantenimiento preventivo de equipos y solución de incidencias.',
+        en: 'On-site and remote support, preventive maintenance and incident resolution.',
+      },
     },
   ]),
   education: list<TimelineEntry>([
     {
-      period: { es: '2026 – presente', en: '2026 – present' },
+      period: { es: 'Feb 2026 – presente', en: 'Feb 2026 – present' },
       title: { es: 'Ingeniería de Software', en: 'Software Engineering' },
-      org: 'UTO',
-      description: { es: 'En curso.', en: 'In progress.' },
+      org: 'Universidad Tecnológica del Oriente (UTO)',
+      description: { es: 'Séptimo semestre en curso.', en: 'Currently in 7th semester.' },
     },
     {
       period: { es: '2023 – 2025', en: '2023 – 2025' },
@@ -929,16 +973,21 @@ export const journey = {
         es: 'Tecnología en Análisis y Desarrollo de Software',
         en: 'Technologist in Software Analysis and Development',
       },
-      org: 'SENA',
+      org: 'CIMI · SENA',
     },
     {
-      period: { es: '2022', en: '2022' },
+      period: { es: '2021 – 2022', en: '2021 – 2022' },
       title: { es: 'Técnico en Sistemas', en: 'Systems Technician' },
       org: 'SENA',
     },
     {
-      period: { es: 'Bachillerato', en: 'High school' },
-      title: { es: 'Bachiller', en: 'High school diploma' },
+      period: { es: '2021 – 2022', en: '2021 – 2022' },
+      title: { es: 'Técnico en Criminalística', en: 'Criminalistics Technician' },
+      org: 'FUNDAMIR',
+    },
+    {
+      period: { es: '2014 – 2022', en: '2014 – 2022' },
+      title: { es: 'Bachiller Académico', en: 'High school diploma' },
       org: 'Colegio Militar General Santander',
     },
   ]),
@@ -951,9 +1000,112 @@ export const journey = {
   ]),
   languages: [
     { name: { es: 'Español', en: 'Spanish' }, level: { es: 'Nativo', en: 'Native' } },
-    { name: { es: 'Inglés', en: 'English' }, level: { es: 'B1', en: 'B1' } },
+    { name: { es: 'Inglés', en: 'English' }, level: { es: 'B1 certificado', en: 'B1 certified' } },
     { name: { es: 'Ruso', en: 'Russian' }, level: { es: 'Básico', en: 'Basic' } },
   ],
+};
+
+/* ------------------------------------------------------------------ */
+/* Áreas del inicio: software, community manager y otros conocimientos  */
+/* ------------------------------------------------------------------ */
+export type SocialAccount = {
+  name: string;
+  handle: string;
+  /** Imágenes en public/assets/social: `${handle}-avatar` y `${handle}-1..n`. 0 = sin imágenes. */
+  shots: number;
+  /** Cifras del perfil público el día de `community.measuredAt`. */
+  followers?: number;
+  posts?: number;
+};
+
+export const areas = {
+  kicker: { es: 'Lo que hago', en: 'What I do' },
+  title: { es: 'Tres áreas de trabajo', en: 'Three areas of work' },
+  items: [
+    {
+      id: 'projects',
+      title: { es: 'Desarrollo de software', en: 'Software development' },
+      description: {
+        es: 'Apps móviles, sitios web y software a medida: proyectos propios y sitios en producción para clientes.',
+        en: 'Mobile apps, websites and custom software: my own projects and live client websites.',
+      },
+    },
+    {
+      id: 'community',
+      title: { es: 'Community manager', en: 'Community manager' },
+      description: {
+        es: 'Gestión de redes sociales para marcas de transporte, salud, calzado y tecnología.',
+        en: 'Social media management for transport, healthcare, footwear and tech brands.',
+      },
+    },
+    {
+      id: 'other',
+      title: { es: 'Otros conocimientos', en: 'Other skills' },
+      description: {
+        es: 'Análisis de datos, diseño UI/UX, soporte TI, nube y redes.',
+        en: 'Data analysis, UI/UX design, IT support, cloud and networking.',
+      },
+    },
+  ] as const,
+  go: { es: 'Ir a la sección', en: 'Go to section' },
+};
+
+/** Cuentas que he gestionado como community manager. Imágenes y cifras tomadas del perfil público. */
+export const community = {
+  kicker: { es: 'Área 02 · Community manager', en: 'Area 02 · Community manager' },
+  title: { es: 'Redes que he gestionado', en: 'Social media I’ve managed' },
+  intro: {
+    es: 'Marcas para las que he trabajado como community manager, con algunas de sus publicaciones y las cifras de cada perfil.',
+    en: 'Brands I’ve worked with as a community manager, with some of their posts and each profile’s numbers.',
+  },
+  measuredAt: {
+    es: 'Cifras de Instagram a noviembre de 2026.',
+    en: 'Instagram figures as of November 2026.',
+  },
+  // TODO: periodo con cada marca (la línea de tiempo tiene Pomposa Zapatos y Community Manager en Solusystem).
+  accounts: list<SocialAccount>([
+    {
+      name: 'Transporte Sol Caribe',
+      handle: 'solcaribe.sas24',
+      shots: 3,
+      followers: 548,
+      posts: 184,
+    },
+    {
+      name: 'Cooperativa Prosacoop',
+      handle: 'cooperativaprosacoop',
+      shots: 3,
+      followers: 387,
+      posts: 229,
+    },
+    // El perfil no está disponible públicamente en Instagram: va sin imágenes ni cifras.
+    { name: 'SYSTEMRED GPS', handle: 'systemredgps', shots: 0 },
+    { name: 'Pomposa Zapatos', handle: 'pomposazapatos', shots: 3, followers: 1784, posts: 65 },
+    { name: 'Neurotrauma Center', handle: 'neurotrauma.co', shots: 3, followers: 3483, posts: 787 },
+    { name: 'Solusystem', handle: 'solusystem', shots: 3, followers: 127, posts: 54 },
+  ]),
+  labels: {
+    brands: { es: 'marcas gestionadas', en: 'brands managed' },
+    followers: { es: 'seguidores', en: 'followers' },
+    followersTotal: { es: 'seguidores sumando todas', en: 'followers across all' },
+    posts: { es: 'publicaciones', en: 'posts' },
+    postsTotal: { es: 'publicaciones en sus perfiles', en: 'posts on their profiles' },
+    post: { es: 'Publicación de', en: 'Post by' },
+    open: { es: 'Ver en Instagram', en: 'View on Instagram' },
+    private: { es: 'Perfil no disponible públicamente', en: 'Profile not publicly available' },
+  },
+};
+
+/** Lo que sé fuera del desarrollo y las redes (sale de servicios, cursos e idiomas). */
+export const otherSkills = {
+  kicker: { es: 'Área 03 · Otros conocimientos', en: 'Area 03 · Other skills' },
+  title: { es: 'Más allá del código', en: 'Beyond code' },
+  intro: {
+    es: 'Datos, diseño, soporte e infraestructura: lo que complementa mi trabajo de desarrollo.',
+    en: 'Data, design, support and infrastructure: what rounds out my development work.',
+  },
+  services: ['data', 'design', 'support'] as ServiceIcon[],
+  stackLink: { es: 'Ver todas las herramientas', en: 'See all tools' },
 };
 
 /* ------------------------------------------------------------------ */
@@ -980,8 +1132,8 @@ export const contact = {
     sending: { es: 'Enviando…', en: 'Sending…' },
     successTitle: { es: '¡Mensaje enviado!', en: 'Message sent!' },
     successBody: {
-      es: 'Gracias por escribir. Te responderé lo antes posible.',
-      en: 'Thanks for reaching out. I’ll get back to you soon.',
+      es: 'Gracias por escribir. El oso ya lo tiene entre sus patas: te responderé lo antes posible.',
+      en: 'Thanks for reaching out. The bear has it in its paws: I’ll get back to you soon.',
     },
     errorTitle: { es: 'No se pudo enviar', en: 'Couldn’t send it' },
     errorBody: {
@@ -1030,7 +1182,7 @@ export const footer = {
 /* ------------------------------------------------------------------ */
 type PageId = 'about' | 'services' | 'stack' | 'projects' | 'experience' | 'contact';
 
-const brand = 'Zannián Mantilla Celis';
+const brand = profile.shortName;
 const pageTitle = (es: string, en: string): Localized => ({
   es: `${es} · ${brand}`,
   en: `${en} · ${brand}`,
@@ -1061,8 +1213,8 @@ export const pageSeo: Record<
   experience: {
     title: pageTitle('Trayectoria', 'Journey'),
     description: {
-      es: 'Experiencia laboral, educación, cursos e idiomas de Zannián Mantilla Celis.',
-      en: 'Work experience, education, courses and languages of Zannián Mantilla Celis.',
+      es: 'Experiencia laboral, educación, cursos e idiomas de Zannián MC.',
+      en: 'Work experience, education, courses and languages of Zannián MC.',
     },
   },
   contact: { title: pageTitle('Contacto', 'Contact'), description: contact.intro },
@@ -1077,8 +1229,8 @@ export const pageNav = {
   notFound: {
     title: { es: 'Esta página no existe', en: 'This page doesn’t exist' },
     body: {
-      es: 'Puede que el enlace esté mal escrito o que la página se haya movido.',
-      en: 'The link may be mistyped or the page may have moved.',
+      es: 'El oso la buscó por todo el bosque y no la encontró. Puede que el enlace esté mal escrito o que la página se haya movido.',
+      en: 'The bear searched the whole forest and couldn’t find it. The link may be mistyped or the page may have moved.',
     },
     cta: { es: 'Volver al inicio', en: 'Back to home' },
   },

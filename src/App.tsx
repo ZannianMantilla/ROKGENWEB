@@ -2,6 +2,7 @@ import { useEffect, useRef, type ComponentType } from 'react';
 import { pageSeo, ui } from './data/content';
 import { useT } from './hooks/useT';
 import { loadAnalytics } from './lib/analytics';
+import { initClickSounds } from './lib/sound';
 import { ROUTES, useRoute, withBase, type RouteId } from './lib/router';
 import { Navbar } from './components/layout/Navbar';
 import { ScrollProgress } from './components/layout/ScrollProgress';
@@ -60,6 +61,9 @@ export function App() {
     }
     document.getElementById('main')?.focus({ preventScroll: true });
   }, [route]);
+
+  // Sonidos de clic (logo, cristal, botones…): no dependen de las animaciones.
+  useEffect(() => initClickSounds(), []);
 
   // Scroll suave, cursor y analítica: una vez, cuando el navegador está libre.
   useEffect(() => {

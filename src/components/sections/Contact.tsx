@@ -7,6 +7,7 @@ import { ROUTES } from '../../lib/router';
 
 import { submitForm, validate, type FormErrors, type FormValues } from '../../lib/form';
 import { trackEvent } from '../../lib/analytics';
+import { play } from '../../lib/sound';
 import { SectionHeading } from '../ui/SectionHeading';
 import { BrandIcon } from '../ui/BrandIcon';
 import { Avatar } from '../ui/Avatar';
@@ -81,6 +82,7 @@ export function Contact({ level = 2, more = false }: SectionProps) {
     setTouched({ name: true, email: true, message: true });
     const firstInvalid = (Object.keys(errs) as (keyof FormValues)[])[0];
     if (firstInvalid) {
+      play('error');
       form.querySelector<HTMLElement>(`#cf-${firstInvalid}`)?.focus();
       return;
     }
@@ -98,6 +100,7 @@ export function Contact({ level = 2, more = false }: SectionProps) {
       subject: t(contact.emailSubject),
     });
     setStatus(result);
+    play(result === 'error' ? 'error' : 'success');
     if (result !== 'error') {
       trackEvent('contact_submit');
       setValues(EMPTY);

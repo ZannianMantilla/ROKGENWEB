@@ -78,7 +78,8 @@ const jsonLd = {
     {
       '@type': 'Person',
       '@id': `${SITE_URL}/#person`,
-      name: 'Zannián Mantilla Celis',
+      name: 'Zannián MC',
+      alternateName: 'Zannián Mantilla Celis',
       jobTitle: 'Desarrollador de Software',
       description: 'Desarrollador de Software | Frontend | Mobile | Análisis de Datos | Soporte TI',
       email: 'mailto:zanniancelis@gmail.com',
@@ -115,7 +116,7 @@ const jsonLd = {
     {
       '@type': 'ProfessionalService',
       '@id': `${SITE_URL}/#service`,
-      name: 'Zannián Mantilla Celis — Desarrollo de software freelance',
+      name: 'Zannián MC — Desarrollo de software freelance',
       ...(SITE_URL && { url: `${SITE_URL}/` }),
       image: abs('/og-image.png'),
       email: 'zanniancelis@gmail.com',

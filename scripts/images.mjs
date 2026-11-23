@@ -49,42 +49,82 @@ for (const w of [320, 640, 960]) {
 }
 console.log('• Foto: variantes AVIF/WebP listas');
 
-/* ---------- Íconos ---------- */
-const iconSvg = (
-  size,
-  pad = 0,
-) => `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 64 64">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c4b5fd"/><stop offset=".45" stop-color="#a855f7"/><stop offset="1" stop-color="#c026d3"/></linearGradient>
-    <radialGradient id="h" cx=".5" cy=".55" r=".5"><stop offset="0" stop-color="#7c3aed" stop-opacity=".55"/><stop offset="1" stop-color="#7c3aed" stop-opacity="0"/></radialGradient>
-  </defs>
-  <rect x="${pad}" y="${pad}" width="${64 - pad * 2}" height="${64 - pad * 2}" rx="14" fill="#0c0a16"/>
-  <circle cx="32" cy="34" r="26" fill="url(#h)"/>
-  <!-- El cristal del colgante (misma geometría que src/components/ui/Crystal.tsx) -->
-  <g transform="translate(14 4) scale(1.5 1.75)">
-    <path d="M12 2 18.5 7.5v13L12 30l-6.5-9.5v-13Z" fill="url(#g)"/>
-    <path d="M12 2 5.5 7.5v13L12 30Z" fill="#4c1d95" opacity=".45"/>
-    <path d="M12 2v28M5.5 7.5 12 11l6.5-3.5" stroke="#f5d0fe" stroke-opacity=".55" stroke-width=".8" fill="none"/>
-    <path d="M14.6 9.6v9.6l-1.3 2.4V11Z" fill="#fff" opacity=".7"/>
-  </g>
-</svg>`;
+/* ---------- Logo: el oso (LOGO/oso.webp, sobre blanco con contorno negro) ---------- */
+// El fondo blanco se borra rellenando desde los bordes: el contorno negro lo detiene, así el interior queda intacto.
+// Los píxeles claros junto al contorno quedan semitransparentes para suavizarlo.
+const { data: px, info } = await sharp(join(root, 'LOGO', 'oso.webp'))
+  .removeAlpha()
+  .raw()
+  .toBuffer({ resolveWithObject: true });
+const { width: lw, height: lh } = info;
+const light = (p) => Math.min(px[p * 3], px[p * 3 + 1], px[p * 3 + 2]);
+const alpha = new Uint8Array(lw * lh).fill(255);
+const stack = [];
+for (let x = 0; x < lw; x++) stack.push(x, (lh - 1) * lw + x);
+for (let y = 0; y < lh; y++) stack.push(y * lw, y * lw + lw - 1);
+while (stack.length) {
+  const p = stack.pop();
+  if (alpha[p] !== 255 || light(p) < 200) continue;
+  alpha[p] = Math.max(0, Math.min(254, Math.round(((235 - light(p)) / 35) * 255)));
+  const x = p % lw;
+  if (x > 0) stack.push(p - 1);
+  if (x < lw - 1) stack.push(p + 1);
+  if (p >= lw) stack.push(p - lw);
+  if (p < lw * (lh - 1)) stack.push(p + lw);
+}
+const rgba = Buffer.alloc(lw * lh * 4);
+for (let p = 0; p < lw * lh; p++)
+  rgba.set([px[p * 3], px[p * 3 + 1], px[p * 3 + 2], alpha[p]], p * 4);
+const logo = await sharp(rgba, { raw: { width: lw, height: lh, channels: 4 } })
+  .trim({ threshold: 1 })
+  .png()
+  .toBuffer();
+const logoMeta = await sharp(logo).metadata();
+for (const h of [48, 96, 192]) {
+  await sharp(logo)
+    .resize({ height: h })
+    .webp({ quality: 90, alphaQuality: 90 })
+    .toFile(join(outDir, `logo-${h}.webp`));
+}
+console.log(`• Logo: ${logoMeta.width}×${logoMeta.height} → logo-{48,96,192}.webp`);
+
+/* ---------- Íconos: el logo sobre fondo oscuro ---------- */
+const clear = { r: 0, g: 0, b: 0, alpha: 0 };
+const icon = async (size, inner, background = '#0c0a16') =>
+  sharp({ create: { width: size, height: size, channels: 4, background } })
+    .composite([
+      {
+        input: await sharp(logo)
+          .resize({
+            width: Math.round(size * inner),
+            height: Math.round(size * inner),
+            fit: 'inside',
+          })
+          .toBuffer(),
+        gravity: 'center',
+      },
+    ])
+    .png()
+    .toBuffer();
 
 const icons = [
-  ['favicon-32.png', 32, 0],
-  ['apple-touch-icon.png', 180, 0],
-  ['icon-192.png', 192, 0],
-  ['icon-512.png', 512, 0],
-  ['icon-maskable-512.png', 512, 0],
+  ['favicon-32.png', 32, 1, clear],
+  ['apple-touch-icon.png', 180, 0.78],
+  ['icon-192.png', 192, 0.78],
+  ['icon-512.png', 512, 0.78],
+  ['icon-maskable-512.png', 512, 0.6],
 ];
-for (const [name, size, pad] of icons) {
+for (const [name, size, inner, bg] of icons) {
   const file = join(pub, name);
   if (!force && existsSync(file)) continue;
-  await sharp(Buffer.from(iconSvg(size, pad)))
-    .png()
-    .toFile(file);
+  writeFileSync(file, await icon(size, inner, bg));
 }
 const favicon = join(pub, 'favicon.svg');
-if (force || !existsSync(favicon)) writeFileSync(favicon, iconSvg(64));
+if (force || !existsSync(favicon))
+  writeFileSync(
+    favicon,
+    `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><image width="64" height="64" href="data:image/png;base64,${(await icon(64, 1, clear)).toString('base64')}"/></svg>`,
+  );
 console.log('• Íconos listos');
 
 /* ---------- Imagen Open Graph 1200×630 ---------- */
@@ -101,11 +141,15 @@ if (force || !existsSync(og)) {
     <g font-family="Segoe UI, Arial, sans-serif">
       <text x="80" y="130" font-size="26" fill="#e879f9" letter-spacing="6" font-family="Consolas, monospace">DESARROLLADOR DE SOFTWARE</text>
       <text x="80" y="270" font-size="92" font-weight="700" fill="#ededf5" letter-spacing="-3">Zannián</text>
-      <text x="80" y="370" font-size="92" font-weight="700" fill="url(#t)" letter-spacing="-3">Mantilla Celis</text>
+      <text x="80" y="370" font-size="92" font-weight="700" fill="url(#t)" letter-spacing="-3">MC</text>
       <text x="80" y="470" font-size="32" fill="#a1a1b5">Frontend · Mobile · Análisis de Datos · Soporte TI</text>
       <text x="80" y="550" font-size="26" fill="#a1a1b5">Santander, Colombia</text>
     </g>
   </svg>`;
-  await sharp(Buffer.from(svg)).png({ compressionLevel: 9 }).toFile(og);
+  const mark = await sharp(logo).resize({ width: 330 }).toBuffer();
+  await sharp(Buffer.from(svg))
+    .composite([{ input: mark, top: 130, left: 800 }])
+    .png({ compressionLevel: 9 })
+    .toFile(og);
   console.log('• og-image.png lista');
 }

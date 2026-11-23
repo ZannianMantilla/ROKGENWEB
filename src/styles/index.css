@@ -453,43 +453,53 @@ dialog.modal[open]::backdrop {
   animation: draw 0.7s 0.2s ease-out both;
 }
 
-/* ---------- Cursor ---------- */
-.cursor-ring,
-.cursor-dot,
-.cursor-glow {
+/* ---------- Cursor: huella de oso (misma forma que src/components/ui/Paw.tsx) ---------- */
+.cursor-paw,
+.cursor-glow,
+.paw-print {
   position: fixed;
   top: 0;
   left: 0;
-  border-radius: 999px;
   pointer-events: none;
+}
+.cursor-paw,
+.paw-print {
+  background: var(--accent-2);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cellipse cx='12' cy='16.5' rx='5.6' ry='4.6'/%3E%3Cellipse cx='5' cy='10.5' rx='2.1' ry='2.7' transform='rotate(-18 5 10.5)'/%3E%3Cellipse cx='9.4' cy='6.6' rx='2.2' ry='2.9' transform='rotate(-6 9.4 6.6)'/%3E%3Cellipse cx='14.6' cy='6.6' rx='2.2' ry='2.9' transform='rotate(6 14.6 6.6)'/%3E%3Cellipse cx='19' cy='10.5' rx='2.1' ry='2.7' transform='rotate(18 19 10.5)'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}
+.cursor-paw,
+.cursor-glow {
   opacity: 0;
   transition: opacity 0.3s ease;
 }
-.cursor-ring {
-  z-index: 70;
+.cursor-paw {
+  z-index: 71;
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+  transition:
+    width 0.3s var(--ease-out-expo),
+    height 0.3s var(--ease-out-expo),
+    margin 0.3s var(--ease-out-expo),
+    scale 0.15s ease,
+    background-color 0.3s ease,
+    opacity 0.3s ease;
+}
+/* Tamaño y escala van por width/scale: el transform lo usa GSAP para moverla */
+.cursor-paw.is-hover {
+  background: var(--accent);
   width: 40px;
   height: 40px;
   margin: -20px 0 0 -20px;
-  border: 1.5px solid color-mix(in oklab, var(--accent-2) 75%, transparent);
-  transition:
-    width 0.35s var(--ease-out-expo),
-    height 0.35s var(--ease-out-expo),
-    margin 0.35s var(--ease-out-expo),
-    background-color 0.3s ease,
-    border-color 0.3s ease,
-    opacity 0.3s ease;
 }
-.cursor-dot {
-  z-index: 71;
-  width: 6px;
-  height: 6px;
-  margin: -3px 0 0 -3px;
-  background: var(--accent-2);
-  box-shadow: 0 0 12px var(--accent-2);
+.cursor-paw.is-down {
+  scale: 0.75;
 }
 /* Detrás del contenido: ilumina el fondo y las tarjetas translúcidas, nunca el texto */
 .cursor-glow {
   z-index: -1;
+  border-radius: 999px;
   width: 640px;
   height: 640px;
   margin: -320px 0 0 -320px;
@@ -499,17 +509,39 @@ dialog.modal[open]::backdrop {
     transparent
   );
 }
-.cursor-ring.is-visible,
-.cursor-dot.is-visible,
+.cursor-paw.is-visible,
 .cursor-glow.is-visible {
   opacity: 1;
 }
-.cursor-ring.is-hover {
-  width: 72px;
-  height: 72px;
-  margin: -36px 0 0 -36px;
-  border-color: var(--accent);
-  background: color-mix(in oklab, var(--accent) 16%, transparent);
+
+/* ---------- Huellas que bajan por el borde al hacer scroll (enhance.ts: initPawTrail) ---------- */
+@keyframes paw-step {
+  0% {
+    opacity: 0;
+    scale: 0.6;
+  }
+  15% {
+    opacity: 0.55;
+    scale: 1;
+  }
+  70% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.paw-print {
+  z-index: 40;
+  width: 22px;
+  height: 22px;
+  animation: paw-step 1.6s ease-out forwards;
+}
+@media (max-width: 640px) {
+  .paw-print {
+    width: 14px;
+    height: 14px;
+  }
 }
 
 /* ---------- Botón con destello ---------- */
@@ -814,7 +846,6 @@ dialog.modal[open]::backdrop {
   height: 14px;
   background: linear-gradient(135deg, white, var(--accent) 45%, var(--accent-strong));
   clip-path: polygon(50% 0, 100% 35%, 50% 100%, 0 35%);
-  filter: drop-shadow(0 0 6px var(--accent-2));
   pointer-events: none;
 }
 /* Globo de diálogo del avatar del hero */
@@ -836,22 +867,27 @@ dialog.modal[open]::backdrop {
   opacity: 0;
   transform: scale(0.6) translateY(10px);
 }
-/* Logo: el cristal brilla y late despacio */
-.logo-crystal::before {
-  content: '';
-  position: absolute;
-  inset: -30%;
-  border-radius: 50%;
-  background: radial-gradient(
-    closest-side,
-    color-mix(in oklab, var(--accent-strong) 60%, transparent),
-    transparent
-  );
-  animation: core-pulse 3s ease-in-out infinite;
+/* 404: el oso mira a un lado y al otro buscando la página */
+@keyframes bear-look {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-10deg) translateX(-4%);
+  }
+  60% {
+    transform: rotate(9deg) translateX(4%);
+  }
 }
-.logo-crystal > svg {
-  position: relative;
-  filter: drop-shadow(0 0 6px rgb(232 121 249 / 0.6));
+.bear-lost {
+  transform-origin: 50% 90%;
+  animation: bear-look 3.6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bear-lost {
+    animation: none;
+  }
 }
 
 /* ---------- Transición entre páginas (View Transitions; router.ts la activa) ---------- */

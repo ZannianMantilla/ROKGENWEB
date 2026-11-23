@@ -14,10 +14,19 @@ export function Footer() {
       />
       <p
         aria-hidden
-        className="ticker pointer-events-none pt-12 text-center text-[clamp(4rem,19vw,17rem)] whitespace-nowrap select-none"
+        className="ticker pointer-events-none flex items-center justify-center gap-[0.15em] pt-12 text-[clamp(2.5rem,11vw,10rem)] whitespace-nowrap select-none"
         data-reveal
       >
-        <span className="text-outline">{profile.name.split(' ')[0]}</span>
+        <img
+          src={`${import.meta.env.BASE_URL}assets/generated/logo-192.webp`}
+          width={163}
+          height={192}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="h-[0.9em] w-auto"
+        />
+        <span className="text-outline">{profile.shortName}</span>
         <span className="text-gradient">.</span>
       </p>
       <nav aria-label={t(ui.footerNav)} className="shell">
@@ -33,7 +42,7 @@ export function Footer() {
       </nav>
       <div className="shell flex flex-col gap-6 py-10 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="font-display text-lg font-semibold">{profile.name}</p>
+          <p className="font-display text-lg font-semibold">{profile.shortName}</p>
           <p className="mt-1 text-sm text-muted">
             {t(footer.tagline)} © {new Date().getFullYear()}
           </p>
