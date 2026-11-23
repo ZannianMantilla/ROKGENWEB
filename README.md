@@ -113,14 +113,14 @@ Ninguna es secreta: todo lo que empieza por `VITE_` termina en el JS público.
 
 ## Desplegar
 
-**GitHub Pages (el actual):** el sitio se publica en https://zannianmantilla.github.io/rokgen/ con `.github/workflows/deploy.yml`, en cada push a `main`.
+**GitHub Pages (el actual):** el sitio se publica en https://zannianmantilla.github.io/ROKGENWEB/ con `.github/workflows/deploy.yml`, en cada push a `main`.
 
-1. En el repo `ZannianMantilla/rokgen`: *Settings → Pages → Source: GitHub Actions*.
+1. En el repo `ZannianMantilla/ROKGENWEB`: *Settings → Pages → Source: GitHub Actions*.
 2. (Opcional) En *Settings → Secrets and variables → Actions → Variables* agrega `VITE_FORM_ENDPOINT` y, si los usas, `VITE_PLAUSIBLE_DOMAIN` o `VITE_GA_ID`.
 
-- El sitio vive en la subcarpeta `/rokgen/`. El build la recibe en `BASE_PATH` y `SITE_URL`, que ya están en el workflow.
+- El sitio vive en la subcarpeta `/ROKGENWEB/`. El build la recibe en `BASE_PATH` y `SITE_URL`, que ya están en el workflow.
 - En el código, los enlaces internos pasan por `withBase` (`src/lib/router.ts`) y las imágenes usan `import.meta.env.BASE_URL`. Si agregas una ruta o imagen nueva, úsalos igual.
-- Para probar en local con la subcarpeta: `BASE_PATH=/rokgen/ npm run build` (en Git Bash, antepone `MSYS_NO_PATHCONV=1`).
+- Para probar en local con la subcarpeta: `BASE_PATH=/ROKGENWEB/ npm run build` (en Git Bash, antepone `MSYS_NO_PATHCONV=1`).
 - GitHub Pages no permite cabeceras propias: la caché inmutable y las cabeceras de seguridad de `vercel.json` solo aplican en Vercel.
 
 **Vercel:** importa el repositorio y listo. `vercel.json` ya define el build, la carpeta `dist`, caché inmutable y cabeceras de seguridad. Agrega `VITE_FORM_ENDPOINT` en *Settings → Environment Variables*. Cuando tengas dominio propio, define también `SITE_URL=https://tudominio.com`.

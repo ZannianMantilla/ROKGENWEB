@@ -19,7 +19,7 @@ export const ROUTES = {
 
 export type RouteId = keyof typeof ROUTES | 'notFound';
 
-/** Subcarpeta donde se publica el sitio, sin '/' final ('' en la raíz, '/rokgen' en GitHub Pages). */
+/** Subcarpeta donde se publica el sitio, sin '/' final ('' en la raíz, '/ROKGENWEB' en GitHub Pages). */
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 /** Ruta interna (de ROUTES) → URL real con la subcarpeta. Los enlaces "#ancla" quedan igual. */
