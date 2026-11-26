@@ -29,9 +29,13 @@ const avatars = [
   { src: 'proyectos.png', name: 'avatar-proyectos', bg: 'white', holes: 3000 },
   { src: 'pulgar arriba.png', name: 'avatar-pulgar', bg: 'white' },
   { src: 'contacto.png', name: 'avatar-contacto', bg: 'white' },
-  // La gata del carrusel de sitios (bg 'none': la imagen ya trae transparencia).
-  { src: 'AVATAR GATO/Gato siamés curioso sobre el borde.png', name: 'gata-borde', bg: 'white' },
-  { src: 'AVATAR GATO/Gato siamés curioso con pata alzada.png', name: 'gata-pata', bg: 'none' },
+  // La gata del carrusel de sitios: sin pupilas, porque las dibuja ClientSites.tsx para moverlas.
+  {
+    src: 'AVATAR GATO/Gato siamés curioso sobre el borde.png',
+    name: 'gata-borde',
+    bg: 'white',
+    noPupils: true,
+  },
 ];
 const WIDTHS = [360, 720];
 
@@ -112,7 +116,6 @@ function removeHoles(mask, bgMask, w, h, minArea) {
 }
 
 async function cutout({ src, bg, gap = 3, holes = 0 }) {
-  if (bg === 'none') return sharp(join(srcDir, src)).trim({ threshold: 0 }).png().toBuffer();
   const { data, info } = await sharp(join(srcDir, src))
     .ensureAlpha()
     .raw()
@@ -171,6 +174,75 @@ async function cutout({ src, bg, gap = 3, holes = 0 }) {
     .toBuffer();
 }
 
+/**
+ * Borra las pupilas de los iris azules (uno por mitad de la imagen): lo oscuro o muy claro dentro de la
+ * elipse del iris se rellena por difusión (cada píxel toma el promedio de sus vecinos, muchas veces),
+ * así queda un azul suave sin rayas. Devuelve la imagen y la caja de cada iris en %.
+ */
+async function removePupils(png) {
+  const { data, info } = await sharp(png).raw().toBuffer({ resolveWithObject: true });
+  const { width: w, height: h, channels: c } = info;
+  const blue = (i) => data[i + 2] > 150 && data[i + 2] > data[i] + 70 && data[i + 1] > 100;
+  const eyes = [];
+  for (const [x0, x1] of [
+    [0, Math.floor(w / 2)],
+    [Math.floor(w / 2), w],
+  ]) {
+    let minX = w,
+      maxX = 0,
+      minY = h,
+      maxY = 0;
+    for (let y = 0; y < h; y++)
+      for (let x = x0; x < x1; x++)
+        if (blue((y * w + x) * c)) {
+          minX = Math.min(minX, x);
+          maxX = Math.max(maxX, x);
+          minY = Math.min(minY, y);
+          maxY = Math.max(maxY, y);
+        }
+    const cx = (minX + maxX) / 2,
+      cy = (minY + maxY) / 2;
+    const rx = ((maxX - minX) / 2) * 0.9,
+      ry = ((maxY - minY) / 2) * 0.95;
+    const hole = [];
+    for (let y = minY; y <= maxY; y++)
+      for (let x = minX; x <= maxX; x++) {
+        if (((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 > 1) continue;
+        if (!blue((y * w + x) * c)) hole.push(y * w + x);
+      }
+    const inHole = new Uint8Array(w * h);
+    for (const p of hole) inHole[p] = 1;
+    // Punto de partida: el azul medio del iris, y luego difusión desde los bordes.
+    for (const p of hole) {
+      data[p * c] = 90;
+      data[p * c + 1] = 180;
+      data[p * c + 2] = 230;
+    }
+    for (let iter = 0; iter < 400; iter++)
+      for (const p of hole)
+        for (let ch = 0; ch < 3; ch++)
+          data[p * c + ch] =
+            (data[(p - 1) * c + ch] +
+              data[(p + 1) * c + ch] +
+              data[(p - w) * c + ch] +
+              data[(p + w) * c + ch]) >>
+            2;
+    const pct = (v, t) => +((v / t) * 100).toFixed(1);
+    eyes.push({
+      left: pct(minX, w),
+      top: pct(minY, h),
+      width: pct(maxX - minX, w),
+      height: pct(maxY - minY, h),
+    });
+  }
+  return {
+    png: await sharp(data, { raw: { width: w, height: h, channels: c } })
+      .png()
+      .toBuffer(),
+    eyes,
+  };
+}
+
 for (const a of avatars) {
   const source = join(srcDir, a.src);
   if (!existsSync(source)) {
@@ -183,7 +255,12 @@ for (const a of avatars) {
   );
   if (!force && files.every((f) => existsSync(f) && statSync(f).mtimeMs > srcTime)) continue;
 
-  const png = await cutout(a);
+  let png = await cutout(a);
+  if (a.noPupils) {
+    const out = await removePupils(png);
+    png = out.png;
+    console.log(`• ${a.name}: iris (en %) →`, JSON.stringify(out.eyes));
+  }
   for (const w of WIDTHS) {
     const img = () => sharp(png).resize({ width: w });
     await img()

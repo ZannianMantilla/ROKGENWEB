@@ -81,7 +81,6 @@ export function enhanceGlobal(): () => void {
 
     () => {
       if (finePointer) cleanups.push(initCursor());
-      cleanups.push(initPawTrail());
     },
   ]);
 }
@@ -341,40 +340,6 @@ function initCursor() {
   };
 }
 
-/* ---------- Huellas de oso bajando (o subiendo) por el borde izquierdo mientras se hace scroll ---------- */
-function initPawTrail() {
-  const STRIDE = 110; // px de scroll por paso
-  let lastY = scrollY;
-  let travelled = 0;
-  let stepY = 90; // posición en pantalla del siguiente paso
-  let left = true;
-
-  const onScroll = () => {
-    const dy = scrollY - lastY;
-    lastY = scrollY;
-    travelled += Math.abs(dy);
-    if (travelled < STRIDE || !dy) return;
-    travelled = 0;
-    const down = dy > 0;
-    stepY += down ? 56 : -56;
-    if (stepY > innerHeight - 60) stepY = 90;
-    if (stepY < 90) stepY = innerHeight - 60;
-    left = !left;
-    const print = document.createElement('span');
-    print.className = 'paw-print';
-    print.setAttribute('aria-hidden', 'true');
-    // En móvil caben en el margen de 20 px de .shell, sin tapar el texto.
-    const [x, gap] = innerWidth < 640 ? [3, 6] : [18, 14];
-    print.style.transform = `translate(${x + (left ? 0 : gap)}px, ${stepY}px) rotate(${down ? 180 + (left ? 8 : -8) : left ? -8 : 8}deg)`;
-    print.addEventListener('animationend', () => print.remove(), { once: true });
-    document.body.append(print);
-  };
-  addEventListener('scroll', onScroll, { passive: true });
-  return () => {
-    removeEventListener('scroll', onScroll);
-    document.querySelectorAll('.paw-print').forEach((el) => el.remove());
-  };
-}
 
 /* ---------- Avatar vivo ----------
  * - Con mouse: la mirada y el cuerpo siguen al cursor, y el cristal se enciende al acercarse.

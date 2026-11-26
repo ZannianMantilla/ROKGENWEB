@@ -1,7 +1,60 @@
 import { ArrowDown, Code2, Megaphone, Sparkles } from 'lucide-react';
 import { areas, clientSites, community, journey, projects } from '../../data/content';
+import type { CSSProperties } from 'react';
 import { useT } from '../../hooks/useT';
 import { SectionHeading } from '../ui/SectionHeading';
+
+/**
+ * Huellas de un oso cruzando la sección, una tras otra (pata izquierda y derecha).
+ * path(t) da el punto del camino en % (t de 0 a 1); aspect es ancho/alto aproximado de la sección,
+ * para orientar cada huella hacia donde avanza.
+ */
+function walk(steps: number, aspect: number, path: (t: number) => [number, number], gap: number) {
+  return Array.from({ length: steps }, (_, i) => {
+    const t = i / (steps - 1);
+    const [x, y] = path(t);
+    const [x2, y2] = path(Math.min(1, t + 0.01));
+    const [x1, y1] = path(Math.max(0, t - 0.01));
+    const angle = Math.atan2(y2 - y1, (x2 - x1) * aspect); // en píxeles, no en %
+    const side = i % 2 ? 1 : -1;
+    // cada pata va un poco a un lado del camino, perpendicular a la dirección
+    return {
+      left: x - (side * gap * Math.sin(angle)) / aspect,
+      top: y + side * gap * Math.cos(angle),
+      rotate: (angle * 180) / Math.PI + 90 + side * 8,
+    };
+  });
+}
+const TAU = Math.PI * 2;
+// PC: diagonal suave de abajo a la izquierda hacia arriba a la derecha.
+const wide = walk(16, 2, (t) => [4 + 92 * t, 88 - 76 * t + 9 * Math.sin(t * TAU)], 2.8);
+// Móvil (sección alta y angosta): sube en S de abajo hacia arriba.
+const tall = walk(18, 0.3, (t) => [50 + 30 * Math.sin(t * TAU * 1.5), 97 - 94 * t], 0.8);
+
+function PawWalk() {
+  const prints = (list: typeof wide, className: string) =>
+    list.map((p, i) => (
+      <span
+        key={className + i}
+        className={`walk-print ${className}`}
+        style={
+          {
+            left: `${p.left}%`,
+            top: `${p.top}%`,
+            rotate: `${p.rotate}deg`,
+            '--i': i,
+            '--n': list.length,
+          } as CSSProperties
+        }
+      />
+    ));
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      {prints(wide, 'max-md:hidden')}
+      {prints(tall, 'md:hidden')}
+    </div>
+  );
+}
 
 const icons = { projects: Code2, community: Megaphone, other: Sparkles };
 
@@ -23,7 +76,8 @@ export function Areas() {
   };
 
   return (
-    <section id="areas" aria-labelledby="areas-title" className="relative py-24 md:py-32">
+    <section id="areas" aria-labelledby="areas-title" className="relative isolate py-24 md:py-32">
+      <PawWalk />
       <div className="shell">
         <SectionHeading id="areas-title" kicker={t(areas.kicker)} title={t(areas.title)} />
         <ol className="grid gap-4 md:grid-cols-3" data-stagger>

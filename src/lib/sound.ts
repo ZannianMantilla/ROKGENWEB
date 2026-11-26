@@ -4,7 +4,7 @@
  */
 import { soundOn } from './prefs';
 
-export type SoundName = 'growl' | 'chime' | 'pop' | 'tick' | 'success' | 'error' | 'none';
+export type SoundName = 'growl' | 'meow' | 'chime' | 'pop' | 'tick' | 'success' | 'error' | 'none';
 
 let ctx: AudioContext | undefined;
 let master: GainNode;
@@ -52,8 +52,35 @@ function growl() {
   void growlAudio.play().catch(() => {});
 }
 
+/** Maullido: tono que sube y baja ("mi-au") pasado por un filtro que imita la boca abriéndose. */
+function meow() {
+  const a = audio();
+  const t = a.currentTime;
+  const dur = 0.55;
+  const osc = a.createOscillator();
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(520, t);
+  osc.frequency.linearRampToValueAtTime(820, t + 0.18);
+  osc.frequency.linearRampToValueAtTime(460, t + dur);
+  const mouth = a.createBiquadFilter();
+  mouth.type = 'bandpass';
+  mouth.Q.value = 4;
+  mouth.frequency.setValueAtTime(700, t);
+  mouth.frequency.linearRampToValueAtTime(1600, t + 0.2);
+  mouth.frequency.linearRampToValueAtTime(800, t + dur);
+  const env = a.createGain();
+  env.gain.setValueAtTime(0.0001, t);
+  env.gain.exponentialRampToValueAtTime(0.5, t + 0.05);
+  env.gain.setValueAtTime(0.5, t + 0.3);
+  env.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  osc.connect(mouth).connect(env).connect(master);
+  osc.start(t);
+  osc.stop(t + dur + 0.05);
+}
+
 const sounds: Record<SoundName, () => void> = {
   growl,
+  meow,
   chime: () => {
     const t = audio().currentTime;
     [1319, 1760, 2637].forEach((f, i) => tone('sine', f, f, t + i * 0.07, 0.5, 0.18));
