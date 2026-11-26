@@ -1,8 +1,7 @@
 /**
- * Sonidos de la interfaz sintetizados con Web Audio (sin archivos), salvo el gruñido del oso, que es un audio.
- * Solo suenan tras un clic del visitante y se pueden apagar desde la barra (prefs.ts).
+ * Sonidos de la interfaz sintetizados con Web Audio, salvo el gruñido del oso y el maullido de la gata,
+ * que son audios. Solo suenan tras un clic del visitante.
  */
-import { soundOn } from './prefs';
 
 export type SoundName = 'growl' | 'meow' | 'chime' | 'pop' | 'tick' | 'success' | 'error' | 'none';
 
@@ -43,44 +42,19 @@ function tone(
   osc.stop(start + dur + 0.05);
 }
 
-/** Gruñido del oso: audio real (Universfield, Pixabay), se carga solo la primera vez que se usa. */
-let growlAudio: HTMLAudioElement | undefined;
-function growl() {
-  growlAudio ??= new Audio(`${import.meta.env.BASE_URL}assets/sounds/oso.mp3`);
-  growlAudio.volume = 0.7;
-  growlAudio.currentTime = 0;
-  void growlAudio.play().catch(() => {});
-}
-
-/** Maullido: tono que sube y baja ("mi-au") pasado por un filtro que imita la boca abriéndose. */
-function meow() {
-  const a = audio();
-  const t = a.currentTime;
-  const dur = 0.55;
-  const osc = a.createOscillator();
-  osc.type = 'sawtooth';
-  osc.frequency.setValueAtTime(520, t);
-  osc.frequency.linearRampToValueAtTime(820, t + 0.18);
-  osc.frequency.linearRampToValueAtTime(460, t + dur);
-  const mouth = a.createBiquadFilter();
-  mouth.type = 'bandpass';
-  mouth.Q.value = 4;
-  mouth.frequency.setValueAtTime(700, t);
-  mouth.frequency.linearRampToValueAtTime(1600, t + 0.2);
-  mouth.frequency.linearRampToValueAtTime(800, t + dur);
-  const env = a.createGain();
-  env.gain.setValueAtTime(0.0001, t);
-  env.gain.exponentialRampToValueAtTime(0.5, t + 0.05);
-  env.gain.setValueAtTime(0.5, t + 0.3);
-  env.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  osc.connect(mouth).connect(env).connect(master);
-  osc.start(t);
-  osc.stop(t + dur + 0.05);
+/** Audios reales: se cargan la primera vez que se usan. */
+const clips: Record<string, HTMLAudioElement> = {};
+function clip(file: string, volume: number) {
+  const el = (clips[file] ??= new Audio(`${import.meta.env.BASE_URL}assets/sounds/${file}`));
+  el.volume = volume;
+  el.currentTime = 0;
+  void el.play().catch(() => {});
 }
 
 const sounds: Record<SoundName, () => void> = {
-  growl,
-  meow,
+  // Gruñido: Universfield (Pixabay). Maullido: audio que eligió Zannián.
+  growl: () => clip('oso.mp3', 0.7),
+  meow: () => clip('gata.mp3', 0.8),
   chime: () => {
     const t = audio().currentTime;
     [1319, 1760, 2637].forEach((f, i) => tone('sine', f, f, t + i * 0.07, 0.5, 0.18));
@@ -95,8 +69,7 @@ const sounds: Record<SoundName, () => void> = {
   none: () => {},
 };
 
-export function play(name: SoundName, force = false) {
-  if (!force && !soundOn()) return;
+export function play(name: SoundName) {
   try {
     sounds[name]();
   } catch {

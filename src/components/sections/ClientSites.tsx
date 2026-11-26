@@ -21,7 +21,7 @@ const IRIS = [
   { left: 25.9, top: 72.9, width: 12.9, height: 16.3 },
   { left: 60.7, top: 73.7, width: 12.8, height: 15.7 },
 ];
-const SPEED = 48; // px por segundo del giro continuo
+const SPEED = 70; // px por segundo del giro continuo
 
 /** Corazones que salen de la gata al tocarla (Web Animations; se borran al terminar). */
 function hearts(host: HTMLElement) {
@@ -112,7 +112,6 @@ export function ClientSites({ level, detailed = false }: Props) {
   const track = useRef<HTMLUListElement>(null);
   const cat = useRef<HTMLButtonElement>(null);
   const [index, setIndex] = useState(0);
-  const resumeAt = useRef(0); // hasta cuándo queda en pausa el giro tras deslizar
 
   useEffect(() => {
     const el = track.current;
@@ -122,25 +121,45 @@ export function ClientSites({ level, detailed = false }: Props) {
     let pos = el.scrollLeft;
     let last = performance.now();
     let frame = 0;
-    let holding = false;
+    // Modo: 'auto' gira solo; 'drag' lo lleva el mouse; 'coast' sigue con la inercia del arrastre;
+    // 'touch' lo mueve el dedo (scroll nativo).
+    let mode: 'auto' | 'drag' | 'coast' | 'touch' = 'auto';
+    let velocity = 0; // px/s al soltar el arrastre
+    let resumeAt = 0;
+
+    const metrics = () => {
+      const cards = [...el.children] as HTMLElement[];
+      const step = cards[0].offsetWidth + (parseFloat(getComputedStyle(el).columnGap) || 0);
+      return { cards, loop: step * N }; // una vuelta: las tarjetas van dos veces seguidas
+    };
+    // Mantiene la posición dentro de la primera vuelta, en ambos sentidos.
+    const wrap = (x: number, loop: number) => ((x % loop) + loop) % loop;
 
     const tick = (now: number) => {
       const dt = Math.min(now - last, 64) / 1000;
       last = now;
-      const cards = [...el.children] as HTMLElement[];
-      const step = cards[0].offsetWidth + (parseFloat(getComputedStyle(el).columnGap) || 0);
-      const loop = step * N; // una vuelta: las tarjetas van dos veces seguidas
+      const { cards, loop } = metrics();
 
-      if (!reduced && !holding && now > resumeAt.current) {
+      if (mode === 'coast') {
+        pos += velocity * dt;
+        velocity *= Math.pow(0.04, dt); // frena poco a poco
+        if (Math.abs(velocity) < SPEED) {
+          mode = 'auto';
+          resumeAt = now + 1200;
+        }
+      } else if (mode === 'auto' && !reduced && now > resumeAt) {
         pos += SPEED * dt;
-        if (pos >= loop) pos -= loop;
-        el.scrollLeft = pos;
-      } else {
-        if (el.scrollLeft >= loop) el.scrollLeft -= loop;
+      } else if (mode !== 'drag') {
         pos = el.scrollLeft;
       }
+      if (mode !== 'touch') {
+        pos = wrap(pos, loop);
+        el.scrollLeft = pos;
+      } else if (el.scrollLeft < 2 || el.scrollLeft >= loop + 2) {
+        el.scrollLeft = wrap(el.scrollLeft, loop) || loop; // con el dedo también da la vuelta
+      }
 
-      // Los ojos siguen la tarjeta más cercana a la gata, la que pasa por debajo.
+      // Los ojos (y un poco la cabeza) siguen la tarjeta más cercana a la gata, la que pasa por debajo.
       const box = catEl.getBoundingClientRect();
       const cx = box.left + box.width / 2;
       let best = 0;
@@ -171,26 +190,73 @@ export function ClientSites({ level, detailed = false }: Props) {
     });
     io.observe(el);
 
-    // Se detiene mientras alguien lo mira o lo usa, y sigue girando poco después.
-    const hold = () => (holding = true);
-    const release = () => {
-      holding = false;
-      resumeAt.current = performance.now() + 1500;
+    /* Arrastrar con el mouse, con inercia al soltar. Si se arrastró, el clic no abre el enlace. */
+    let startX = 0;
+    let startPos = 0;
+    let lastX = 0;
+    let lastT = 0;
+    let moved = false;
+    const down = (e: PointerEvent) => {
+      if (e.pointerType === 'touch' || e.button !== 0) return;
+      mode = 'drag';
+      startX = lastX = e.clientX;
+      startPos = pos;
+      lastT = performance.now();
+      velocity = 0;
+      moved = false;
     };
-    const nudge = () => (resumeAt.current = performance.now() + 3000);
-    const events: [string, EventListener][] = [
-      ['pointerenter', hold],
-      ['pointerleave', release],
-      ['focusin', hold],
-      ['focusout', release],
-      ['touchstart', nudge],
-      ['wheel', nudge],
+    const move = (e: PointerEvent) => {
+      if (mode !== 'drag') return;
+      const now = performance.now();
+      if (Math.abs(e.clientX - startX) > 6 && !moved) {
+        moved = true;
+        el.setPointerCapture(e.pointerId);
+      }
+      velocity = ((lastX - e.clientX) / Math.max(now - lastT, 1)) * 1000;
+      lastX = e.clientX;
+      lastT = now;
+      pos = startPos - (e.clientX - startX);
+    };
+    const up = () => {
+      if (mode !== 'drag') return;
+      mode = Math.abs(velocity) > SPEED ? 'coast' : 'auto';
+      resumeAt = performance.now() + 1200;
+    };
+    const click = (e: Event) => {
+      if (!moved) return;
+      e.preventDefault();
+      e.stopPropagation();
+      moved = false;
+    };
+    // El dedo usa el scroll nativo; el giro sigue poco después de soltar.
+    const touchStart = () => (mode = 'touch');
+    const touchEnd = () => {
+      mode = 'auto';
+      resumeAt = performance.now() + 1500;
+      pos = el.scrollLeft;
+    };
+    const noDrag = (e: Event) => e.preventDefault(); // sin el "arrastrar imagen" del navegador
+    const wheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) resumeAt = performance.now() + 1500;
+    };
+    const events: [string, EventListener, AddEventListenerOptions?][] = [
+      ['pointerdown', down as EventListener],
+      ['pointermove', move as EventListener],
+      ['pointerup', up],
+      ['pointercancel', up],
+      ['lostpointercapture', up],
+      ['click', click, { capture: true }],
+      ['touchstart', touchStart, { passive: true }],
+      ['touchend', touchEnd],
+      ['touchcancel', touchEnd],
+      ['dragstart', noDrag],
+      ['wheel', wheel as EventListener, { passive: true }],
     ];
-    events.forEach(([type, fn]) => el.addEventListener(type, fn, { passive: true }));
+    events.forEach(([type, fn, opts]) => el.addEventListener(type, fn, opts));
     return () => {
       io.disconnect();
       cancelAnimationFrame(frame);
-      events.forEach(([type, fn]) => el.removeEventListener(type, fn));
+      events.forEach(([type, fn, opts]) => el.removeEventListener(type, fn, opts));
     };
   }, [N]);
 
@@ -214,7 +280,7 @@ export function ClientSites({ level, detailed = false }: Props) {
         <ul
           id="client-sites-track"
           ref={track}
-          className="carousel -mx-5 flex gap-5 overflow-x-auto px-5 pb-4 sm:mr-[calc(50%-50vw)] sm:-ml-8 sm:pl-8"
+          className="carousel -mx-5 flex cursor-grab gap-5 overflow-x-auto px-5 pb-4 select-none active:cursor-grabbing sm:mr-[calc(50%-50vw)] sm:-ml-8 sm:pl-8"
         >
           {/* Las tarjetas van dos veces para que el giro no tenga fin; la copia no se lee ni se enfoca. */}
           {[...clientSites, ...clientSites].map((site, i) => {

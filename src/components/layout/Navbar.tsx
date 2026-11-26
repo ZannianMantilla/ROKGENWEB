@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import { Menu, Volume2, VolumeX, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { hero, profile, ui, whatsappLink } from '../../data/content';
-import { setLang, setSound, useSound } from '../../lib/prefs';
-import { play } from '../../lib/sound';
+import { setLang } from '../../lib/prefs';
 import { useT } from '../../hooks/useT';
 import { ROUTES, type RouteId } from '../../lib/router';
 import { Link } from '../ui/Link';
@@ -11,7 +10,6 @@ const PAGES = ['about', 'services', 'stack', 'projects', 'experience', 'contact'
 
 export function Navbar({ route }: { route: RouteId }) {
   const { t, lang } = useT();
-  const sound = useSound();
   const [scrolled, setScrolled] = useState(false);
   const menuRef = useRef<HTMLDialogElement>(null);
 
@@ -35,24 +33,6 @@ export function Navbar({ route }: { route: RouteId }) {
       >
         <span aria-hidden>{lang === 'es' ? 'EN' : 'ES'}</span>
         <span className="sr-only">{t(ui.langSwitch)}</span>
-      </button>
-      <button
-        type="button"
-        data-sound="none"
-        aria-pressed={sound}
-        aria-label={t(ui.sound)}
-        title={t(ui.sound)}
-        onClick={() => {
-          setSound(!sound);
-          if (!sound) play('pop', true);
-        }}
-        className="grid size-11 place-items-center rounded-full text-muted transition-colors hover:text-fg"
-      >
-        {sound ? (
-          <Volume2 className="size-4" aria-hidden />
-        ) : (
-          <VolumeX className="size-4" aria-hidden />
-        )}
       </button>
     </div>
   );

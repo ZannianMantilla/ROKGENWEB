@@ -36,6 +36,8 @@ const avatars = [
     bg: 'white',
     noPupils: true,
   },
+  // Gata sentada junto al botón de enviar del formulario de contacto.
+  { src: 'AVATAR GATO/Gato siamés de papel recortado.png', name: 'gata-sentada', bg: 'white' },
 ];
 const WIDTHS = [360, 720];
 

@@ -56,7 +56,6 @@ export const ui = {
   closeMenu: { es: 'Cerrar menú', en: 'Close menu' },
   mainNav: { es: 'Navegación principal', en: 'Main navigation' },
   langSwitch: { es: 'Switch to English', en: 'Cambiar a español' },
-  sound: { es: 'Sonidos de la web', en: 'Site sounds' },
   home: { es: 'Inicio', en: 'Home' },
   footerNav: { es: 'Páginas del sitio', en: 'Site pages' },
 } satisfies Record<string, Localized | Record<string, Localized>>;

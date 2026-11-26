@@ -324,12 +324,12 @@ export function Contact({ level = 2, more = false }: SectionProps) {
                   </div>
                 )}
 
-                <div className="pt-4">
+                <div className="flex items-end gap-2 pt-4">
                   <button
                     type="submit"
                     data-magnetic
                     disabled={status === 'sending'}
-                    className={`${buttonClasses('primary')} w-full disabled:cursor-wait disabled:opacity-80 sm:w-auto`}
+                    className={`${buttonClasses('primary')} flex-1 disabled:cursor-wait disabled:opacity-80 sm:flex-none`}
                   >
                     <span data-magnetic-inner className="inline-flex items-center gap-2">
                       {status === 'sending' ? (
@@ -344,6 +344,19 @@ export function Contact({ level = 2, more = false }: SectionProps) {
                       )}
                     </span>
                   </button>
+                  {/* La gata sentada señala el botón con una huella que va y viene. */}
+                  <span aria-hidden className="pointer-events-none flex shrink-0 items-end">
+                    <span className="cat-point mb-4" />
+                    <img
+                      src={`${import.meta.env.BASE_URL}assets/generated/gata-sentada-360.webp`}
+                      width={740}
+                      height={1284}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      className="cat-sit h-24 w-auto sm:h-28"
+                    />
+                  </span>
                 </div>
               </form>
             )}
