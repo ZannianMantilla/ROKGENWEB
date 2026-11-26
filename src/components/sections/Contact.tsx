@@ -344,9 +344,16 @@ export function Contact({ level = 2, more = false }: SectionProps) {
                       )}
                     </span>
                   </button>
-                  {/* La gata sentada señala el botón con una huella que va y viene. */}
-                  <span aria-hidden className="pointer-events-none flex shrink-0 items-end">
-                    <span className="cat-point mb-4" />
+                  {/* La gata sentada invita a escribir: se asoma hacia el botón y "maúlla" el mensaje. */}
+                  <button
+                    type="button"
+                    data-sound="meow"
+                    aria-label={t(contact.catLabel)}
+                    className="cat-sit relative shrink-0 cursor-pointer"
+                  >
+                    <span aria-hidden className="cat-sit-bubble speech">
+                      {t(contact.catLine)}
+                    </span>
                     <img
                       src={`${import.meta.env.BASE_URL}assets/generated/gata-sentada-360.webp`}
                       width={740}
@@ -354,9 +361,9 @@ export function Contact({ level = 2, more = false }: SectionProps) {
                       alt=""
                       loading="lazy"
                       decoding="async"
-                      className="cat-sit h-24 w-auto sm:h-28"
+                      className="cat-sit-body h-24 w-auto sm:h-28"
                     />
-                  </span>
+                  </button>
                 </div>
               </form>
             )}

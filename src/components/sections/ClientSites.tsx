@@ -280,7 +280,7 @@ export function ClientSites({ level, detailed = false }: Props) {
         <ul
           id="client-sites-track"
           ref={track}
-          className="carousel -mx-5 flex cursor-grab gap-5 overflow-x-auto px-5 pb-4 select-none active:cursor-grabbing sm:mr-[calc(50%-50vw)] sm:-ml-8 sm:pl-8"
+          className="carousel -mx-5 flex cursor-grab gap-5 overflow-x-auto px-5 pb-4 select-none active:cursor-grabbing sm:mx-[calc(50%-50vw)] sm:pl-[calc(50vw-50%)]"
         >
           {/* Las tarjetas van dos veces para que el giro no tenga fin; la copia no se lee ni se enfoca. */}
           {[...clientSites, ...clientSites].map((site, i) => {

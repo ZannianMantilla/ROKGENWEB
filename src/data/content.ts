@@ -1164,6 +1164,8 @@ export const contact = {
     linkedin: { es: 'LinkedIn', en: 'LinkedIn' },
   },
   emailSubject: { es: 'Contacto desde tu portafolio', en: 'Contact from your portfolio' },
+  catLine: { es: '¡Miau! Escríbele', en: 'Meow! Drop him a line' },
+  catLabel: { es: 'Saludar a la gata', en: 'Say hi to the cat' },
 };
 
 /* ------------------------------------------------------------------ */
