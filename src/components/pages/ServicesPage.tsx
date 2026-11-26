@@ -24,7 +24,7 @@ export function ServicesPage() {
     <section
       id="services"
       aria-labelledby="services-title"
-      className={`relative isolate overflow-hidden ${sectionPadding(1)}`}
+      className={`relative isolate overflow-clip ${sectionPadding(1)}`}
     >
       <div
         aria-hidden
@@ -60,7 +60,7 @@ export function ServicesPage() {
               <li key={s.icon} id={anchor} className="scroll-mt-28" data-reveal>
                 <article
                   aria-labelledby={`${anchor}-title`}
-                  className="group gradient-ring relative grid gap-10 overflow-hidden card p-7 sm:p-10 lg:grid-cols-[1.2fr_1fr] lg:p-14"
+                  className="group gradient-ring relative grid gap-10 overflow-clip card p-7 sm:p-10 lg:grid-cols-[1.2fr_1fr] lg:p-14"
                 >
                   <span
                     aria-hidden
@@ -69,7 +69,8 @@ export function ServicesPage() {
                     0{i + 1}
                   </span>
 
-                  <div className="relative">
+                  {/* Fijo mientras se recorre una lista larga de proyectos a la derecha */}
+                  <div className="relative lg:sticky lg:top-28 lg:self-start">
                     <span className="svc-icon grid size-16 place-items-center rounded-2xl bg-brand text-white shadow-[0_0_32px_-4px_var(--accent-strong)]">
                       <Icon className="size-7" strokeWidth={1.75} aria-hidden />
                     </span>

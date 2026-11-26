@@ -29,6 +29,9 @@ const avatars = [
   { src: 'proyectos.png', name: 'avatar-proyectos', bg: 'white', holes: 3000 },
   { src: 'pulgar arriba.png', name: 'avatar-pulgar', bg: 'white' },
   { src: 'contacto.png', name: 'avatar-contacto', bg: 'white' },
+  // La gata del carrusel de sitios (bg 'none': la imagen ya trae transparencia).
+  { src: 'AVATAR GATO/Gato siamés curioso sobre el borde.png', name: 'gata-borde', bg: 'white' },
+  { src: 'AVATAR GATO/Gato siamés curioso con pata alzada.png', name: 'gata-pata', bg: 'none' },
 ];
 const WIDTHS = [360, 720];
 
@@ -109,6 +112,7 @@ function removeHoles(mask, bgMask, w, h, minArea) {
 }
 
 async function cutout({ src, bg, gap = 3, holes = 0 }) {
+  if (bg === 'none') return sharp(join(srcDir, src)).trim({ threshold: 0 }).png().toBuffer();
   const { data, info } = await sharp(join(srcDir, src))
     .ensureAlpha()
     .raw()

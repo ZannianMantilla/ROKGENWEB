@@ -47,7 +47,7 @@ export function Projects({ level = 2, more = false, kicker }: SectionProps & { k
     <section
       id="projects"
       aria-labelledby="projects-title"
-      className={`relative isolate overflow-hidden ${sectionPadding(level)}`}
+      className={`relative isolate overflow-clip ${sectionPadding(level)}`}
     >
       <div
         aria-hidden

@@ -602,6 +602,8 @@ export const projects = {
       en: 'Live websites where I worked on both front-end and back-end development.',
     },
     visit: { es: 'Visitar sitio', en: 'Visit site' },
+    prev: { es: 'Sitio anterior', en: 'Previous site' },
+    next: { es: 'Siguiente sitio', en: 'Next site' },
     talk: { es: '¿Quieres algo así? Hablemos', en: 'Want something like this? Let’s talk' },
   },
   items: list<Project>([

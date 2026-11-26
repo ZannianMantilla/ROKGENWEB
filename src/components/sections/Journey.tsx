@@ -95,7 +95,8 @@ export function Journey({ level = 2, more = false, extra }: SectionProps & { ext
             id="exp-title"
             title={t(journey.experienceTitle)}
             icon={Briefcase}
-            items={journey.experience}
+            // En el inicio, los cargos más recientes: así las dos columnas quedan parejas
+            items={level === 2 ? journey.experience.slice(0, 4) : journey.experience}
             level={level}
           />
 
