@@ -253,7 +253,10 @@ function Orbit({ mode }: { mode: Mode }) {
   );
 }
 
-/** Guitarra: cada grupo de trastes brilla de un color y cambia la faceta del avatar. */
+/**
+ * Guitarra: toda ella es un solo botón (cómodo aunque sea pequeña). Cada toque rasguea y pasa a la
+ * siguiente faceta; los trastes de colores solo indican cuál está activa.
+ */
 function Guitar({ mode, onPick }: { mode: Mode; onPick: (m: Mode) => void }) {
   const { t } = useT();
   const base = `${import.meta.env.BASE_URL}assets/generated/guitarra`;
@@ -262,22 +265,34 @@ function Guitar({ mode, onPick }: { mode: Mode; onPick: (m: Mode) => void }) {
   const [said, setSaid] = useState<Mode | null>(null);
   const hide = useRef(0);
   useEffect(() => () => clearTimeout(hide.current), []);
-  const pick = (m: Mode) => {
+  const next = (e: MouseEvent<HTMLButtonElement>) => {
+    const m = MODE_IDS[(MODE_IDS.indexOf(mode) + 1) % MODE_IDS.length];
     strum(MODES[m].chord);
     onPick(m);
     setSaid(m);
     clearTimeout(hide.current);
     hide.current = window.setTimeout(() => setSaid(null), 2600);
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches)
+      e.currentTarget.animate(
+        [{ rotate: '0deg' }, { rotate: '-5deg' }, { rotate: '3deg' }, { rotate: '-1.5deg' }, { rotate: '0deg' }],
+        { duration: 500, easing: 'ease-out' },
+      );
   };
   return (
-    <div className="w-[10.5rem] shrink-0 sm:w-[12.5rem]">
-      <div role="group" aria-label={t(hero.guitar.label)} className="guitar relative">
-        <p
-          aria-live="polite"
-          className={`speech pointer-events-none absolute right-[3%] bottom-[88%] w-max max-w-[14rem] lg:hidden ${said ? '' : 'is-hidden'}`}
-        >
-          {said && t(hero.guitar.modes[said].line)}
-        </p>
+    <div className="relative w-[10.5rem] shrink-0 sm:w-[12.5rem]">
+      <p
+        aria-live="polite"
+        className={`speech pointer-events-none absolute right-[3%] bottom-[88%] w-max max-w-[14rem] lg:hidden ${said ? '' : 'is-hidden'}`}
+      >
+        {said && t(hero.guitar.modes[said].line)}
+      </p>
+      <button
+        type="button"
+        onClick={next}
+        data-sound="none"
+        aria-label={`${t(hero.guitar.label)}: ${t(hero.guitar.modes[mode].name)}`}
+        className="guitar relative block w-full cursor-pointer rounded-xl"
+      >
         <picture>
           <source type="image/avif" srcSet={set('avif')} sizes="(min-width: 640px) 12.5rem, 10.5rem" />
           <source type="image/webp" srcSet={set('webp')} sizes="(min-width: 640px) 12.5rem, 10.5rem" />
@@ -292,19 +307,15 @@ function Guitar({ mode, onPick }: { mode: Mode; onPick: (m: Mode) => void }) {
           />
         </picture>
         {MODE_IDS.map((m) => (
-          <button
+          <span
             key={m}
-            type="button"
-            aria-label={t(hero.guitar.modes[m].name)}
-            aria-pressed={m === mode}
-            data-sound="none"
+            aria-hidden
             data-on={m === mode}
-            onClick={() => pick(m)}
             className="fret"
             style={{ ...pct(MODES[m].frets), '--c': MODES[m].color } as CSSProperties}
           />
         ))}
-      </div>
+      </button>
     </div>
   );
 }

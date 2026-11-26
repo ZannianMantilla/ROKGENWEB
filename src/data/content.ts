@@ -104,7 +104,7 @@ export const hero = {
   ctaPrimary: { es: 'Hablemos', en: 'Let’s talk' },
   /** Guitarra del hero: cada grupo de trastes cambia la faceta del avatar y lo que dice su cristal. */
   guitar: {
-    label: { es: 'Elige una faceta', en: 'Pick a side of me' },
+    label: { es: 'Cambiar de faceta', en: 'Switch side' },
     modes: {
       dev: {
         name: { es: 'Software', en: 'Software' },

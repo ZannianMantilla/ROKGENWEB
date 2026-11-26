@@ -1115,7 +1115,6 @@ dialog.modal[open]::backdrop {
 .fret {
   position: absolute;
   border-radius: 3px;
-  cursor: pointer;
   background: color-mix(in oklab, var(--c) 60%, transparent);
   box-shadow:
     0 0 12px 1px var(--c),
@@ -1130,10 +1129,6 @@ dialog.modal[open]::backdrop {
 }
 .fret:nth-of-type(3) {
   animation-delay: -1.8s;
-}
-.fret:hover {
-  opacity: 0.85;
-  animation-play-state: paused;
 }
 .fret[data-on='true'] {
   opacity: 1;
@@ -1156,16 +1151,19 @@ dialog.modal[open]::backdrop {
     translate: 0 -1px;
   }
 }
-/* La guitarra es pequeña: el área táctil de cada traste es más alta que el brillo */
-.fret::before {
-  content: '';
-  position: absolute;
-  inset: -14px -3px;
+/* La guitarra entera es el botón: se inclina al pasar y muestra el foco del teclado */
+.guitar {
+  transition: translate 0.3s var(--ease-out-expo);
 }
-.fret:focus-visible {
-  outline: 2px solid var(--c);
-  outline-offset: 3px;
-  opacity: 1;
+.guitar:hover {
+  translate: 0 -3px;
+}
+.guitar:hover .fret:not([data-on='true']) {
+  opacity: 0.75;
+}
+.guitar:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
 }
 /* Cambio de faceta: el avatar que sale se desvanece y el que entra crece desde abajo */
 .mode-swap {
