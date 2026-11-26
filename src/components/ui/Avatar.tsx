@@ -17,6 +17,28 @@ const AVATARS = {
     glow: '26%',
     eye: '3%',
   },
+  ram: {
+    w: 959,
+    h: 1279,
+    eyes: [
+      [42.4, 15.2],
+      [50, 17.3],
+    ],
+    crystal: [52.4, 47.4],
+    glow: '24%',
+    eye: '2.4%',
+  },
+  metricas: {
+    w: 965,
+    h: 1428,
+    eyes: [
+      [44.4, 16.1],
+      [51.8, 16.2],
+    ],
+    crystal: [59.7, 39.9],
+    glow: '24%',
+    eye: '2.4%',
+  },
   checklist: {
     w: 1060,
     h: 1472,
@@ -64,6 +86,9 @@ const AVATARS = {
 } as const;
 
 export type AvatarName = keyof typeof AVATARS;
+
+/** Tamaño del recorte en px (para reservar su proporción). */
+export const avatarSize = (name: AvatarName) => ({ w: AVATARS[name].w, h: AVATARS[name].h });
 
 type Props = {
   name: AvatarName;

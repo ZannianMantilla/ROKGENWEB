@@ -29,6 +29,11 @@ const avatars = [
   { src: 'proyectos.png', name: 'avatar-proyectos', bg: 'white', holes: 3000 },
   { src: 'pulgar arriba.png', name: 'avatar-pulgar', bg: 'white' },
   { src: 'contacto.png', name: 'avatar-contacto', bg: 'white' },
+  // Variantes del hero que se eligen con la guitarra: técnico en sistemas y community manager.
+  { src: 'Inspección de memoria RAM brillante.png', name: 'avatar-ram', bg: 'black', gap: 12 },
+  { src: 'Sorpresa ante las métricas.png', name: 'avatar-metricas', bg: 'black', gap: 12 },
+  // La guitarra ya trae transparencia: solo se recorta el borde vacío.
+  { src: 'Guitarra eléctrica negra estilo Stratocaster.png', name: 'guitarra', keepAlpha: true },
   // La gata del carrusel de sitios: sin pupilas, porque las dibuja ClientSites.tsx para moverlas.
   {
     src: 'AVATAR GATO/Gato siamés curioso sobre el borde.png',
@@ -257,7 +262,9 @@ for (const a of avatars) {
   );
   if (!force && files.every((f) => existsSync(f) && statSync(f).mtimeMs > srcTime)) continue;
 
-  let png = await cutout(a);
+  let png = a.keepAlpha
+    ? await sharp(source).trim({ threshold: 0 }).png().toBuffer()
+    : await cutout(a);
   if (a.noPupils) {
     const out = await removePupils(png);
     png = out.png;

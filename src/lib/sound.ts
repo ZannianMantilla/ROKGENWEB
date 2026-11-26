@@ -69,6 +69,33 @@ const sounds: Record<SoundName, () => void> = {
   none: () => {},
 };
 
+/** Rasgueo de guitarra: cuerdas en diente de sierra que se apagan con un filtro que se va cerrando. */
+export function strum(freqs: number[]) {
+  try {
+    const a = audio();
+    const t = a.currentTime;
+    freqs.forEach((f, i) => {
+      const start = t + i * 0.028;
+      const osc = a.createOscillator();
+      const lp = a.createBiquadFilter();
+      const g = a.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.value = f;
+      lp.type = 'lowpass';
+      lp.frequency.setValueAtTime(f * 8, start);
+      lp.frequency.exponentialRampToValueAtTime(f * 1.5, start + 0.6);
+      g.gain.setValueAtTime(0.0001, start);
+      g.gain.exponentialRampToValueAtTime(0.09, start + 0.005);
+      g.gain.exponentialRampToValueAtTime(0.0001, start + 1.2);
+      osc.connect(lp).connect(g).connect(master);
+      osc.start(start);
+      osc.stop(start + 1.25);
+    });
+  } catch {
+    /* sin Web Audio */
+  }
+}
+
 export function play(name: SoundName) {
   try {
     sounds[name]();

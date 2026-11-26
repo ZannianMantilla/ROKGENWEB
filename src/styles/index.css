@@ -1109,3 +1109,93 @@ dialog.modal[open]::backdrop {
     animation: none;
   }
 }
+
+/* ---------- Guitarra del hero: facetas del avatar (Hero.tsx) ---------- */
+/* Cada grupo de trastes brilla con su color; el elegido queda encendido y los otros laten suave. */
+.fret {
+  position: absolute;
+  border-radius: 3px;
+  cursor: pointer;
+  background: color-mix(in oklab, var(--c) 60%, transparent);
+  box-shadow:
+    0 0 12px 1px var(--c),
+    inset 0 0 8px color-mix(in oklab, white 40%, var(--c));
+  mix-blend-mode: screen;
+  opacity: 0.4;
+  animation: fret-pulse 2.6s ease-in-out infinite;
+  transition: opacity 0.3s;
+}
+.fret:nth-of-type(2) {
+  animation-delay: -0.9s;
+}
+.fret:nth-of-type(3) {
+  animation-delay: -1.8s;
+}
+.fret:hover {
+  opacity: 0.85;
+  animation-play-state: paused;
+}
+.fret[data-on='true'] {
+  opacity: 1;
+  animation: fret-strum 0.5s var(--ease-out-expo);
+}
+@keyframes fret-pulse {
+  50% {
+    opacity: 0.7;
+  }
+}
+/* Vibración corta de las cuerdas al elegir */
+@keyframes fret-strum {
+  20% {
+    translate: 0 -1.5px;
+  }
+  40% {
+    translate: 0 1.5px;
+  }
+  60% {
+    translate: 0 -1px;
+  }
+}
+/* La guitarra es pequeña: el área táctil de cada traste es más alta que el brillo */
+.fret::before {
+  content: '';
+  position: absolute;
+  inset: -14px -3px;
+}
+.fret:focus-visible {
+  outline: 2px solid var(--c);
+  outline-offset: 3px;
+  opacity: 1;
+}
+/* Cambio de faceta: el avatar que sale se desvanece y el que entra crece desde abajo */
+.mode-swap {
+  transition:
+    opacity 0.6s,
+    scale 0.8s var(--ease-out-expo),
+    visibility 0.6s;
+  transform-origin: 50% 100%;
+}
+.mode-swap.is-off {
+  opacity: 0;
+  scale: 0.9;
+  visibility: hidden;
+}
+.ring-swap {
+  animation: ring-in 0.9s var(--ease-out-expo) both;
+}
+@keyframes ring-in {
+  from {
+    opacity: 0;
+    scale: 0.85;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fret,
+  .fret[data-on='true'],
+  .ring-swap {
+    animation: none;
+  }
+  .mode-swap {
+    transition: none;
+  }
+}

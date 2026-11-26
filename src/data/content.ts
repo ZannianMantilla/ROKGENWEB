@@ -102,16 +102,32 @@ export const hero = {
     en: 'I’m Zannián Mantilla Celis, a software developer and community manager based in Colombia. I work across mobile, frontend, social media and data analysis, and I look after every project from idea to delivery.',
   },
   ctaPrimary: { es: 'Hablemos', en: 'Let’s talk' },
-  ctaSecondary: { es: 'Ver proyectos', en: 'See projects' },
+  /** Guitarra del hero: cada grupo de trastes cambia la faceta del avatar y lo que dice su cristal. */
+  guitar: {
+    label: { es: 'Elige una faceta', en: 'Pick a side of me' },
+    modes: {
+      dev: {
+        name: { es: 'Software', en: 'Software' },
+        line: { es: '¿Qué hay pa’ hacer?', en: 'So, what are we building?' },
+      },
+      tech: {
+        name: { es: 'Sistemas', en: 'IT support' },
+        line: { es: 'Pásele un borrador', en: 'Give it a rub with an eraser' },
+      },
+      cm: {
+        name: { es: 'Redes', en: 'Social' },
+        line: { es: 'Trending Topic', en: 'Trending Topic' },
+      },
+    },
+  },
   whatsappText: {
     es: 'Hola Zannián, vi tu portafolio y me gustaría hablar sobre un proyecto.',
     en: 'Hi Zannián, I saw your portfolio and I’d like to talk about a project.',
   },
   scroll: { es: 'Desliza', en: 'Scroll' },
-  /** Lo que dice el avatar al tocar su cristal. */
+  /** Botón del cristal del avatar (lo que dice depende de la faceta, ver guitar.modes). */
   crystal: {
     label: { es: 'Tocar el cristal del avatar', en: 'Tap the avatar’s crystal' },
-    line: { es: '¿Qué hay pa’ hacer?', en: 'So, what are we building?' },
   },
   headlineLabel: {
     es: 'Zannián Mantilla Celis — Desarrollador de Software | Frontend | Mobile | Análisis de Datos | Soporte TI',
@@ -857,6 +873,32 @@ export const clientSites = list<ClientSite>([
     },
     role: frontAndBack,
     ...siteShots('serfu', 'SERFU'),
+    services: ['web'],
+    stack: [],
+  },
+  {
+    id: 'prosacoop',
+    name: 'Cooperativa Prosacoop',
+    url: 'https://prosacoop.com.co/',
+    summary: {
+      es: 'Sitio de una cooperativa de salud en Bucaramanga y Floridablanca: servicios y programas médicos, equipo médico, cinco sedes, documentos, PQRS y agendamiento de citas.',
+      en: 'Website for a healthcare cooperative in Bucaramanga and Floridablanca: medical services and programs, medical staff, five locations, documents, a feedback channel and appointment booking.',
+    },
+    role: frontAndBack,
+    ...siteShots('prosacoop', 'Cooperativa Prosacoop'),
+    services: ['web'],
+    stack: [],
+  },
+  {
+    id: 'tornopartes',
+    name: 'Torno Partes',
+    url: 'https://tornopartes.com.co/',
+    summary: {
+      es: 'Sitio de una empresa metalmecánica santandereana de diseño, fabricación y mantenimiento de maquinaria: productos, proyectos, clientes, equipo de trabajo y contacto.',
+      en: 'Website for a metalworking company from Santander that designs, builds and maintains machinery: products, projects, clients, team and contact.',
+    },
+    role: frontAndBack,
+    ...siteShots('tornopartes', 'Torno Partes'),
     services: ['web'],
     stack: [],
   },

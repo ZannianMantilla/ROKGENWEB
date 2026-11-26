@@ -15,6 +15,11 @@ const icons = {
   figma: si.siFigma,
   github: si.siGithub,
   whatsapp: si.siWhatsapp,
+  instagram: si.siInstagram,
+  facebook: si.siFacebook,
+  tiktok: si.siTiktok,
+  youtube: si.siYoutube,
+  x: si.siX,
 };
 
 const entries = Object.entries(icons)
